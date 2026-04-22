@@ -85,7 +85,7 @@ stoku/
 | F1   | File messaggi i18n (it/sq/en) + `.vscode/settings.json`                    | ✅ fatto       |
 | F1   | Workflow CI (`.github/workflows/ci.yml`)                                   | 🟡 PR separata |
 | F1   | Provider `next-intl` wired + stringhe UI esternalizzate                    | ⬜ opzionale   |
-| F1   | Store switcher cookie-based (server-side scoping)                          | ⬜ opzionale   |
+| F1   | Store switcher cookie-based (server-side scoping) + selezione `is_default` | ✅ fatto       |
 | F1   | Primo utente admin creato su Supabase cloud                                | ⬜ dipende     |
 | F1   | Deploy Vercel preview + smoke test login                                   | ⬜ dipende     |
 | F2   | CRUD prodotti + categorie + foto + ricerca full-text + import Excel        | ⬜             |

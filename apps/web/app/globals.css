@@ -1,0 +1,509 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-heading: var(--font-inter);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  --radius-2xl: 12px;
+  --radius-3xl: 14px;
+  --radius-4xl: 16px;
+}
+
+:root {
+  /* STOKU design tokens — workmanlike, dense, industrial. */
+
+  /* accents */
+  --stoku-accent: oklch(0.58 0.14 45);
+  --stoku-accent-bg: oklch(0.96 0.03 60);
+  --stoku-accent-fg: #fff;
+  --stoku-accent-weak: oklch(0.88 0.06 60);
+
+  /* neutrals */
+  --bg: #fafaf9;
+  --panel: #ffffff;
+  --panel-2: #f5f5f4;
+  --panel-sunken: #f0efed;
+  --stoku-border: oklch(0.92 0.004 80);
+  --border-strong: oklch(0.84 0.005 80);
+  --border-subtle: oklch(0.95 0.003 80);
+
+  --ink: oklch(0.2 0.01 80);
+  --ink-2: oklch(0.35 0.008 80);
+  --ink-3: oklch(0.52 0.006 80);
+  --ink-4: oklch(0.68 0.004 80);
+  --ink-inv: #fafaf9;
+
+  /* sidebar dark surface */
+  --sbar: oklch(0.22 0.008 80);
+  --sbar-2: oklch(0.27 0.009 80);
+  --sbar-ink: oklch(0.88 0.008 80);
+  --sbar-ink-dim: oklch(0.62 0.008 80);
+  --sbar-border: oklch(0.3 0.009 80);
+
+  /* semantic */
+  --ok: oklch(0.62 0.11 150);
+  --ok-bg: oklch(0.94 0.06 150);
+  --warn: oklch(0.72 0.14 75);
+  --warn-bg: oklch(0.96 0.06 85);
+  --danger: oklch(0.58 0.18 28);
+  --danger-bg: oklch(0.95 0.04 28);
+  --info: oklch(0.6 0.1 240);
+  --info-bg: oklch(0.95 0.03 240);
+
+  /* radii / density */
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 8px;
+
+  --row-h: 32px;
+  --row-h-comfy: 44px;
+  --row-h-card: 64px;
+
+  --sb-w: 216px;
+  --top-h: 48px;
+
+  /* type scale */
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-base: 13px;
+  --fs-md: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 20px;
+  --fs-2xl: 26px;
+
+  /* shadows */
+  --shadow-pop: 0 1px 2px rgba(20, 20, 18, 0.06), 0 8px 24px rgba(20, 20, 18, 0.12);
+  --shadow-card: 0 1px 0 rgba(20, 20, 18, 0.02);
+
+  /* shadcn bridges → STOKU palette */
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --card: var(--panel);
+  --card-foreground: var(--ink);
+  --popover: var(--panel);
+  --popover-foreground: var(--ink);
+  --primary: var(--stoku-accent);
+  --primary-foreground: var(--stoku-accent-fg);
+  --secondary: var(--panel-2);
+  --secondary-foreground: var(--ink);
+  --muted: var(--panel-2);
+  --muted-foreground: var(--ink-3);
+  --accent: var(--stoku-accent-bg);
+  --accent-foreground: var(--stoku-accent);
+  --destructive: var(--danger);
+  --border: var(--stoku-border);
+  --input: var(--stoku-border);
+  --ring: var(--stoku-accent);
+  --chart-1: var(--stoku-accent);
+  --chart-2: oklch(0.48 0.18 270);
+  --chart-3: oklch(0.52 0.12 160);
+  --chart-4: oklch(0.72 0.14 75);
+  --chart-5: oklch(0.6 0.1 240);
+  --radius: 8px;
+
+  --sidebar: var(--sbar);
+  --sidebar-foreground: var(--sbar-ink);
+  --sidebar-primary: var(--stoku-accent);
+  --sidebar-primary-foreground: var(--stoku-accent-fg);
+  --sidebar-accent: var(--sbar-2);
+  --sidebar-accent-foreground: #fff;
+  --sidebar-border: var(--sbar-border);
+  --sidebar-ring: var(--stoku-accent);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #__next {
+    height: 100%;
+  }
+
+  body {
+    font-family: var(--font-inter, 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif);
+    font-size: var(--fs-base);
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'ss01', 'cv11';
+    letter-spacing: -0.005em;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--stoku-accent);
+    outline-offset: 1px;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: oklch(0.85 0.005 80);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.72 0.005 80);
+    background-clip: padding-box;
+    border: 2px solid transparent;
+  }
+}
+
+@layer components {
+  /* typography helpers */
+  .mono {
+    font-family: var(
+      --font-jetbrains-mono,
+      'JetBrains Mono',
+      'IBM Plex Mono',
+      ui-monospace,
+      monospace
+    );
+    font-feature-settings: 'zero';
+    letter-spacing: -0.01em;
+  }
+  .meta {
+    color: var(--ink-3);
+    font-size: var(--fs-sm);
+  }
+  .dim {
+    color: var(--ink-3);
+  }
+  .faint {
+    color: var(--ink-4);
+  }
+
+  /* layout helpers */
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .col {
+    display: flex;
+    flex-direction: column;
+  }
+  .stretch {
+    flex: 1;
+    min-width: 0;
+  }
+  .truncate-1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .divider {
+    height: 1px;
+    background: var(--stoku-border);
+  }
+  .vdivider {
+    width: 1px;
+    background: var(--stoku-border);
+    align-self: stretch;
+  }
+
+  /* button primitive */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--border-strong);
+    background: var(--panel);
+    color: var(--ink);
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+      background 120ms ease,
+      border-color 120ms ease;
+  }
+  .btn:hover:not(:disabled) {
+    background: var(--panel-2);
+  }
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .btn.primary {
+    background: var(--stoku-accent);
+    border-color: var(--stoku-accent);
+    color: var(--stoku-accent-fg);
+  }
+  .btn.primary:hover:not(:disabled) {
+    filter: brightness(0.95);
+    background: var(--stoku-accent);
+  }
+  .btn.ghost {
+    border-color: transparent;
+    background: transparent;
+  }
+  .btn.ghost:hover:not(:disabled) {
+    background: var(--panel-2);
+  }
+  .btn.danger {
+    color: var(--danger);
+    border-color: var(--border-strong);
+  }
+  .btn.sm {
+    height: 24px;
+    padding: 0 8px;
+    font-size: var(--fs-xs);
+  }
+  .btn.lg {
+    height: 36px;
+    padding: 0 14px;
+    font-size: var(--fs-md);
+  }
+
+  /* keyboard hint */
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 3px;
+    border: 1px solid var(--border-strong);
+    background: var(--panel);
+    font-family: var(--font-jetbrains-mono, monospace);
+    font-size: 10px;
+    color: var(--ink-3);
+    box-shadow: 0 1px 0 var(--border-strong);
+  }
+
+  /* input primitive */
+  .stoku-input {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--border-strong);
+    background: var(--panel);
+    font-size: var(--fs-sm);
+    min-width: 0;
+  }
+  .stoku-input:focus-within {
+    border-color: var(--stoku-accent);
+    box-shadow: 0 0 0 2px var(--stoku-accent-weak);
+    outline: none;
+  }
+  .stoku-input input,
+  .stoku-input select {
+    border: none;
+    outline: none;
+    background: transparent;
+    flex: 1;
+    min-width: 0;
+    font-size: inherit;
+  }
+
+  /* badge */
+  .stoku-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 3px;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    background: var(--panel-2);
+    color: var(--ink-2);
+    border: 1px solid var(--stoku-border);
+    white-space: nowrap;
+  }
+  .stoku-badge.ok {
+    background: var(--ok-bg);
+    color: var(--ok);
+    border-color: transparent;
+  }
+  .stoku-badge.warn {
+    background: var(--warn-bg);
+    color: oklch(0.4 0.1 75);
+    border-color: transparent;
+  }
+  .stoku-badge.danger {
+    background: var(--danger-bg);
+    color: var(--danger);
+    border-color: transparent;
+  }
+  .stoku-badge.info {
+    background: var(--info-bg);
+    color: var(--info);
+    border-color: transparent;
+  }
+  .stoku-badge.draft {
+    background: oklch(0.94 0.004 80);
+    color: var(--ink-3);
+    border-color: transparent;
+  }
+  .stoku-badge.accent {
+    background: var(--stoku-accent-bg);
+    color: var(--stoku-accent);
+    border-color: transparent;
+  }
+
+  /* popover */
+  .pop {
+    background: var(--panel);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-pop);
+    padding: 4px;
+    min-width: 180px;
+  }
+  .pop-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: var(--r-sm);
+    font-size: var(--fs-sm);
+    cursor: pointer;
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: left;
+    color: inherit;
+  }
+  .pop-item:hover {
+    background: var(--panel-2);
+  }
+
+  /* table */
+  .tbl {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: var(--fs-base);
+  }
+  .tbl thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--panel-2);
+    color: var(--ink-3);
+    font-weight: 500;
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--stoku-border);
+    white-space: nowrap;
+  }
+  .tbl tbody td {
+    padding: 0 10px;
+    height: var(--row-h);
+    border-bottom: 1px solid var(--border-subtle);
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  .tbl tbody tr {
+    cursor: pointer;
+  }
+  .tbl tbody tr:hover {
+    background: var(--panel-2);
+  }
+  .tbl tbody tr.selected {
+    background: var(--stoku-accent-bg);
+  }
+  .tbl .num {
+    font-family: var(--font-jetbrains-mono, monospace);
+    font-size: var(--fs-sm);
+    font-variant-numeric: tabular-nums;
+  }
+  .tbl td.r,
+  .tbl th.r {
+    text-align: right;
+  }
+  .tbl td.c,
+  .tbl th.c {
+    text-align: center;
+  }
+
+  /* app shell */
+  .stoku-app {
+    display: grid;
+    grid-template-columns: var(--sb-w) 1fr;
+    height: 100vh;
+    min-height: 100vh;
+  }
+  .stoku-main {
+    display: grid;
+    grid-template-rows: var(--top-h) 1fr;
+    min-width: 0;
+    background: var(--bg);
+  }
+  .stoku-content {
+    overflow: auto;
+    min-height: 0;
+  }
+}

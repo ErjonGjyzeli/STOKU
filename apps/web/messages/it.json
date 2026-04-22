@@ -1,0 +1,44 @@
+{
+  "app": {
+    "name": "STOKU",
+    "tagline": "Gestionale ricambi auto"
+  },
+  "auth": {
+    "signIn": "Accedi",
+    "signOut": "Esci",
+    "email": "Email",
+    "password": "Password",
+    "loginTitle": "Accedi al gestionale",
+    "loginError": "Accesso fallito",
+    "loginSuccess": "Accesso effettuato"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "products": "Prodotti",
+    "stock": "Magazzino",
+    "orders": "Ordini",
+    "customers": "Clienti",
+    "vehicles": "Veicoli",
+    "transfers": "Trasferimenti",
+    "settings": "Impostazioni",
+    "stores": "Punti vendita",
+    "users": "Utenti staff"
+  },
+  "common": {
+    "new": "Nuovo",
+    "edit": "Modifica",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "active": "Attivo",
+    "inactive": "Disattivato",
+    "loading": "Caricamento…",
+    "error": "Errore"
+  },
+  "roles": {
+    "admin": "Admin",
+    "sales": "Vendite",
+    "warehouse": "Magazzino",
+    "viewer": "Visualizzatore"
+  }
+}

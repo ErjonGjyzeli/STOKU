@@ -13,7 +13,10 @@
     "lint": "pnpm --filter web lint",
     "typecheck": "pnpm --filter web typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\" --ignore-path .gitignore",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\" --ignore-path .gitignore"
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\" --ignore-path .gitignore",
+    "gen:types": "supabase gen types typescript --project-id ztchukszlebrkvnlscia > apps/web/lib/supabase/types.ts",
+    "db:push": "supabase db push",
+    "db:query": "supabase db query --linked"
   },
   "devDependencies": {
     "prettier": "^3.4.2",

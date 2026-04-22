@@ -1,27 +1,18 @@
 'use client';
 
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { Icon } from '@/components/ui/icon';
 import { useStoreContext } from '@/lib/context/store-context';
+import { setActiveStore } from '@/lib/auth/actions';
 import type { StoreLite } from '@/lib/auth/session';
 
-const STORAGE_KEY = 'stoku:active-store';
-
-function subscribe(onChange: () => void) {
-  window.addEventListener('storage', onChange);
-  return () => window.removeEventListener('storage', onChange);
-}
-
-function readSaved() {
-  if (typeof window === 'undefined') return null;
-  const raw = window.localStorage.getItem(STORAGE_KEY);
-  return raw ? Number(raw) : null;
-}
-
 export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
+  const router = useRouter();
   const { activeStoreId, setActiveStoreId } = useStoreContext();
-  const savedId = useSyncExternalStore(subscribe, readSaved, () => null);
   const [open, setOpen] = useState(false);
+  const [pending, startTransition] = useTransition();
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -40,17 +31,25 @@ export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
     );
   }
 
-  const fallback = stores[0].id;
-  const effectiveId =
-    activeStoreId ?? (savedId != null && stores.some((s) => s.id === savedId) ? savedId : fallback);
+  const effectiveId = activeStoreId ?? stores[0].id;
   const active = stores.find((s) => s.id === effectiveId) ?? stores[0];
 
   function select(id: number) {
-    setActiveStoreId(id);
-    if (typeof window !== 'undefined') {
-      window.localStorage.setItem(STORAGE_KEY, String(id));
+    if (id === activeStoreId) {
+      setOpen(false);
+      return;
     }
+    setActiveStoreId(id);
     setOpen(false);
+    startTransition(async () => {
+      const res = await setActiveStore(id);
+      if (!res.ok) {
+        toast.error('Errore cambio punto vendita', { description: res.error });
+        setActiveStoreId(activeStoreId);
+        return;
+      }
+      router.refresh();
+    });
   }
 
   return (
@@ -59,6 +58,7 @@ export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
         type="button"
         className="btn"
         style={{ gap: 8, height: 28 }}
+        disabled={pending}
         onClick={() => setOpen((v) => !v)}
       >
         <Icon name="store" size={13} />

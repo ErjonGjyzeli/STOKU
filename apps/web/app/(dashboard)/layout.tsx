@@ -7,7 +7,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const session = await requireSession();
 
   return (
-    <StoreProvider>
+    <StoreProvider initialStoreId={session.activeStoreId}>
       <div className="stoku-app">
         <Sidebar
           role={session.profile.role}

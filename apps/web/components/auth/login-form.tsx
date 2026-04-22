@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -27,7 +27,6 @@ const FEATURES = [
 ];
 
 export function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next') || '/';
   const [submitting, setSubmitting] = useState(false);
@@ -45,16 +44,17 @@ export function LoginForm() {
     setSubmitting(true);
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithPassword(values);
-    setSubmitting(false);
 
     if (error) {
+      setSubmitting(false);
       toast.error('Accesso fallito', { description: error.message });
       return;
     }
 
-    toast.success('Accesso effettuato');
-    router.replace(next);
-    router.refresh();
+    // Full-page navigation so server-rendered layout receives fresh auth
+    // cookies on its first hit; client router state tree can diverge between
+    // (auth)/login and (dashboard)/ groups when we only soft-navigate.
+    window.location.assign(next);
   }
 
   return (

@@ -1,0 +1,44 @@
+{
+  "app": {
+    "name": "STOKU",
+    "tagline": "Menaxhimi i pjesëve të makinave"
+  },
+  "auth": {
+    "signIn": "Hyr",
+    "signOut": "Dil",
+    "email": "Email",
+    "password": "Fjalëkalimi",
+    "loginTitle": "Hyr në sistem",
+    "loginError": "Hyrja dështoi",
+    "loginSuccess": "Hyrja u krye me sukses"
+  },
+  "nav": {
+    "dashboard": "Paneli",
+    "products": "Produktet",
+    "stock": "Magazina",
+    "orders": "Porositë",
+    "customers": "Klientët",
+    "vehicles": "Automjetet",
+    "transfers": "Transferimet",
+    "settings": "Cilësimet",
+    "stores": "Pikat e shitjes",
+    "users": "Përdoruesit"
+  },
+  "common": {
+    "new": "I ri",
+    "edit": "Modifiko",
+    "save": "Ruaj",
+    "cancel": "Anulo",
+    "delete": "Fshi",
+    "active": "Aktiv",
+    "inactive": "Joaktiv",
+    "loading": "Duke ngarkuar…",
+    "error": "Gabim"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "sales": "Shitje",
+    "warehouse": "Magazinë",
+    "viewer": "Vëzhgues"
+  }
+}

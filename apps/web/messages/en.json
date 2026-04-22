@@ -1,0 +1,44 @@
+{
+  "app": {
+    "name": "STOKU",
+    "tagline": "Auto parts management"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "email": "Email",
+    "password": "Password",
+    "loginTitle": "Sign in to the dashboard",
+    "loginError": "Sign-in failed",
+    "loginSuccess": "Signed in"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "products": "Products",
+    "stock": "Inventory",
+    "orders": "Orders",
+    "customers": "Customers",
+    "vehicles": "Vehicles",
+    "transfers": "Transfers",
+    "settings": "Settings",
+    "stores": "Stores",
+    "users": "Staff users"
+  },
+  "common": {
+    "new": "New",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "active": "Active",
+    "inactive": "Inactive",
+    "loading": "Loading…",
+    "error": "Error"
+  },
+  "roles": {
+    "admin": "Admin",
+    "sales": "Sales",
+    "warehouse": "Warehouse",
+    "viewer": "Viewer"
+  }
+}

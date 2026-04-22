@@ -51,3 +51,7 @@ supabase/.env
 
 # turbo
 .turbo
+
+# Claude Code worktree/session artifacts
+.claude/
+stoku-claude-code-prompt.md

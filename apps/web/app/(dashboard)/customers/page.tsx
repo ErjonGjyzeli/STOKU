@@ -1,5 +1,12 @@
 import { PagePlaceholder } from '@/components/layout/page-placeholder';
 
 export default function CustomersPage() {
-  return <PagePlaceholder title="Clienti" description="Anagrafica e storico acquisti. F4." />;
+  return (
+    <PagePlaceholder
+      title="Clienti"
+      subtitle="Anagrafica clienti privati e business, storico acquisti."
+      phase="Fase 4"
+      icon="users"
+    />
+  );
 }

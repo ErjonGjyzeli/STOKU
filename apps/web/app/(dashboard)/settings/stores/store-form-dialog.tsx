@@ -26,7 +26,11 @@ import {
 import type { StoreInput } from './actions';
 
 const schema = z.object({
-  code: z.string().min(2).max(10).regex(/^[A-Z0-9]+$/, 'Solo maiuscole e numeri'),
+  code: z
+    .string()
+    .min(2)
+    .max(10)
+    .regex(/^[A-Z0-9]+$/, 'Solo maiuscole e numeri'),
   name: z.string().min(2),
   type: z.enum(['shop', 'warehouse', 'mixed']),
   city: z.string().nullable().optional(),

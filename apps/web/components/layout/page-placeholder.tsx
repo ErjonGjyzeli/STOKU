@@ -1,21 +1,28 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import type { IconName } from '@/components/ui/icon';
+import { Empty } from '@/components/ui/empty';
+import { PageHeader } from '@/components/ui/page-header';
+import { Panel } from '@/components/ui/panel';
 
-export function PagePlaceholder({
-  title,
-  description,
-}: {
+type Props = {
   title: string;
-  description: string;
-}) {
+  subtitle: string;
+  phase: string;
+  icon?: IconName;
+};
+
+export function PagePlaceholder({ title, subtitle, phase, icon = 'box' }: Props) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="text-muted-foreground text-sm">
-        Questa sezione è pianificata nella roadmap del progetto.
-      </CardContent>
-    </Card>
+    <div>
+      <PageHeader title={title} subtitle={subtitle} />
+      <div style={{ padding: 24 }}>
+        <Panel padded={false}>
+          <Empty
+            icon={icon}
+            title={`In arrivo nella ${phase}`}
+            subtitle="Questa sezione è pianificata nella roadmap del progetto."
+          />
+        </Panel>
+      </div>
+    </div>
   );
 }

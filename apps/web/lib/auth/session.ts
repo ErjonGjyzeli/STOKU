@@ -53,7 +53,12 @@ export const getSession = cache(async (): Promise<Session | null> => {
       .select('store:stores!inner(id, code, name, is_active)')
       .eq('staff_id', user.id);
     for (const row of data ?? []) {
-      const s = row.store as unknown as { id: number; code: string; name: string; is_active: boolean };
+      const s = row.store as unknown as {
+        id: number;
+        code: string;
+        name: string;
+        is_active: boolean;
+      };
       if (s?.is_active) stores.push({ id: s.id, code: s.code, name: s.name });
     }
   }

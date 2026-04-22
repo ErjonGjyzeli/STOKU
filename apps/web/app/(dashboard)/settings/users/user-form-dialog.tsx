@@ -147,11 +147,7 @@ function CreateForm({
             control={control}
             name="store_ids"
             render={({ field }) => (
-              <StoreCheckList
-                stores={stores}
-                selected={field.value}
-                onChange={field.onChange}
-              />
+              <StoreCheckList stores={stores} selected={field.value} onChange={field.onChange} />
             )}
           />
           <DialogFooter>
@@ -259,11 +255,7 @@ function EditFormInner({
             control={control}
             name="store_ids"
             render={({ field }) => (
-              <StoreCheckList
-                stores={stores}
-                selected={field.value}
-                onChange={field.onChange}
-              />
+              <StoreCheckList stores={stores} selected={field.value} onChange={field.onChange} />
             )}
           />
           <DialogFooter>

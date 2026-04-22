@@ -9,7 +9,9 @@ export default async function StoresSettingsPage() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('stores')
-    .select('id, code, name, type, city, country, address_line1, postal_code, phone, email, is_active')
+    .select(
+      'id, code, name, type, city, country, address_line1, postal_code, phone, email, is_active',
+    )
     .order('code');
 
   if (error) {

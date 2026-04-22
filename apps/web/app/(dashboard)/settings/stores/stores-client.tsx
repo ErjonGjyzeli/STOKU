@@ -1,18 +1,14 @@
 'use client';
 
-import { Pencil, Plus, Power } from 'lucide-react';
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Empty } from '@/components/ui/empty';
+import { Icon } from '@/components/ui/icon';
+import { PageHeader } from '@/components/ui/page-header';
+import { Panel } from '@/components/ui/panel';
+import { StokuBadge } from '@/components/ui/stoku-badge';
+import { StokuButton } from '@/components/ui/stoku-button';
 import { createStore, toggleStoreActive, updateStore, type StoreInput } from './actions';
 import { StoreFormDialog } from './store-form-dialog';
 
@@ -60,68 +56,101 @@ export function StoresClient({ stores }: { stores: StoreRow[] }) {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Punti vendita</h1>
-          <p className="text-muted-foreground">Gestisci negozi e magazzini.</p>
-        </div>
-        <Button onClick={() => setCreating(true)}>
-          <Plus className="size-4" /> Nuovo
-        </Button>
-      </div>
+    <div>
+      <PageHeader
+        title="Punti vendita"
+        subtitle={`${stores.length} configurati · Negozi, magazzini e punti misti`}
+        right={
+          <StokuButton icon="plus" variant="primary" onClick={() => setCreating(true)}>
+            Nuovo punto
+          </StokuButton>
+        }
+      />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {stores.map((s) => (
-          <Card key={s.id}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                {s.code}
-                <Badge variant={s.is_active ? 'default' : 'secondary'}>
-                  {s.is_active ? 'Attivo' : 'Disattivato'}
-                </Badge>
-              </CardTitle>
-              <CardDescription>{s.name}</CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-2 text-sm">
-              <div>
-                <span className="text-muted-foreground">Tipo: </span>
-                {TYPE_LABEL[s.type] ?? s.type}
-              </div>
-              {(s.city || s.country) && (
-                <div>
-                  <span className="text-muted-foreground">Città: </span>
-                  {[s.city, s.country].filter(Boolean).join(', ')}
-                </div>
-              )}
-              {s.phone && (
-                <div>
-                  <span className="text-muted-foreground">Tel: </span>
-                  {s.phone}
-                </div>
-              )}
-              {s.email && (
-                <div className="truncate">
-                  <span className="text-muted-foreground">Email: </span>
-                  {s.email}
-                </div>
-              )}
-              <div className="mt-2 flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => setEditing(s)}>
-                  <Pencil /> Modifica
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => handleToggle(s)}
-                  disabled={pending}
-                >
-                  <Power /> {s.is_active ? 'Disattiva' : 'Attiva'}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      <div style={{ padding: 24 }}>
+        <Panel padded={false}>
+          {stores.length === 0 ? (
+            <Empty
+              icon="store"
+              title="Nessun punto vendita"
+              subtitle="Crea il primo punto vendita per iniziare."
+              action={
+                <StokuButton icon="plus" variant="primary" onClick={() => setCreating(true)}>
+                  Crea punto vendita
+                </StokuButton>
+              }
+            />
+          ) : (
+            <table className="tbl">
+              <thead>
+                <tr>
+                  <th style={{ width: 90 }}>Codice</th>
+                  <th>Nome</th>
+                  <th style={{ width: 140 }}>Città</th>
+                  <th style={{ width: 140 }}>Tipo</th>
+                  <th style={{ width: 110 }}>Stato</th>
+                  <th style={{ width: 160 }}>Telefono</th>
+                  <th style={{ width: 90 }} />
+                </tr>
+              </thead>
+              <tbody>
+                {stores.map((store) => (
+                  <tr key={store.id} style={{ cursor: 'default' }}>
+                    <td className="mono" style={{ fontWeight: 500 }}>
+                      {store.code}
+                    </td>
+                    <td className="truncate-1">{store.name}</td>
+                    <td>
+                      {[store.city, store.country].filter(Boolean).join(', ') || (
+                        <span className="faint">—</span>
+                      )}
+                    </td>
+                    <td>
+                      <StokuBadge>{TYPE_LABEL[store.type] ?? store.type}</StokuBadge>
+                    </td>
+                    <td>
+                      {store.is_active ? (
+                        <StokuBadge variant="ok" dot>
+                          Attivo
+                        </StokuBadge>
+                      ) : (
+                        <StokuBadge variant="draft">Disattivato</StokuBadge>
+                      )}
+                    </td>
+                    <td className="mono" style={{ fontSize: 11 }}>
+                      {store.phone ?? <span className="faint">—</span>}
+                    </td>
+                    <td>
+                      <div className="row" style={{ gap: 4, justifyContent: 'flex-end' }}>
+                        <button
+                          type="button"
+                          className="btn ghost sm"
+                          style={{ width: 24, padding: 0, justifyContent: 'center' }}
+                          onClick={() => setEditing(store)}
+                          title="Modifica"
+                          aria-label="Modifica"
+                        >
+                          <Icon name="edit" size={12} />
+                        </button>
+                        <button
+                          type="button"
+                          className="btn ghost sm"
+                          style={{ width: 24, padding: 0, justifyContent: 'center' }}
+                          onClick={() => handleToggle(store)}
+                          disabled={pending}
+                          title={store.is_active ? 'Disattiva' : 'Attiva'}
+                          aria-label={store.is_active ? 'Disattiva' : 'Attiva'}
+                        >
+                          <Icon name="ring" size={12} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </Panel>
       </div>
 
       <StoreFormDialog

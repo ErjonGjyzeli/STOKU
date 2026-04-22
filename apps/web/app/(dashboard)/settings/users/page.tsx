@@ -20,9 +20,7 @@ export default async function UsersSettingsPage() {
 
   if (staffErr || storesErr) {
     return (
-      <p className="text-destructive text-sm">
-        Errore: {staffErr?.message || storesErr?.message}
-      </p>
+      <p className="text-destructive text-sm">Errore: {staffErr?.message || storesErr?.message}</p>
     );
   }
 

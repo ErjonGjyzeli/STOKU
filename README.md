@@ -73,16 +73,28 @@ stoku/
 
 ## Roadmap
 
-| Fase | Scope                                              | Stato       |
-| ---- | -------------------------------------------------- | ----------- |
-| F1   | Fondamenta (scaffold, auth, layout, staff, stores) | 🟡 in corso |
-| F2   | CRUD prodotti + import Excel                       | ⬜          |
-| F3   | Veicoli + compatibilità                            | ⬜          |
-| F4   | CRUD clienti                                       | ⬜          |
-| F5   | Order builder + fatture PDF                        | ⬜          |
-| F6   | Magazzino avanzato + trasferimenti                 | ⬜          |
-| F7   | Dashboard + report                                 | ⬜          |
-| F8   | Migrazione dati Excel                              | ⬜          |
-| F9   | i18n, mobile, UAT, deploy prod                     | ⬜          |
+| Fase | Scope                                                                      | Stato          |
+| ---- | -------------------------------------------------------------------------- | -------------- |
+| F1   | Scaffold repo + Next.js 16 + pnpm workspace + Tailwind v4 + shadcn         | ✅ fatto       |
+| F1   | Migrazioni DB (7) + RLS + helper `is_admin` / `has_store_access` + seed    | ✅ fatto       |
+| F1   | Auth Supabase: client browser/server, proxy middleware, session helper     | ✅ fatto       |
+| F1   | Login split-screen + signout route                                         | ✅ fatto       |
+| F1   | Shell dashboard: sidebar dark, topbar, store switcher, placeholder pages   | ✅ fatto       |
+| F1   | Admin CRUD `/settings/stores` + `/settings/users` con server actions       | ✅ fatto       |
+| F1   | Design system STOKU (Inter + JetBrains Mono, token industriali, primitive) | ✅ fatto       |
+| F1   | File messaggi i18n (it/sq/en) + `.vscode/settings.json`                    | ✅ fatto       |
+| F1   | Workflow CI (`.github/workflows/ci.yml`)                                   | 🟡 PR separata |
+| F1   | Provider `next-intl` wired + stringhe UI esternalizzate                    | ⬜ opzionale   |
+| F1   | Store switcher cookie-based (server-side scoping)                          | ⬜ opzionale   |
+| F1   | Primo utente admin creato su Supabase cloud                                | ⬜ dipende     |
+| F1   | Deploy Vercel preview + smoke test login                                   | ⬜ dipende     |
+| F2   | CRUD prodotti + categorie + foto + ricerca full-text + import Excel        | ⬜             |
+| F3   | Veicoli + compatibilità prodotto↔veicolo + lookup                          | ⬜             |
+| F4   | CRUD clienti + storico acquisti                                            | ⬜             |
+| F5   | Order builder + trigger stock + PDF fattura + dati fiscali                 | ⬜             |
+| F6   | Magazzino avanzato + trasferimenti + etichette QR                          | ⬜             |
+| F7   | Dashboard + report + export                                                | ⬜             |
+| F8   | Migrazione dati Excel (5.920 pezzi)                                        | ⬜             |
+| F9   | i18n UAT, mobile, deploy produzione                                        | ⬜             |
 
-Dettagli completi in [`CLAUDE.md`](./CLAUDE.md).
+Dettagli completi in [`CLAUDE.md`](./CLAUDE.md). PR F1: [#1](https://github.com/ErjonGjyzeli/STOKU/pull/1).

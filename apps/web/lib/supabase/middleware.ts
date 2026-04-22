@@ -26,12 +26,24 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const getUserResult = await supabase.auth.getUser();
+  const user = getUserResult.data.user;
+  const getUserError = getUserResult.error;
 
   const { pathname } = request.nextUrl;
   const isPublic = PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+
+  console.log(
+    JSON.stringify({
+      mw: true,
+      path: pathname,
+      isPublic,
+      hasUser: !!user,
+      userId: user?.id ?? null,
+      err: getUserError?.message ?? null,
+      cookieNames: request.cookies.getAll().map((c) => c.name),
+    }),
+  );
 
   // When redirecting we must forward any cookies that supabase set during
   // token refresh — otherwise the rotated refresh_token is lost and the next

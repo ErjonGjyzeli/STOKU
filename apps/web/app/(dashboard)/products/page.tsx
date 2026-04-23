@@ -103,8 +103,9 @@ export default async function ProductsPage({
   const productIds = products.map((p) => p.id);
   const stockMap = new Map<string, { available: number; total: number }>();
   const imagesMap = new Map<string, { id: string; storage_path: string; is_primary: boolean }[]>();
+  const compatMap = new Map<string, number[]>();
   if (productIds.length > 0) {
-    const [stockRes, imagesRes] = await Promise.all([
+    const [stockRes, imagesRes, compatRes] = await Promise.all([
       supabase
         .from('v_product_stock_total')
         .select('product_id, total_quantity, total_available')
@@ -115,6 +116,10 @@ export default async function ProductsPage({
         .in('product_id', productIds)
         .order('is_primary', { ascending: false })
         .order('sort_order'),
+      supabase
+        .from('product_vehicle_compatibility')
+        .select('product_id, vehicle_id')
+        .in('product_id', productIds),
     ]);
     for (const row of stockRes.data ?? []) {
       if (row.product_id) {
@@ -134,7 +139,29 @@ export default async function ProductsPage({
       });
       imagesMap.set(img.product_id, list);
     }
+    for (const row of compatRes.data ?? []) {
+      if (!row.product_id) continue;
+      const list = compatMap.get(row.product_id) ?? [];
+      list.push(row.vehicle_id);
+      compatMap.set(row.product_id, list);
+    }
   }
+
+  const { data: allVehiclesData } = await supabase
+    .from('vehicles')
+    .select(
+      'id, model, chassis_code, year_from, year_to, engine, make:vehicle_makes(name)',
+    )
+    .order('model');
+  const allVehicles = (allVehiclesData ?? []).map((v) => ({
+    id: v.id,
+    make_name: v.make?.name ?? null,
+    model: v.model,
+    chassis_code: v.chassis_code,
+    year_from: v.year_from,
+    year_to: v.year_to,
+    engine: v.engine,
+  }));
 
   const rangeFrom = total === 0 ? 0 : from + 1;
   const rangeTo = Math.min(to + 1, total);
@@ -272,7 +299,7 @@ export default async function ProductsPage({
                   <th style={{ width: 110, textAlign: 'right' }}>Prezzo</th>
                   <th style={{ width: 90, textAlign: 'right' }}>Disp.</th>
                   <th style={{ width: 100 }}>Stato</th>
-                  <th style={{ width: 110 }} />
+                  <th style={{ width: 140 }} />
                 </tr>
               </thead>
               <ProductsRows
@@ -292,9 +319,11 @@ export default async function ProductsPage({
                     category: p.category ? { id: p.category.id, name: p.category.name } : null,
                     stock: stockMap.get(p.id) ?? null,
                     images: imagesMap.get(p.id) ?? [],
+                    vehicleIds: compatMap.get(p.id) ?? [],
                   }),
                 )}
                 categories={categories}
+                allVehicles={allVehicles}
               />
             </table>
           )}

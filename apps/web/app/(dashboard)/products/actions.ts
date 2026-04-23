@@ -242,3 +242,28 @@ export async function setPrimaryImage(productId: string, imageId: string): Promi
   revalidatePath('/products');
   return { ok: true, data: null };
 }
+
+export async function setProductCompatibility(
+  productId: string,
+  vehicleIds: number[],
+): Promise<ActionResult> {
+  await requireSession();
+  const supabase = await createClient();
+
+  // Sostituzione atomica: delete + insert. Il PK composito
+  // (product_id, vehicle_id) previene duplicati a livello DB.
+  const { error: delErr } = await supabase
+    .from('product_vehicle_compatibility')
+    .delete()
+    .eq('product_id', productId);
+  if (delErr) return { ok: false, error: delErr.message };
+
+  if (vehicleIds.length > 0) {
+    const rows = vehicleIds.map((vid) => ({ product_id: productId, vehicle_id: vid }));
+    const { error: insErr } = await supabase.from('product_vehicle_compatibility').insert(rows);
+    if (insErr) return { ok: false, error: insErr.message };
+  }
+
+  revalidatePath('/products');
+  return { ok: true, data: null };
+}

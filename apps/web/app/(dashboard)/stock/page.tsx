@@ -35,10 +35,17 @@ export default async function StockPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  await requireSession();
+  const session = await requireSession();
   const params = await searchParams;
   const q = (params.q ?? '').trim();
-  const storeFilter = params.store ? Number(params.store) : null;
+  const storeFilter =
+    params.store !== undefined
+      ? params.store
+        ? Number(params.store)
+        : null
+      : session.isExplicitAllScope
+        ? null
+        : session.activeStoreId;
   const lowOnly = params.low === '1';
   const page = Math.max(1, Number(params.page) || 1);
 

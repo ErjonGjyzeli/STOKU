@@ -100,12 +100,19 @@ export default async function ReportsPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  await requireSession();
+  const session = await requireSession();
   const params = await searchParams;
   const tab = resolveTab(params.tab);
   const from = params.from || null;
   const to = params.to || null;
-  const storeId = params.store ? Number(params.store) : null;
+  const storeId =
+    params.store !== undefined
+      ? params.store
+        ? Number(params.store)
+        : null
+      : session.isExplicitAllScope
+        ? null
+        : session.activeStoreId;
 
   const supabase = await createClient();
   const { data: stores } = await supabase

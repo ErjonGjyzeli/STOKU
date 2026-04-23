@@ -136,9 +136,7 @@ export function LoginForm() {
           </div>
         </div>
 
-        <div className="meta" style={{ fontSize: 11, color: 'var(--sbar-ink-dim)' }}>
-          v0.1 · STOKU
-        </div>
+        <div className="meta" style={{ fontSize: 11, color: 'var(--sbar-ink-dim)' }}>STOKU</div>
       </aside>
 
       <section

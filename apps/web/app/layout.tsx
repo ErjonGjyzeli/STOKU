@@ -29,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="it" className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}>
-      <body className="min-h-full">
+      <body className="h-full overflow-hidden">
         {children}
         <Toaster position="top-right" richColors closeButton />
       </body>

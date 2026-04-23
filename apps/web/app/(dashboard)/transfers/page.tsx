@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { Empty } from '@/components/ui/empty';
+import { Icon } from '@/components/ui/icon';
 import { PageHeader } from '@/components/ui/page-header';
 import { Panel } from '@/components/ui/panel';
 import { StokuBadge } from '@/components/ui/stoku-badge';
@@ -8,6 +9,7 @@ import { StokuButton } from '@/components/ui/stoku-button';
 import { requireSession } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { STATUS_LABEL } from './status';
+import { TransferCreateButton } from './transfer-create-button';
 
 export const metadata = { title: 'Trasferimenti — STOKU' };
 
@@ -40,7 +42,7 @@ export default async function TransfersPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  await requireSession();
+  const session = await requireSession();
   const params = await searchParams;
   const status = params.status ?? '';
   const fromFilter = params.from ? Number(params.from) : null;
@@ -79,11 +81,7 @@ export default async function TransfersPage({
             : 'Nessun trasferimento — crea il primo'
         }
         right={
-          <Link href="/transfers/new">
-            <StokuButton icon="plus" variant="primary">
-              Nuovo trasferimento
-            </StokuButton>
-          </Link>
+          <TransferCreateButton stores={stores} defaultFromStoreId={session.activeStoreId} />
         }
       />
 
@@ -173,10 +171,9 @@ export default async function TransfersPage({
               }
               action={
                 activeFilters > 0 ? undefined : (
-                  <Link href="/transfers/new">
-                    <StokuButton icon="plus" variant="primary">
-                      Nuovo trasferimento
-                    </StokuButton>
+                  <Link href="/transfers?new=1" className="btn primary">
+                    <Icon name="plus" size={12} />
+                    Nuovo trasferimento
                   </Link>
                 )
               }

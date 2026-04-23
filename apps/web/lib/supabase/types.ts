@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      company_settings: {
+        Row: {
+          address_line1: string | null
+          bank_name: string | null
+          city: string | null
+          country: string | null
+          created_at: string | null
+          default_tax_rate: number | null
+          email: string | null
+          iban: string | null
+          id: number
+          invoice_footer: string | null
+          legal_name: string
+          logo_url: string | null
+          phone: string | null
+          postal_code: string | null
+          tax_code: string | null
+          updated_at: string | null
+          vat_number: string | null
+        }
+        Insert: {
+          address_line1?: string | null
+          bank_name?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          default_tax_rate?: number | null
+          email?: string | null
+          iban?: string | null
+          id?: number
+          invoice_footer?: string | null
+          legal_name?: string
+          logo_url?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          tax_code?: string | null
+          updated_at?: string | null
+          vat_number?: string | null
+        }
+        Update: {
+          address_line1?: string | null
+          bank_name?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          default_tax_rate?: number | null
+          email?: string | null
+          iban?: string | null
+          id?: number
+          invoice_footer?: string | null
+          legal_name?: string
+          logo_url?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          tax_code?: string | null
+          updated_at?: string | null
+          vat_number?: string | null
+        }
+        Relationships: []
+      }
       customers: {
         Row: {
           address_line1: string | null

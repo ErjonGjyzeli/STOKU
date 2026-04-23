@@ -71,37 +71,55 @@ export default async function HomePage() {
   const todayIso = todayStart.toISOString();
   const monthIso = monthStart.toISOString();
 
-  // Parallela: stats + liste
+  // Scope: se l'utente ha un PdV attivo (non ha scelto scope globale),
+  // tutte le KPI + liste si restringono a quel PdV.
+  const scopeStoreId = session.isExplicitAllScope ? null : session.activeStoreId;
+
+  const todayOrdersQuery = supabase
+    .from('orders')
+    .select('id', { count: 'exact', head: true })
+    .gte('created_at', todayIso);
+  const mtdOrdersQuery = supabase
+    .from('orders')
+    .select('total')
+    .in('status', REVENUE_STATUSES)
+    .gte('created_at', monthIso);
+  const productsActiveQuery = supabase
+    .from('products')
+    .select('id', { count: 'exact', head: true })
+    .eq('is_active', true);
+  const transfersOpenQuery = supabase
+    .from('stock_transfers')
+    .select(
+      'id, transfer_number, status, shipped_at, from_store:stores!stock_transfers_from_store_id_fkey(code), to_store:stores!stock_transfers_to_store_id_fkey(code)',
+    )
+    .in('status', ['draft', 'in_transit'])
+    .order('created_at', { ascending: false })
+    .limit(5);
+  const recentOrdersQuery = supabase
+    .from('orders')
+    .select(
+      'id, order_number, status, total, currency, created_at, customer:customers(code, name)',
+    )
+    .order('created_at', { ascending: false })
+    .limit(5);
+
+  if (scopeStoreId) {
+    todayOrdersQuery.eq('store_id', scopeStoreId);
+    mtdOrdersQuery.eq('store_id', scopeStoreId);
+    transfersOpenQuery.or(
+      `from_store_id.eq.${scopeStoreId},to_store_id.eq.${scopeStoreId}`,
+    );
+    recentOrdersQuery.eq('store_id', scopeStoreId);
+  }
+
   const [todayOrdersRes, mtdOrdersRes, productsActiveRes, transfersOpenRes, recentOrdersRes] =
     await Promise.all([
-      supabase
-        .from('orders')
-        .select('id', { count: 'exact', head: true })
-        .gte('created_at', todayIso),
-      supabase
-        .from('orders')
-        .select('total')
-        .in('status', REVENUE_STATUSES)
-        .gte('created_at', monthIso),
-      supabase
-        .from('products')
-        .select('id', { count: 'exact', head: true })
-        .eq('is_active', true),
-      supabase
-        .from('stock_transfers')
-        .select(
-          'id, transfer_number, status, shipped_at, from_store:stores!stock_transfers_from_store_id_fkey(code), to_store:stores!stock_transfers_to_store_id_fkey(code)',
-        )
-        .in('status', ['draft', 'in_transit'])
-        .order('created_at', { ascending: false })
-        .limit(5),
-      supabase
-        .from('orders')
-        .select(
-          'id, order_number, status, total, currency, created_at, customer:customers(code, name)',
-        )
-        .order('created_at', { ascending: false })
-        .limit(5),
+      todayOrdersQuery,
+      mtdOrdersQuery,
+      productsActiveQuery,
+      transfersOpenQuery,
+      recentOrdersQuery,
     ]);
 
   const ordersToday = todayOrdersRes.count ?? 0;
@@ -115,12 +133,14 @@ export default async function HomePage() {
 
   // Stock basso: fetch tutto stock + filtro in memoria (no server aggregate
   // via PostgREST). Abbiamo già l'index stock_low_idx per quando cresce.
-  const { data: stockRows } = await supabase
+  const stockQuery = supabase
     .from('stock')
     .select(
       'product_id, store_id, quantity, reserved_quantity, min_stock, store:stores(code), product:products(sku, name)',
     )
     .limit(2000);
+  if (scopeStoreId) stockQuery.eq('store_id', scopeStoreId);
+  const { data: stockRows } = await stockQuery;
   const lowStock = (stockRows ?? []).filter(
     (r) => r.quantity - r.reserved_quantity <= (r.min_stock ?? 0),
   );

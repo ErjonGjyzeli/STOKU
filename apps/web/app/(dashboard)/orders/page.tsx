@@ -75,7 +75,16 @@ export default async function OrdersPage({
   const params = await searchParams;
   const q = (params.q ?? '').trim();
   const status = params.status ?? '';
-  const storeId = params.store ? Number(params.store) : null;
+  // Scope store: URL esplicito ha priorità, poi activeStoreId della session
+  // (a meno che l'utente abbia scelto scope globale "Tutti i magazzini").
+  const storeId =
+    params.store !== undefined
+      ? params.store
+        ? Number(params.store)
+        : null
+      : session.isExplicitAllScope
+        ? null
+        : session.activeStoreId;
   const customerId = params.customer || null;
   const from = params.from || null;
   const to = params.to || null;
@@ -90,25 +99,39 @@ export default async function OrdersPage({
   nowMonthStart.setUTCHours(0, 0, 0, 0);
   const mtdIso = nowMonthStart.toISOString();
 
+  // I tile rispettano lo scope store corrente: se l'utente ha selezionato
+  // un PdV singolo la KPI bar si restringe, altrimenti conta global.
+  const openTiles = supabase
+    .from('orders')
+    .select('id', { count: 'exact', head: true })
+    .in('status', ['confirmed', 'paid', 'shipped']);
+  const draftTiles = supabase
+    .from('orders')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'draft');
+  const mtdTiles = supabase
+    .from('orders')
+    .select('total, currency')
+    .in('status', REVENUE_STATUSES)
+    .gte('created_at', mtdIso);
+  const todayTiles = supabase
+    .from('orders')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'completed')
+    .gte('completed_at', new Date(new Date().setUTCHours(0, 0, 0, 0)).toISOString());
+
+  if (storeId) {
+    openTiles.eq('store_id', storeId);
+    draftTiles.eq('store_id', storeId);
+    mtdTiles.eq('store_id', storeId);
+    todayTiles.eq('store_id', storeId);
+  }
+
   const [openCountRes, draftCountRes, mtdRes, todayRes] = await Promise.all([
-    supabase
-      .from('orders')
-      .select('id', { count: 'exact', head: true })
-      .in('status', ['confirmed', 'paid', 'shipped']),
-    supabase
-      .from('orders')
-      .select('id', { count: 'exact', head: true })
-      .eq('status', 'draft'),
-    supabase
-      .from('orders')
-      .select('total, currency')
-      .in('status', REVENUE_STATUSES)
-      .gte('created_at', mtdIso),
-    supabase
-      .from('orders')
-      .select('id', { count: 'exact', head: true })
-      .eq('status', 'completed')
-      .gte('completed_at', new Date(new Date().setUTCHours(0, 0, 0, 0)).toISOString()),
+    openTiles,
+    draftTiles,
+    mtdTiles,
+    todayTiles,
   ]);
 
   const openCount = openCountRes.count ?? 0;

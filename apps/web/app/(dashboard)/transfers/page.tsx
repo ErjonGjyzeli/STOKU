@@ -48,6 +48,11 @@ export default async function TransfersPage({
   const fromFilter = params.from ? Number(params.from) : null;
   const toFilter = params.to ? Number(params.to) : null;
 
+  // Scope store: se l'utente ha un PdV attivo e non ha già filtrato da/a,
+  // mostra i trasferimenti che coinvolgono quel PdV (origine O destinazione).
+  const scopeStoreId =
+    session.isExplicitAllScope || fromFilter || toFilter ? null : session.activeStoreId;
+
   const supabase = await createClient();
 
   let query = supabase
@@ -61,6 +66,9 @@ export default async function TransfersPage({
   if (status) query = query.eq('status', status);
   if (fromFilter) query = query.eq('from_store_id', fromFilter);
   if (toFilter) query = query.eq('to_store_id', toFilter);
+  if (scopeStoreId) {
+    query = query.or(`from_store_id.eq.${scopeStoreId},to_store_id.eq.${scopeStoreId}`);
+  }
 
   const [transfersRes, storesRes] = await Promise.all([
     query,

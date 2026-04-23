@@ -1,12 +1,364 @@
-import { PagePlaceholder } from '@/components/layout/page-placeholder';
+import Link from 'next/link';
 
-export default function ProductsPage() {
+import { Empty } from '@/components/ui/empty';
+import { Icon } from '@/components/ui/icon';
+import { PageHeader } from '@/components/ui/page-header';
+import { Panel } from '@/components/ui/panel';
+import { StokuBadge } from '@/components/ui/stoku-badge';
+import { StokuButton } from '@/components/ui/stoku-button';
+import { requireSession } from '@/lib/auth/session';
+import { createClient } from '@/lib/supabase/server';
+
+export const metadata = { title: 'Inventario — STOKU' };
+
+const PAGE_SIZE = 25;
+
+type BadgeVariant = 'default' | 'ok' | 'warn' | 'danger' | 'info' | 'draft' | 'accent';
+
+const CONDITION_LABEL: Record<string, string> = {
+  new: 'Nuovo',
+  used: 'Usato',
+  refurbished: 'Rigenerato',
+  damaged: 'Danneggiato',
+};
+
+const CONDITION_VARIANT: Record<string, BadgeVariant> = {
+  new: 'ok',
+  used: 'default',
+  refurbished: 'info',
+  damaged: 'warn',
+};
+
+type SearchParams = {
+  q?: string;
+  category?: string;
+  condition?: string;
+  status?: string;
+  page?: string;
+};
+
+function currency(value: number | null, code: string | null) {
+  if (value == null) return null;
+  return new Intl.NumberFormat('it-IT', {
+    style: 'currency',
+    currency: code ?? 'EUR',
+    maximumFractionDigits: 2,
+  }).format(Number(value));
+}
+
+function buildQuery(base: SearchParams, patch: Partial<SearchParams>) {
+  const params = new URLSearchParams();
+  const merged = { ...base, ...patch };
+  for (const [k, v] of Object.entries(merged)) {
+    if (v !== undefined && v !== null && v !== '') params.set(k, String(v));
+  }
+  const s = params.toString();
+  return s ? `?${s}` : '';
+}
+
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  await requireSession();
+  const params = await searchParams;
+  const q = (params.q ?? '').trim();
+  const categoryId = params.category ? Number(params.category) : null;
+  const condition = params.condition ?? '';
+  const status = params.status ?? 'active';
+  const page = Math.max(1, Number(params.page) || 1);
+
+  const supabase = await createClient();
+
+  let query = supabase
+    .from('products')
+    .select(
+      'id, sku, legacy_nr, name, condition, price_sell, currency, is_active, category:product_categories(id, name)',
+      { count: 'exact' },
+    )
+    .order('created_at', { ascending: false });
+
+  if (q) {
+    const pattern = `%${q.replace(/[%_]/g, (m) => `\\${m}`)}%`;
+    query = query.or(`name.ilike.${pattern},sku.ilike.${pattern},oem_code.ilike.${pattern}`);
+  }
+  if (categoryId) query = query.eq('category_id', categoryId);
+  if (condition) query = query.eq('condition', condition);
+  if (status === 'active') query = query.eq('is_active', true);
+  else if (status === 'inactive') query = query.eq('is_active', false);
+
+  const from = (page - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
+  const [productsRes, categoriesRes] = await Promise.all([
+    query.range(from, to),
+    supabase.from('product_categories').select('id, name').order('name'),
+  ]);
+
+  if (productsRes.error) {
+    return (
+      <div>
+        <PageHeader title="Inventario" />
+        <div style={{ padding: 24 }}>
+          <p style={{ color: 'var(--danger)' }}>Errore: {productsRes.error.message}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const products = productsRes.data ?? [];
+  const categories = categoriesRes.data ?? [];
+  const total = productsRes.count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+  const productIds = products.map((p) => p.id);
+  const stockMap = new Map<string, { available: number; total: number }>();
+  if (productIds.length > 0) {
+    const { data: stockRows } = await supabase
+      .from('v_product_stock_total')
+      .select('product_id, total_quantity, total_available')
+      .in('product_id', productIds);
+    for (const row of stockRows ?? []) {
+      if (row.product_id) {
+        stockMap.set(row.product_id, {
+          available: row.total_available ?? 0,
+          total: row.total_quantity ?? 0,
+        });
+      }
+    }
+  }
+
+  const rangeFrom = total === 0 ? 0 : from + 1;
+  const rangeTo = Math.min(to + 1, total);
+  const activeFilters =
+    (q ? 1 : 0) + (categoryId ? 1 : 0) + (condition ? 1 : 0) + (status !== 'active' ? 1 : 0);
+
   return (
-    <PagePlaceholder
-      title="Inventario"
-      subtitle="Catalogo ricambi e utensili, ricerca full-text, foto e compatibilità."
-      phase="Fase 2"
-      icon="box"
-    />
+    <div>
+      <PageHeader
+        title="Inventario"
+        subtitle={
+          total > 0
+            ? `${total.toLocaleString('it-IT')} prodotti · ${rangeFrom}–${rangeTo}`
+            : 'Nessun prodotto — crea il primo articolo per iniziare'
+        }
+        right={
+          <StokuButton icon="plus" variant="primary" disabled title="Disponibile nel prossimo step">
+            Nuovo prodotto
+          </StokuButton>
+        }
+      />
+
+      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <Panel padded>
+          <form
+            method="get"
+            className="row"
+            style={{ gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}
+          >
+            <label className="col" style={{ gap: 4, flex: '1 1 260px' }}>
+              <span className="meta" style={{ fontSize: 11 }}>
+                CERCA
+              </span>
+              <div className="stoku-input" style={{ height: 32 }}>
+                <Icon name="search" size={13} />
+                <input
+                  type="search"
+                  name="q"
+                  defaultValue={q}
+                  placeholder="Nome, SKU o codice OEM"
+                  autoComplete="off"
+                />
+              </div>
+            </label>
+
+            <label className="col" style={{ gap: 4, width: 200 }}>
+              <span className="meta" style={{ fontSize: 11 }}>
+                CATEGORIA
+              </span>
+              <select
+                name="category"
+                defaultValue={categoryId ? String(categoryId) : ''}
+                className="stoku-input"
+                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
+              >
+                <option value="">Tutte</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="col" style={{ gap: 4, width: 160 }}>
+              <span className="meta" style={{ fontSize: 11 }}>
+                CONDIZIONE
+              </span>
+              <select
+                name="condition"
+                defaultValue={condition}
+                className="stoku-input"
+                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
+              >
+                <option value="">Tutte</option>
+                {Object.entries(CONDITION_LABEL).map(([k, label]) => (
+                  <option key={k} value={k}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="col" style={{ gap: 4, width: 140 }}>
+              <span className="meta" style={{ fontSize: 11 }}>
+                STATO
+              </span>
+              <select
+                name="status"
+                defaultValue={status}
+                className="stoku-input"
+                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
+              >
+                <option value="active">Attivi</option>
+                <option value="inactive">Disattivati</option>
+                <option value="all">Tutti</option>
+              </select>
+            </label>
+
+            <div className="row" style={{ gap: 6, marginLeft: 'auto' }}>
+              <StokuButton type="submit" variant="primary" size="sm" icon="search">
+                Filtra
+              </StokuButton>
+              {activeFilters > 0 && (
+                <Link href="/products" className="btn ghost sm">
+                  Reset
+                </Link>
+              )}
+            </div>
+          </form>
+        </Panel>
+
+        <Panel padded={false}>
+          {products.length === 0 ? (
+            <Empty
+              icon="box"
+              title={activeFilters > 0 ? 'Nessun prodotto trovato' : 'Nessun prodotto ancora'}
+              subtitle={
+                activeFilters > 0
+                  ? 'Prova a modificare i filtri o resetta la ricerca.'
+                  : 'La creazione del primo prodotto arriva nello step successivo (F2.2).'
+              }
+            />
+          ) : (
+            <table className="tbl">
+              <thead>
+                <tr>
+                  <th style={{ width: 130 }}>SKU</th>
+                  <th>Nome</th>
+                  <th style={{ width: 160 }}>Categoria</th>
+                  <th style={{ width: 110 }}>Condizione</th>
+                  <th style={{ width: 110, textAlign: 'right' }}>Prezzo</th>
+                  <th style={{ width: 110, textAlign: 'right' }}>Disp.</th>
+                  <th style={{ width: 100 }}>Stato</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map((p) => {
+                  const stock = stockMap.get(p.id);
+                  const price = currency(p.price_sell, p.currency);
+                  return (
+                    <tr key={p.id}>
+                      <td className="mono" style={{ fontWeight: 500, fontSize: 11 }}>
+                        {p.sku}
+                      </td>
+                      <td className="truncate-1" style={{ maxWidth: 360 }}>
+                        {p.name}
+                        {p.legacy_nr && (
+                          <span className="faint mono" style={{ marginLeft: 8, fontSize: 11 }}>
+                            #{p.legacy_nr}
+                          </span>
+                        )}
+                      </td>
+                      <td>
+                        {p.category?.name ? (
+                          <StokuBadge>{p.category.name}</StokuBadge>
+                        ) : (
+                          <span className="faint">—</span>
+                        )}
+                      </td>
+                      <td>
+                        <StokuBadge variant={CONDITION_VARIANT[p.condition] ?? 'default'}>
+                          {CONDITION_LABEL[p.condition] ?? p.condition}
+                        </StokuBadge>
+                      </td>
+                      <td className="mono" style={{ textAlign: 'right' }}>
+                        {price ?? <span className="faint">—</span>}
+                      </td>
+                      <td className="mono" style={{ textAlign: 'right' }}>
+                        {stock ? (
+                          <span style={{ color: stock.available > 0 ? undefined : 'var(--ink-3)' }}>
+                            {stock.available}
+                          </span>
+                        ) : (
+                          <span className="faint">0</span>
+                        )}
+                      </td>
+                      <td>
+                        {p.is_active ? (
+                          <StokuBadge variant="ok" dot>
+                            Attivo
+                          </StokuBadge>
+                        ) : (
+                          <StokuBadge variant="draft">Disattivato</StokuBadge>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </Panel>
+
+        {totalPages > 1 && (
+          <div
+            className="row"
+            style={{ justifyContent: 'space-between', alignItems: 'center', gap: 12 }}
+          >
+            <div className="meta" style={{ fontSize: 12 }}>
+              Pagina {page} di {totalPages}
+            </div>
+            <div className="row" style={{ gap: 6 }}>
+              {page > 1 ? (
+                <Link
+                  href={`/products${buildQuery(params, { page: String(page - 1) })}`}
+                  className="btn ghost sm"
+                >
+                  <Icon name="chevronLeft" size={12} /> Precedente
+                </Link>
+              ) : (
+                <span className="btn ghost sm" aria-disabled="true" style={{ opacity: 0.4 }}>
+                  <Icon name="chevronLeft" size={12} /> Precedente
+                </span>
+              )}
+              {page < totalPages ? (
+                <Link
+                  href={`/products${buildQuery(params, { page: String(page + 1) })}`}
+                  className="btn ghost sm"
+                >
+                  Successiva <Icon name="chevronRight" size={12} />
+                </Link>
+              ) : (
+                <span className="btn ghost sm" aria-disabled="true" style={{ opacity: 0.4 }}>
+                  Successiva <Icon name="chevronRight" size={12} />
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

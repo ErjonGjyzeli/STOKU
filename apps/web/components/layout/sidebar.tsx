@@ -109,17 +109,6 @@ export function Sidebar({ role, email, fullName }: Props) {
           STOKU
         </div>
         <div style={{ flex: 1 }} />
-        <span
-          className="kbd"
-          style={{
-            background: 'var(--sbar-2)',
-            borderColor: 'var(--sbar-border)',
-            color: 'var(--sbar-ink-dim)',
-            boxShadow: 'none',
-          }}
-        >
-          v0.1
-        </span>
       </div>
 
       <nav

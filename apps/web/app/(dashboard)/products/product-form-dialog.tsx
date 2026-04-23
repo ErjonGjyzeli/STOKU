@@ -95,8 +95,7 @@ export function ProductFormDialog({
       name: values.name,
       legacy_nr: values.legacy_nr ?? '',
       oem_code: values.oem_code ?? '',
-      category_id:
-        values.category_id && values.category_id !== '_none' ? values.category_id : null,
+      category_id: values.category_id && values.category_id !== '_none' ? values.category_id : null,
       condition: values.condition,
       price_sell: values.price_sell ?? '',
       price_cost: values.price_cost ?? '',

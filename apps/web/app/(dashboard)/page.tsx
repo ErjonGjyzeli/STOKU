@@ -40,13 +40,43 @@ function currency(value: number | null, code: string | null) {
   }).format(Number(value));
 }
 
-function formatDate(iso: string | null) {
+function relativeTime(iso: string | null) {
   if (!iso) return '—';
-  return new Date(iso).toLocaleDateString('it-IT', {
-    day: 'numeric',
-    month: 'short',
-  });
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const minutes = Math.floor(diffMs / 60_000);
+  if (minutes < 1) return 'adesso';
+  if (minutes < 60) return `${minutes} min fa`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} ${hours === 1 ? 'ora' : 'ore'} fa`;
+  const days = Math.floor(hours / 24);
+  if (days === 1) return 'ieri';
+  if (days < 7) return `${days} giorni fa`;
+  return new Date(iso).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
 }
+
+const REASON_LABEL: Record<string, string> = {
+  sale: 'ha venduto',
+  return: 'ha registrato un reso di',
+  adjustment: 'ha rettificato',
+  intake: 'ha caricato',
+  damage: 'ha registrato perdita di',
+  transfer_out: 'ha spedito in transito',
+  transfer_in: 'ha ricevuto',
+  reservation: 'ha prenotato',
+  unreservation: 'ha rilasciato prenotazione di',
+};
+
+const REASON_ICON: Record<string, string> = {
+  sale: 'cart',
+  return: 'swap',
+  adjustment: 'edit',
+  intake: 'box',
+  damage: 'alert',
+  transfer_out: 'truck',
+  transfer_in: 'truck',
+  reservation: 'clock',
+  unreservation: 'swap',
+};
 
 export default async function HomePage() {
   const session = await requireSession();
@@ -99,10 +129,10 @@ export default async function HomePage() {
   const recentOrdersQuery = supabase
     .from('orders')
     .select(
-      'id, order_number, status, total, currency, created_at, customer:customers(code, name)',
+      'id, order_number, status, total, currency, created_at, customer:customers(code, name), store:stores(code)',
     )
     .order('created_at', { ascending: false })
-    .limit(5);
+    .limit(8);
 
   if (scopeStoreId) {
     todayOrdersQuery.eq('store_id', scopeStoreId);
@@ -147,8 +177,19 @@ export default async function HomePage() {
     (r) => r.quantity - r.reserved_quantity <= (r.min_stock ?? 0),
   );
   const lowStockCount = lowStock.length;
-  const lowStockTop = lowStock.slice(0, 5);
+  const lowStockTop = lowStock.slice(0, 6);
   const totalUnits = (stockRows ?? []).reduce((sum, r) => sum + Number(r.quantity ?? 0), 0);
+
+  // Activity feed: ultimi 10 movimenti stock (vendite, carichi, transfer, etc)
+  const activityQuery = supabase
+    .from('inventory_movements')
+    .select(
+      'id, created_at, reason, change, product:products(sku, name), store:stores!inventory_movements_store_id_fkey(code), staff:staff_profiles(full_name)',
+    )
+    .order('created_at', { ascending: false })
+    .limit(10);
+  if (scopeStoreId) activityQuery.eq('store_id', scopeStoreId);
+  const { data: activityRows } = await activityQuery;
 
   return (
     <div>
@@ -204,17 +245,17 @@ export default async function HomePage() {
               <table className="tbl">
                 <thead>
                   <tr>
-                    <th style={{ width: 90 }}>Data</th>
                     <th style={{ width: 120 }}>Numero</th>
                     <th>Cliente</th>
+                    <th style={{ width: 70 }}>Store</th>
                     <th style={{ width: 120 }}>Status</th>
                     <th style={{ width: 110, textAlign: 'right' }}>Totale</th>
+                    <th style={{ width: 110, textAlign: 'right' }}>Quando</th>
                   </tr>
                 </thead>
                 <tbody>
                   {recentOrders.map((o) => (
                     <tr key={o.id}>
-                      <td>{formatDate(o.created_at)}</td>
                       <td className="mono" style={{ fontSize: 11, fontWeight: 500 }}>
                         <Link href={`/orders/${o.id}`} style={{ color: 'inherit' }}>
                           {o.order_number}
@@ -227,6 +268,9 @@ export default async function HomePage() {
                           <span className="faint">Vendita banco</span>
                         )}
                       </td>
+                      <td className="mono" style={{ fontSize: 11, color: 'var(--ink-3)' }}>
+                        {o.store?.code ?? <span className="faint">—</span>}
+                      </td>
                       <td>
                         <StokuBadge variant={STATUS_VARIANT[o.status] ?? 'default'}>
                           {STATUS_LABEL[o.status] ?? o.status}
@@ -234,6 +278,12 @@ export default async function HomePage() {
                       </td>
                       <td className="mono" style={{ textAlign: 'right' }}>
                         {currency(Number(o.total), o.currency)}
+                      </td>
+                      <td
+                        className="meta"
+                        style={{ textAlign: 'right', fontSize: 12 }}
+                      >
+                        {relativeTime(o.created_at)}
                       </td>
                     </tr>
                   ))}
@@ -262,36 +312,55 @@ export default async function HomePage() {
                 />
               ) : (
                 <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                  {lowStockTop.map((r) => (
-                    <li
-                      key={`${r.product_id}-${r.store_id}`}
-                      style={{
-                        padding: '8px 12px',
-                        borderBottom: '1px solid var(--stoku-border)',
-                        fontSize: 12,
-                      }}
-                    >
-                      <div className="row" style={{ gap: 8, justifyContent: 'space-between' }}>
-                        <span className="truncate-1">
-                          <span className="mono" style={{ fontSize: 11, fontWeight: 500 }}>
-                            {r.product?.sku ?? '—'}
+                  {lowStockTop.map((r) => {
+                    const available = r.quantity - r.reserved_quantity;
+                    const outOfStock = available <= 0;
+                    return (
+                      <li
+                        key={`${r.product_id}-${r.store_id}`}
+                        style={{
+                          padding: '8px 12px',
+                          borderBottom: '1px solid var(--stoku-border)',
+                        }}
+                      >
+                        <div className="row" style={{ gap: 8 }}>
+                          <div
+                            style={{
+                              width: 28,
+                              height: 28,
+                              flexShrink: 0,
+                              background: 'var(--panel-sunken)',
+                              border: '1px solid var(--stoku-border)',
+                              borderRadius: 'var(--r-sm)',
+                              backgroundImage: `repeating-linear-gradient(45deg, oklch(0.88 0.005 80) 0 4px, oklch(0.94 0.004 80) 4px 8px)`,
+                            }}
+                          />
+                          <div className="col stretch" style={{ gap: 0, minWidth: 0 }}>
+                            <div
+                              className="truncate-1"
+                              style={{ fontSize: 12, fontWeight: 500 }}
+                            >
+                              {r.product?.name ?? '—'}
+                            </div>
+                            <div className="mono meta" style={{ fontSize: 10.5 }}>
+                              {r.product?.sku ?? '—'} · {r.store?.code ?? '—'}
+                            </div>
+                          </div>
+                          <span
+                            className="mono"
+                            style={{
+                              fontSize: 12,
+                              fontWeight: 500,
+                              color: outOfStock ? 'var(--danger)' : 'var(--warn)',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {available}
                           </span>
-                          {r.product?.name && (
-                            <span style={{ marginLeft: 6 }}>{r.product.name}</span>
-                          )}
-                        </span>
-                        <span
-                          className="mono"
-                          style={{ fontSize: 11, color: 'var(--warn)', whiteSpace: 'nowrap' }}
-                        >
-                          {r.quantity - r.reserved_quantity} / {r.min_stock ?? 0}
-                        </span>
-                      </div>
-                      <div className="meta" style={{ fontSize: 10, marginTop: 2 }}>
-                        {r.store?.code ?? '—'}
-                      </div>
-                    </li>
-                  ))}
+                        </div>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </Panel>
@@ -346,6 +415,66 @@ export default async function HomePage() {
             </Panel>
           </div>
         </div>
+
+        {(activityRows ?? []).length > 0 && (
+          <Panel title="Attività recente" padded={false}>
+            <div className="col" style={{ gap: 0 }}>
+              {(activityRows ?? []).map((a, i) => {
+                const who = a.staff?.full_name ?? 'Sistema';
+                const action = REASON_LABEL[a.reason] ?? a.reason;
+                const target = a.product
+                  ? `${a.product.sku}${a.change != null ? ` (${a.change > 0 ? '+' : ''}${a.change})` : ''}`
+                  : '—';
+                const iconName = REASON_ICON[a.reason] ?? 'history';
+                return (
+                  <div
+                    key={a.id}
+                    className="row"
+                    style={{
+                      gap: 12,
+                      padding: '10px 16px',
+                      borderTop: i ? '1px solid var(--stoku-border)' : 'none',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: '50%',
+                        background: 'var(--panel-2)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'var(--ink-3)',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Icon name={iconName as 'box'} size={12} />
+                    </div>
+                    <div
+                      className="row"
+                      style={{ gap: 4, fontSize: 13, flex: 1, minWidth: 0, flexWrap: 'wrap' }}
+                    >
+                      <span style={{ fontWeight: 500 }}>{who}</span>
+                      <span className="dim">{action}</span>
+                      <span className="mono" style={{ fontSize: 12 }}>
+                        {target}
+                      </span>
+                      {a.store?.code && (
+                        <span className="meta" style={{ fontSize: 11 }}>
+                          · {a.store.code}
+                        </span>
+                      )}
+                    </div>
+                    <span className="meta" style={{ fontSize: 12, whiteSpace: 'nowrap' }}>
+                      {relativeTime(a.created_at)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </Panel>
+        )}
       </div>
     </div>
   );

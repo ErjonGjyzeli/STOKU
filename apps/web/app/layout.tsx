@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { Toaster } from 'sonner';
 import './globals.css';
@@ -20,6 +20,16 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: 'STOKU — Gestionale ricambi',
   description: 'Gestionale multi-punto vendita per ricambi auto',
+};
+
+// Evita l'auto-zoom di iOS Safari sui campi di input durante il focus
+// mobile. La strategia tipica "font-size ≥ 16px" non si adatta a una UI
+// dense come la nostra; qui blocchiamo il comportamento via viewport.
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({

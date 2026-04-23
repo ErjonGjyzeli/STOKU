@@ -97,18 +97,37 @@ export default async function ProductsPage({
 
   const productIds = products.map((p) => p.id);
   const stockMap = new Map<string, { available: number; total: number }>();
+  const imagesMap = new Map<string, { id: string; storage_path: string; is_primary: boolean }[]>();
   if (productIds.length > 0) {
-    const { data: stockRows } = await supabase
-      .from('v_product_stock_total')
-      .select('product_id, total_quantity, total_available')
-      .in('product_id', productIds);
-    for (const row of stockRows ?? []) {
+    const [stockRes, imagesRes] = await Promise.all([
+      supabase
+        .from('v_product_stock_total')
+        .select('product_id, total_quantity, total_available')
+        .in('product_id', productIds),
+      supabase
+        .from('product_images')
+        .select('id, product_id, storage_path, is_primary, sort_order')
+        .in('product_id', productIds)
+        .order('is_primary', { ascending: false })
+        .order('sort_order'),
+    ]);
+    for (const row of stockRes.data ?? []) {
       if (row.product_id) {
         stockMap.set(row.product_id, {
           available: row.total_available ?? 0,
           total: row.total_quantity ?? 0,
         });
       }
+    }
+    for (const img of imagesRes.data ?? []) {
+      if (!img.product_id) continue;
+      const list = imagesMap.get(img.product_id) ?? [];
+      list.push({
+        id: img.id,
+        storage_path: img.storage_path,
+        is_primary: !!img.is_primary,
+      });
+      imagesMap.set(img.product_id, list);
     }
   }
 
@@ -241,7 +260,7 @@ export default async function ProductsPage({
                   <th style={{ width: 110, textAlign: 'right' }}>Prezzo</th>
                   <th style={{ width: 90, textAlign: 'right' }}>Disp.</th>
                   <th style={{ width: 100 }}>Stato</th>
-                  <th style={{ width: 80 }} />
+                  <th style={{ width: 110 }} />
                 </tr>
               </thead>
               <ProductsRows
@@ -262,6 +281,7 @@ export default async function ProductsPage({
                       ? { id: p.category.id, name: p.category.name }
                       : null,
                     stock: stockMap.get(p.id) ?? null,
+                    images: imagesMap.get(p.id) ?? [],
                   }),
                 )}
                 categories={categories}

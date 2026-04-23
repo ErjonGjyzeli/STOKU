@@ -207,13 +207,7 @@ export default async function OrdersPage({
       />
 
       <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: 12,
-          }}
-        >
+        <div className="grid-kpi-4">
           <Stat
             label="Ordini aperti"
             value={openCount.toLocaleString('it-IT')}

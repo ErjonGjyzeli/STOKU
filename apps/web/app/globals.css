@@ -522,6 +522,82 @@
   .stoku-content > * {
     max-width: 100%;
   }
+
+  /* Utility grid responsive per pagine che non possono usare Tailwind
+     inline (componenti che passano style={} diretto). */
+  .grid-kpi-4 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .grid-main-aside {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+  }
+  .grid-side {
+    display: grid;
+    grid-template-columns: minmax(280px, 320px) 1fr;
+    gap: 16px;
+  }
+  .grid-pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .grid-triple {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  /* Tabelle: scroll orizzontale su schermi stretti */
+  .panel-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  @media (max-width: 900px) {
+    .grid-kpi-4 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .grid-main-aside {
+      grid-template-columns: 1fr;
+    }
+    .grid-side {
+      grid-template-columns: 1fr;
+    }
+    .grid-triple {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 520px) {
+    .grid-kpi-4 {
+      grid-template-columns: 1fr;
+    }
+    .grid-pair,
+    .grid-triple {
+      grid-template-columns: 1fr;
+    }
+    .stoku-content {
+      font-size: 13px;
+    }
+  }
+
+  /* Login: desktop split, mobile single column */
+  .login-shell {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 860px) {
+    .login-shell {
+      grid-template-columns: 1fr;
+    }
+    .login-aside {
+      display: none !important;
+    }
+  }
   @media (max-width: 640px) {
     .topbar-bell,
     .topbar-divider {

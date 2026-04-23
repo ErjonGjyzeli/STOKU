@@ -50,7 +50,15 @@ export function Panel({ title, right, padded = true, children, style, className 
           )}
         </header>
       )}
-      <div style={padded ? { padding: 14 } : undefined}>{children}</div>
+      <div
+        style={
+          padded
+            ? { padding: 14 }
+            : { overflowX: 'auto', WebkitOverflowScrolling: 'touch' }
+        }
+      >
+        {children}
+      </div>
     </section>
   );
 }

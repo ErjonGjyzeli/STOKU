@@ -15,7 +15,7 @@ type NavItem = {
 };
 
 const MAIN_NAV: NavItem[] = [
-  { href: '/', label: 'Panel', icon: 'dashboard' },
+  { href: '/', label: 'Dashboard', icon: 'dashboard' },
   { href: '/products', label: 'Inventario', icon: 'box' },
   { href: '/stock', label: 'Magazzino', icon: 'building' },
   { href: '/vehicles', label: 'Veicoli', icon: 'car' },

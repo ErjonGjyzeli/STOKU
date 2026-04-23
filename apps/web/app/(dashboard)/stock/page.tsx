@@ -102,11 +102,18 @@ export default async function StockPage({
   return (
     <div>
       <PageHeader
-        title="Magazzino"
+        title="Giacenze magazzino"
         subtitle={
           total > 0
-            ? `${total.toLocaleString('it-IT')} righe stock · pagina ${page}/${totalPages}`
+            ? `${total.toLocaleString('it-IT')} righe stock · pagina ${page}/${totalPages} · gestisci i punti vendita da Impostazioni`
             : 'Nessuna giacenza — le righe appaiono dopo il primo movimento'
+        }
+        right={
+          session.profile.role === 'admin' ? (
+            <Link href="/settings/stores" className="btn ghost sm">
+              <Icon name="store" size={12} /> Gestisci PdV
+            </Link>
+          ) : undefined
         }
       />
       <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>

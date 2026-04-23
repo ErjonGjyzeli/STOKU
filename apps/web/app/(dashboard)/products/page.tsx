@@ -209,14 +209,7 @@ export default async function ProductsPage({
             ? `${total.toLocaleString('it-IT')} prodotti · ${rangeFrom}–${rangeTo}`
             : 'Nessun prodotto — crea il primo articolo per iniziare'
         }
-        right={
-          <>
-            <Link href="/products/import" className="btn ghost sm">
-              <Icon name="download" size={12} /> Import
-            </Link>
-            <ProductsCreateButton categories={categories} />
-          </>
-        }
+        right={<ProductsCreateButton categories={categories} />}
       />
 
       <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>

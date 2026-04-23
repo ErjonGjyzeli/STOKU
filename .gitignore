@@ -55,3 +55,4 @@ supabase/.env
 # Claude Code worktree/session artifacts
 .claude/
 stoku-claude-code-prompt.md
+files/

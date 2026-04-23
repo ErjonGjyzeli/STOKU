@@ -354,7 +354,7 @@ export default async function ProductsPage({
                   <th style={{ width: 110, textAlign: 'right' }}>Prezzo</th>
                   <th style={{ width: 90, textAlign: 'right' }}>Disp.</th>
                   <th style={{ width: 100 }}>Stato</th>
-                  <th style={{ width: 140 }} />
+                  <th style={{ width: 170 }} />
                 </tr>
               </thead>
               <ProductsRows

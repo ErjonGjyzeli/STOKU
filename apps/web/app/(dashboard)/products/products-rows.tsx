@@ -160,6 +160,17 @@ export function ProductsRows({
               </td>
               <td>
                 <div className="row" style={{ gap: 4, justifyContent: 'flex-end' }}>
+                  <a
+                    href={`/products/${p.id}/label`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn ghost sm"
+                    style={{ width: 24, padding: 0, justifyContent: 'center' }}
+                    title="Stampa etichetta QR"
+                    aria-label="Etichetta QR"
+                  >
+                    <Icon name="qr" size={12} />
+                  </a>
                   <button
                     type="button"
                     className="btn ghost sm"

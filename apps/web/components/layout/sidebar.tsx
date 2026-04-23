@@ -17,6 +17,7 @@ type NavItem = {
 const MAIN_NAV: NavItem[] = [
   { href: '/', label: 'Panel', icon: 'dashboard' },
   { href: '/products', label: 'Inventario', icon: 'box' },
+  { href: '/vehicles', label: 'Veicoli', icon: 'car' },
   { href: '/orders', label: 'Ordini', icon: 'cart' },
   { href: '/customers', label: 'Clienti', icon: 'users' },
   { href: '/transfers', label: 'Trasferimenti', icon: 'transfer', roles: ['admin', 'warehouse'] },

@@ -15,19 +15,20 @@ type NavItem = {
 };
 
 const MAIN_NAV: NavItem[] = [
-  { href: '/', label: 'Panel', icon: 'dashboard' },
+  { href: '/', label: 'Dashboard', icon: 'dashboard' },
   { href: '/products', label: 'Inventario', icon: 'box' },
   { href: '/stock', label: 'Magazzino', icon: 'building' },
   { href: '/vehicles', label: 'Veicoli', icon: 'car' },
   { href: '/orders', label: 'Ordini', icon: 'cart' },
   { href: '/customers', label: 'Clienti', icon: 'users' },
   { href: '/transfers', label: 'Trasferimenti', icon: 'transfer', roles: ['admin', 'warehouse'] },
+  { href: '/reports', label: 'Report', icon: 'history' },
 ];
 
 const SETTINGS_NAV: NavItem[] = [
-  { href: '/settings/company', label: 'Azienda', icon: 'building', roles: ['admin'] },
   { href: '/settings/stores', label: 'Punti vendita', icon: 'store', roles: ['admin'] },
-  { href: '/settings/users', label: 'Utenti staff', icon: 'users', roles: ['admin'] },
+  { href: '/settings/users', label: 'Utenti', icon: 'users', roles: ['admin'] },
+  { href: '/settings/company', label: 'Azienda', icon: 'building', roles: ['admin'] },
 ];
 
 const ROLE_LABEL: Record<Role, string> = {

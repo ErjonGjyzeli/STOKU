@@ -26,6 +26,7 @@ type SearchParams = {
   category?: string;
   condition?: string;
   status?: string;
+  vehicle?: string;
   page?: string;
 };
 
@@ -50,9 +51,25 @@ export default async function ProductsPage({
   const categoryId = params.category ? Number(params.category) : null;
   const condition = params.condition ?? '';
   const status = params.status ?? 'active';
+  const vehicleFilter = params.vehicle ? Number(params.vehicle) : null;
   const page = Math.max(1, Number(params.page) || 1);
 
   const supabase = await createClient();
+
+  // Pre-fetch product IDs compatibili col veicolo richiesto (serve come
+  // .in() sulla query principale). Una query a parte è l'unico modo
+  // pulito via supabase-js: i join PostgREST non supportano filtri
+  // su tabella figlia come predicato di scoping sulla tabella padre.
+  let vehicleCompatIds: string[] | null = null;
+  if (vehicleFilter) {
+    const { data } = await supabase
+      .from('product_vehicle_compatibility')
+      .select('product_id')
+      .eq('vehicle_id', vehicleFilter);
+    vehicleCompatIds = (data ?? [])
+      .map((r) => r.product_id)
+      .filter((id): id is string => !!id);
+  }
 
   let query = supabase
     .from('products')
@@ -61,6 +78,17 @@ export default async function ProductsPage({
       { count: 'exact' },
     )
     .order('created_at', { ascending: false });
+
+  if (vehicleCompatIds !== null) {
+    if (vehicleCompatIds.length === 0) {
+      // Nessun prodotto compatibile: forza risultato vuoto usando un UUID
+      // impossibile. Alternativa: skip della query — ma perderemmo i meta
+      // (count totale reale ecc.) che servono alla UI per dire "0 risultati".
+      query = query.in('id', ['00000000-0000-0000-0000-000000000000']);
+    } else {
+      query = query.in('id', vehicleCompatIds);
+    }
+  }
 
   if (q) {
     // Full-text via colonna generated `search_vector` (simple config) che
@@ -166,7 +194,11 @@ export default async function ProductsPage({
   const rangeFrom = total === 0 ? 0 : from + 1;
   const rangeTo = Math.min(to + 1, total);
   const activeFilters =
-    (q ? 1 : 0) + (categoryId ? 1 : 0) + (condition ? 1 : 0) + (status !== 'active' ? 1 : 0);
+    (q ? 1 : 0) +
+    (categoryId ? 1 : 0) +
+    (condition ? 1 : 0) +
+    (vehicleFilter ? 1 : 0) +
+    (status !== 'active' ? 1 : 0);
 
   return (
     <div>
@@ -245,6 +277,29 @@ export default async function ProductsPage({
                     {label}
                   </option>
                 ))}
+              </select>
+            </label>
+
+            <label className="col" style={{ gap: 4, width: 220 }}>
+              <span className="meta" style={{ fontSize: 11 }}>
+                VEICOLO
+              </span>
+              <select
+                name="vehicle"
+                defaultValue={vehicleFilter ? String(vehicleFilter) : ''}
+                className="stoku-input"
+                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
+              >
+                <option value="">Qualsiasi</option>
+                {allVehicles.map((v) => {
+                  const yrs =
+                    v.year_from && v.year_to ? ` ${v.year_from}–${v.year_to}` : '';
+                  return (
+                    <option key={v.id} value={v.id}>
+                      {`${v.make_name ?? '?'} ${v.model}${yrs}`}
+                    </option>
+                  );
+                })}
               </select>
             </label>
 

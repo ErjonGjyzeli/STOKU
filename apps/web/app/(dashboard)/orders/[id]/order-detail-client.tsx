@@ -10,18 +10,15 @@ import { Icon } from '@/components/ui/icon';
 import { Input } from '@/components/ui/input';
 import { Panel } from '@/components/ui/panel';
 import { StokuBadge } from '@/components/ui/stoku-badge';
-import { addOrderItem, removeOrderItem } from '../actions';
+import { addOrderItem, removeOrderItem, transitionOrderStatus } from '../actions';
+import {
+  allowedNextStatuses,
+  STATUS_ACTION_LABEL,
+  STATUS_LABEL,
+  type OrderTransitionStatus,
+} from '../status';
 
 type BadgeVariant = 'default' | 'ok' | 'warn' | 'danger' | 'info' | 'draft' | 'accent';
-
-const STATUS_LABEL: Record<string, string> = {
-  draft: 'Bozza',
-  confirmed: 'Confermato',
-  paid: 'Pagato',
-  shipped: 'Spedito',
-  completed: 'Completato',
-  cancelled: 'Annullato',
-};
 
 const STATUS_VARIANT: Record<string, BadgeVariant> = {
   draft: 'draft',
@@ -144,6 +141,39 @@ export function OrderDetailClient({ order, items, products }: Props) {
       toast.success('Riga rimossa');
     });
   }
+
+  function handleTransition(nextStatus: OrderTransitionStatus) {
+    const label = STATUS_ACTION_LABEL[nextStatus] ?? nextStatus;
+    const destructive = nextStatus === 'cancelled';
+    if (!confirm(destructive ? `Annullare ordine ${order.order_number}?` : `${label}?`)) return;
+
+    let paymentMethod: 'cash' | 'bank' | 'card' | 'other' | null = null;
+    if (nextStatus === 'paid') {
+      const pm = prompt('Metodo pagamento: cash / bank / card / other', 'cash');
+      if (!pm) return;
+      const normalized = pm.toLowerCase().trim();
+      if (!['cash', 'bank', 'card', 'other'].includes(normalized)) {
+        toast.error('Metodo pagamento non valido');
+        return;
+      }
+      paymentMethod = normalized as 'cash' | 'bank' | 'card' | 'other';
+    }
+
+    startTransition(async () => {
+      const res = await transitionOrderStatus({
+        order_id: order.id,
+        new_status: nextStatus,
+        payment_method: paymentMethod,
+      });
+      if (!res.ok) {
+        toast.error('Transizione fallita', { description: res.error });
+        return;
+      }
+      toast.success(`Ordine → ${STATUS_LABEL[nextStatus] ?? nextStatus}`);
+    });
+  }
+
+  const nextStatuses = allowedNextStatuses(order.status);
 
   return (
     <div className="col" style={{ gap: 16 }}>
@@ -351,6 +381,33 @@ export function OrderDetailClient({ order, items, products }: Props) {
           </div>
         </dl>
       </Panel>
+
+      {nextStatuses.length > 0 && (
+        <Panel title="Azioni">
+          <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
+            {nextStatuses.map((s) => {
+              const destructive = s === 'cancelled';
+              const confirmClass = s === 'confirmed' || s === 'completed';
+              return (
+                <Button
+                  key={s}
+                  type="button"
+                  variant={destructive ? 'ghost' : confirmClass ? 'default' : 'ghost'}
+                  onClick={() => handleTransition(s)}
+                  disabled={pending}
+                  style={
+                    destructive
+                      ? { color: 'var(--danger)', borderColor: 'var(--danger)' }
+                      : undefined
+                  }
+                >
+                  {STATUS_ACTION_LABEL[s] ?? s}
+                </Button>
+              );
+            })}
+          </div>
+        </Panel>
+      )}
 
       <div className="row" style={{ gap: 8 }}>
         <Link href="/orders" className="btn ghost sm">

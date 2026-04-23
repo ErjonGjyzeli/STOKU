@@ -116,6 +116,57 @@ export async function removeOrderItem(
   return { ok: true, data: null };
 }
 
+import { ALLOWED_TRANSITIONS } from './status';
+
+const transitionSchema = z.object({
+  order_id: z.string().uuid(),
+  new_status: z.enum(['confirmed', 'paid', 'shipped', 'completed', 'cancelled']),
+  payment_method: z.enum(['cash', 'bank', 'card', 'other']).nullable().optional(),
+});
+
+export async function transitionOrderStatus(
+  input: z.input<typeof transitionSchema>,
+): Promise<ActionResult> {
+  await requireSession();
+  const parsed = transitionSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Dati non validi' };
+  }
+  const supabase = await createClient();
+  const { data: order, error: readErr } = await supabase
+    .from('orders')
+    .select('status')
+    .eq('id', parsed.data.order_id)
+    .single();
+  if (readErr || !order) {
+    return { ok: false, error: readErr?.message ?? 'Ordine non trovato' };
+  }
+  const allowed = ALLOWED_TRANSITIONS[order.status] ?? [];
+  if (!allowed.includes(parsed.data.new_status)) {
+    return {
+      ok: false,
+      error: `Transizione ${order.status} → ${parsed.data.new_status} non consentita`,
+    };
+  }
+
+  const patch: { status: string; payment_method?: string | null } = {
+    status: parsed.data.new_status,
+  };
+  if (parsed.data.new_status === 'paid' && parsed.data.payment_method) {
+    patch.payment_method = parsed.data.payment_method;
+  }
+
+  const { error } = await supabase
+    .from('orders')
+    .update(patch)
+    .eq('id', parsed.data.order_id);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath('/orders');
+  revalidatePath(`/orders/${parsed.data.order_id}`);
+  return { ok: true, data: null };
+}
+
 export async function deleteDraftOrder(orderId: string): Promise<ActionResult> {
   await requireSession();
   const supabase = await createClient();

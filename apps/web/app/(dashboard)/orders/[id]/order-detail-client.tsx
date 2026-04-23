@@ -174,6 +174,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
   }
 
   const nextStatuses = allowedNextStatuses(order.status);
+  const canDownloadInvoice = ['confirmed', 'paid', 'shipped', 'completed'].includes(order.status);
 
   return (
     <div className="col" style={{ gap: 16 }}>
@@ -409,10 +410,20 @@ export function OrderDetailClient({ order, items, products }: Props) {
         </Panel>
       )}
 
-      <div className="row" style={{ gap: 8 }}>
+      <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
         <Link href="/orders" className="btn ghost sm">
           Torna agli ordini
         </Link>
+        {canDownloadInvoice && (
+          <a
+            href={`/orders/${order.id}/invoice`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn ghost sm"
+          >
+            <Icon name="download" size={12} /> Scarica fattura PDF
+          </a>
+        )}
       </div>
     </div>
   );

@@ -1,0 +1,427 @@
+import Link from 'next/link';
+
+import { Empty } from '@/components/ui/empty';
+import { Icon } from '@/components/ui/icon';
+import { PageHeader } from '@/components/ui/page-header';
+import { Panel } from '@/components/ui/panel';
+import { StokuBadge } from '@/components/ui/stoku-badge';
+import { requireSession } from '@/lib/auth/session';
+import { createClient } from '@/lib/supabase/server';
+import {
+  fetchInventory,
+  fetchMovements,
+  fetchSales,
+  type ReportTab,
+} from './queries';
+
+export const metadata = { title: 'Report — STOKU' };
+
+type BadgeVariant = 'default' | 'ok' | 'warn' | 'danger' | 'info' | 'draft' | 'accent';
+
+const STATUS_LABEL: Record<string, string> = {
+  confirmed: 'Confermato',
+  paid: 'Pagato',
+  shipped: 'Spedito',
+  completed: 'Completato',
+};
+const STATUS_VARIANT: Record<string, BadgeVariant> = {
+  confirmed: 'info',
+  paid: 'info',
+  shipped: 'accent',
+  completed: 'ok',
+};
+
+const REASON_LABEL: Record<string, string> = {
+  sale: 'Vendita',
+  return: 'Reso',
+  adjustment: 'Rettifica',
+  intake: 'Carico',
+  damage: 'Danno/perdita',
+  transfer_out: 'Uscita trasf.',
+  transfer_in: 'Entrata trasf.',
+  reservation: 'Prenotazione',
+  unreservation: 'Svincolo',
+};
+
+type SearchParams = {
+  tab?: string;
+  from?: string;
+  to?: string;
+  store?: string;
+};
+
+function resolveTab(raw: string | undefined): ReportTab {
+  if (raw === 'inventory') return 'inventory';
+  if (raw === 'movements') return 'movements';
+  return 'sales';
+}
+
+function currency(value: number | null, code: string | null) {
+  if (value == null) return '—';
+  return new Intl.NumberFormat('it-IT', {
+    style: 'currency',
+    currency: code ?? 'EUR',
+    maximumFractionDigits: 2,
+  }).format(Number(value));
+}
+
+function formatDate(iso: string | null) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('it-IT', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+}
+
+function formatDateTime(iso: string | null) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleString('it-IT', {
+    day: '2-digit',
+    month: '2-digit',
+    year: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function buildQuery(base: SearchParams, patch: Partial<SearchParams>) {
+  const p = new URLSearchParams();
+  const merged = { ...base, ...patch };
+  for (const [k, v] of Object.entries(merged)) {
+    if (v !== undefined && v !== null && v !== '') p.set(k, String(v));
+  }
+  const s = p.toString();
+  return s ? `?${s}` : '';
+}
+
+export default async function ReportsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  await requireSession();
+  const params = await searchParams;
+  const tab = resolveTab(params.tab);
+  const from = params.from || null;
+  const to = params.to || null;
+  const storeId = params.store ? Number(params.store) : null;
+
+  const supabase = await createClient();
+  const { data: stores } = await supabase
+    .from('stores')
+    .select('id, code, name')
+    .eq('is_active', true)
+    .order('code');
+
+  const filters = { tab, from, to, store: storeId };
+
+  const [salesRows, inventoryRows, movementRows] = await Promise.all([
+    tab === 'sales' ? fetchSales(filters) : Promise.resolve([]),
+    tab === 'inventory' ? fetchInventory(filters) : Promise.resolve([]),
+    tab === 'movements' ? fetchMovements(filters) : Promise.resolve([]),
+  ]);
+
+  const exportBase = buildQuery(params, { tab });
+  const csvHref = `/reports/export${exportBase}${exportBase.includes('?') ? '&' : '?'}format=csv`;
+  const xlsxHref = `/reports/export${exportBase}${exportBase.includes('?') ? '&' : '?'}format=xlsx`;
+
+  const totalSales =
+    tab === 'sales' ? salesRows.reduce((sum, r) => sum + r.total, 0) : 0;
+
+  return (
+    <div>
+      <PageHeader
+        title="Report"
+        subtitle="Vendite, inventario e movimenti stock. Filtri URL-driven, export CSV/XLSX."
+        right={
+          <>
+            <a href={csvHref} className="btn ghost sm" target="_blank" rel="noopener noreferrer">
+              <Icon name="download" size={12} /> CSV
+            </a>
+            <a href={xlsxHref} className="btn ghost sm" target="_blank" rel="noopener noreferrer">
+              <Icon name="download" size={12} /> XLSX
+            </a>
+          </>
+        }
+      />
+
+      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className="row" style={{ gap: 0, borderBottom: '1px solid var(--stoku-border)' }}>
+          <TabLink current={tab} label="Vendite" target="sales" params={params} />
+          <TabLink current={tab} label="Inventario" target="inventory" params={params} />
+          <TabLink current={tab} label="Movimenti" target="movements" params={params} />
+        </div>
+
+        <Panel padded>
+          <form
+            method="get"
+            className="row"
+            style={{ gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}
+          >
+            <input type="hidden" name="tab" value={tab} />
+            <label className="col" style={{ gap: 4, width: 140 }}>
+              <span className="meta" style={{ fontSize: 11 }}>
+                DA
+              </span>
+              <input
+                type="date"
+                name="from"
+                defaultValue={from ?? ''}
+                className="stoku-input"
+                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
+                disabled={tab === 'inventory'}
+              />
+            </label>
+            <label className="col" style={{ gap: 4, width: 140 }}>
+              <span className="meta" style={{ fontSize: 11 }}>
+                A
+              </span>
+              <input
+                type="date"
+                name="to"
+                defaultValue={to ?? ''}
+                className="stoku-input"
+                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
+                disabled={tab === 'inventory'}
+              />
+            </label>
+            <label className="col" style={{ gap: 4, width: 200 }}>
+              <span className="meta" style={{ fontSize: 11 }}>
+                STORE
+              </span>
+              <select
+                name="store"
+                defaultValue={storeId ? String(storeId) : ''}
+                className="stoku-input"
+                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
+              >
+                <option value="">Tutti</option>
+                {(stores ?? []).map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.code} · {s.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button type="submit" className="btn primary sm">
+              <Icon name="filter" size={12} /> Applica
+            </button>
+            {(from || to || storeId) && (
+              <Link href={`/reports?tab=${tab}`} className="btn ghost sm">
+                Reset
+              </Link>
+            )}
+          </form>
+        </Panel>
+
+        {tab === 'sales' && (
+          <Panel
+            title={`Vendite (${salesRows.length}) — totale ${currency(totalSales, salesRows[0]?.currency ?? 'EUR')}`}
+            padded={false}
+          >
+            {salesRows.length === 0 ? (
+              <Empty icon="cart" title="Nessun ordine" subtitle="Filtri non restituiscono righe." />
+            ) : (
+              <table className="tbl">
+                <thead>
+                  <tr>
+                    <th style={{ width: 100 }}>Data</th>
+                    <th style={{ width: 120 }}>Numero</th>
+                    <th>Cliente</th>
+                    <th style={{ width: 80 }}>Store</th>
+                    <th style={{ width: 120 }}>Status</th>
+                    <th style={{ width: 110, textAlign: 'right' }}>Subtotale</th>
+                    <th style={{ width: 110, textAlign: 'right' }}>IVA</th>
+                    <th style={{ width: 110, textAlign: 'right' }}>Totale</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {salesRows.map((r) => (
+                    <tr key={r.id}>
+                      <td>{formatDate(r.created_at)}</td>
+                      <td className="mono" style={{ fontSize: 11 }}>
+                        <Link href={`/orders/${r.id}`} style={{ color: 'inherit' }}>
+                          {r.order_number}
+                        </Link>
+                      </td>
+                      <td className="truncate-1">
+                        {r.customer_name ?? <span className="faint">Vendita banco</span>}
+                      </td>
+                      <td className="mono" style={{ fontSize: 11 }}>
+                        {r.store_code ?? <span className="faint">—</span>}
+                      </td>
+                      <td>
+                        <StokuBadge variant={STATUS_VARIANT[r.status] ?? 'default'}>
+                          {STATUS_LABEL[r.status] ?? r.status}
+                        </StokuBadge>
+                      </td>
+                      <td className="mono" style={{ textAlign: 'right' }}>
+                        {currency(r.subtotal, r.currency)}
+                      </td>
+                      <td className="mono" style={{ textAlign: 'right' }}>
+                        {currency(r.tax_amount, r.currency)}
+                      </td>
+                      <td className="mono" style={{ textAlign: 'right', fontWeight: 500 }}>
+                        {currency(r.total, r.currency)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </Panel>
+        )}
+
+        {tab === 'inventory' && (
+          <Panel title={`Inventario (${inventoryRows.length} righe)`} padded={false}>
+            {inventoryRows.length === 0 ? (
+              <Empty icon="building" title="Nessuna giacenza" />
+            ) : (
+              <table className="tbl">
+                <thead>
+                  <tr>
+                    <th style={{ width: 80 }}>Store</th>
+                    <th style={{ width: 120 }}>SKU</th>
+                    <th>Nome</th>
+                    <th style={{ width: 80, textAlign: 'right' }}>Qta</th>
+                    <th style={{ width: 80, textAlign: 'right' }}>Prenot.</th>
+                    <th style={{ width: 80, textAlign: 'right' }}>Disp.</th>
+                    <th style={{ width: 80, textAlign: 'right' }}>Soglia</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {inventoryRows.map((r) => (
+                    <tr key={`${r.product_id}-${r.store_id}`}>
+                      <td className="mono" style={{ fontSize: 11 }}>
+                        {r.store_code ?? '—'}
+                      </td>
+                      <td className="mono" style={{ fontSize: 11 }}>
+                        {r.sku}
+                      </td>
+                      <td className="truncate-1">{r.name}</td>
+                      <td className="mono" style={{ textAlign: 'right' }}>
+                        {r.quantity}
+                      </td>
+                      <td className="mono" style={{ textAlign: 'right', color: 'var(--ink-3)' }}>
+                        {r.reserved_quantity || '—'}
+                      </td>
+                      <td
+                        className="mono"
+                        style={{
+                          textAlign: 'right',
+                          fontWeight: 500,
+                          color:
+                            r.available <= (r.min_stock ?? 0) ? 'var(--warn)' : undefined,
+                        }}
+                      >
+                        {r.available}
+                      </td>
+                      <td className="mono" style={{ textAlign: 'right' }}>
+                        {r.min_stock ?? 0}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </Panel>
+        )}
+
+        {tab === 'movements' && (
+          <Panel title={`Movimenti (${movementRows.length})`} padded={false}>
+            {movementRows.length === 0 ? (
+              <Empty icon="history" title="Nessun movimento" />
+            ) : (
+              <table className="tbl">
+                <thead>
+                  <tr>
+                    <th style={{ width: 130 }}>Quando</th>
+                    <th style={{ width: 130 }}>Causale</th>
+                    <th style={{ width: 120 }}>SKU</th>
+                    <th>Prodotto</th>
+                    <th style={{ width: 80 }}>Store</th>
+                    <th style={{ width: 80, textAlign: 'right' }}>Delta</th>
+                    <th style={{ width: 140 }}>Riferimento</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {movementRows.map((r) => (
+                    <tr key={r.id}>
+                      <td style={{ fontSize: 11 }}>{formatDateTime(r.created_at)}</td>
+                      <td>
+                        <StokuBadge
+                          variant={r.change < 0 ? 'danger' : r.change > 0 ? 'ok' : 'default'}
+                        >
+                          {REASON_LABEL[r.reason] ?? r.reason}
+                        </StokuBadge>
+                      </td>
+                      <td className="mono" style={{ fontSize: 11 }}>
+                        {r.sku ?? '—'}
+                      </td>
+                      <td className="truncate-1">{r.product_name ?? '—'}</td>
+                      <td className="mono" style={{ fontSize: 11 }}>
+                        {r.store_code ?? '—'}
+                      </td>
+                      <td
+                        className="mono"
+                        style={{
+                          textAlign: 'right',
+                          fontWeight: 500,
+                          color:
+                            r.change < 0
+                              ? 'var(--danger)'
+                              : r.change > 0
+                                ? 'var(--ok)'
+                                : undefined,
+                        }}
+                      >
+                        {r.change > 0 ? `+${r.change}` : r.change}
+                      </td>
+                      <td className="mono" style={{ fontSize: 11 }}>
+                        {r.reference_order_number ?? r.transfer_number ?? (
+                          <span className="faint">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </Panel>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function TabLink({
+  current,
+  label,
+  target,
+  params,
+}: {
+  current: ReportTab;
+  label: string;
+  target: ReportTab;
+  params: SearchParams;
+}) {
+  const active = current === target;
+  const href = `/reports${buildQuery(params, { tab: target })}`;
+  return (
+    <Link
+      href={href}
+      style={{
+        padding: '8px 14px',
+        fontSize: 13,
+        color: active ? 'var(--ink-1)' : 'var(--ink-3)',
+        fontWeight: active ? 600 : 400,
+        borderBottom: active ? '2px solid var(--stoku-accent)' : '2px solid transparent',
+        marginBottom: -1,
+        textDecoration: 'none',
+      }}
+    >
+      {label}
+    </Link>
+  );
+}

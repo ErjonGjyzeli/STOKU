@@ -22,6 +22,7 @@ const MAIN_NAV: NavItem[] = [
   { href: '/orders', label: 'Ordini', icon: 'cart' },
   { href: '/customers', label: 'Clienti', icon: 'users' },
   { href: '/transfers', label: 'Trasferimenti', icon: 'transfer', roles: ['admin', 'warehouse'] },
+  { href: '/reports', label: 'Report', icon: 'history' },
 ];
 
 const SETTINGS_NAV: NavItem[] = [

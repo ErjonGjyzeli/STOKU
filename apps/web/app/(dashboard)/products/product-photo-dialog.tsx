@@ -83,9 +83,7 @@ export function ProductPhotoDialog({
         return;
       }
       toast.success('Foto principale aggiornata');
-      setImages((prev) =>
-        prev.map((i) => ({ ...i, is_primary: i.id === img.id })),
-      );
+      setImages((prev) => prev.map((i) => ({ ...i, is_primary: i.id === img.id })));
     });
   }
 
@@ -186,9 +184,7 @@ export function ProductPhotoDialog({
                       title={img.is_primary ? 'Principale' : 'Imposta come principale'}
                       aria-label="Imposta come principale"
                       style={{
-                        background: img.is_primary
-                          ? 'var(--stoku-accent)'
-                          : 'rgba(0,0,0,0.55)',
+                        background: img.is_primary ? 'var(--stoku-accent)' : 'rgba(0,0,0,0.55)',
                         color: img.is_primary ? 'var(--stoku-accent-fg)' : '#fff',
                         border: 'none',
                         padding: 6,

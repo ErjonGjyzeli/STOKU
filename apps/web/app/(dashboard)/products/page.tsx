@@ -63,8 +63,13 @@ export default async function ProductsPage({
     .order('created_at', { ascending: false });
 
   if (q) {
-    const pattern = `%${q.replace(/[%_]/g, (m) => `\\${m}`)}%`;
-    query = query.or(`name.ilike.${pattern},sku.ilike.${pattern},oem_code.ilike.${pattern}`);
+    // Full-text via colonna generated `search_vector` (simple config) che
+    // indicizza name / sku / oem_code / legacy_nr / description. websearch
+    // accetta frasi tra virgolette, OR espliciti ed esclusioni con `-`.
+    query = query.textSearch('search_vector', q, {
+      type: 'websearch',
+      config: 'simple',
+    });
   }
   if (categoryId) query = query.eq('category_id', categoryId);
   if (condition) query = query.eq('condition', condition);
@@ -165,7 +170,7 @@ export default async function ProductsPage({
                   type="search"
                   name="q"
                   defaultValue={q}
-                  placeholder="Nome, SKU o codice OEM"
+                  placeholder={'Nome, SKU, OEM, #ex-Excel · "frase esatta" · -parola'}
                   autoComplete="off"
                 />
               </div>
@@ -277,9 +282,7 @@ export default async function ProductsPage({
                     price_cost: p.price_cost,
                     currency: p.currency,
                     is_active: p.is_active,
-                    category: p.category
-                      ? { id: p.category.id, name: p.category.name }
-                      : null,
+                    category: p.category ? { id: p.category.id, name: p.category.name } : null,
                     stock: stockMap.get(p.id) ?? null,
                     images: imagesMap.get(p.id) ?? [],
                   }),

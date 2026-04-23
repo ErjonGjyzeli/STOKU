@@ -27,13 +27,11 @@ const productSchema = z.object({
   name: z.string().trim().min(2, 'Nome minimo 2 caratteri').max(200),
   legacy_nr: z.string().trim().max(40).optional().or(z.literal('')),
   oem_code: z.string().trim().max(80).optional().or(z.literal('')),
-  category_id: z
-    .union([z.string(), z.number(), z.null(), z.undefined()])
-    .transform((v) => {
-      if (v === null || v === undefined || v === '') return null;
-      const n = typeof v === 'number' ? v : Number(v);
-      return Number.isFinite(n) ? n : null;
-    }),
+  category_id: z.union([z.string(), z.number(), z.null(), z.undefined()]).transform((v) => {
+    if (v === null || v === undefined || v === '') return null;
+    const n = typeof v === 'number' ? v : Number(v);
+    return Number.isFinite(n) ? n : null;
+  }),
   condition: z.enum(CONDITIONS),
   price_sell: priceSchema,
   price_cost: priceSchema,
@@ -224,10 +222,7 @@ export async function deleteProductImage(imageId: string): Promise<ActionResult>
   return { ok: true, data: null };
 }
 
-export async function setPrimaryImage(
-  productId: string,
-  imageId: string,
-): Promise<ActionResult> {
+export async function setPrimaryImage(productId: string, imageId: string): Promise<ActionResult> {
   await requireSession();
   const supabase = await createClient();
 

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
@@ -138,7 +139,14 @@ export function VehiclesClient({
                       <td style={{ fontWeight: 500 }}>
                         {v.make_name ?? <span className="faint">—</span>}
                       </td>
-                      <td className="truncate-1">{v.model}</td>
+                      <td className="truncate-1">
+                        <Link
+                          href={`/vehicles/${v.id}`}
+                          style={{ color: 'inherit', textDecoration: 'none' }}
+                        >
+                          {v.model}
+                        </Link>
+                      </td>
                       <td className="mono" style={{ fontSize: 11 }}>
                         {v.chassis_code ?? <span className="faint">—</span>}
                       </td>

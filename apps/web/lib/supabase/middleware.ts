@@ -26,39 +26,22 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  const getUserResult = await supabase.auth.getUser();
-  const user = getUserResult.data.user;
-  const getUserError = getUserResult.error;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
   const isPublic = PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 
-  const debugHeaders: Record<string, string> = {
-    'x-mw-path': pathname,
-    'x-mw-public': String(isPublic),
-    'x-mw-has-user': String(!!user),
-    'x-mw-user-id': user?.id ?? 'none',
-    'x-mw-err': getUserError?.message ?? 'none',
-    'x-mw-cookies': request.cookies
-      .getAll()
-      .map((c) => `${c.name}:${c.value.length}`)
-      .join(','),
-  };
-
   // When redirecting we must forward any cookies that supabase set during
   // token refresh — otherwise the rotated refresh_token is lost and the next
   // request will fail auth, causing a redirect loop.
-  function applyDebug<T extends NextResponse>(res: T): T {
-    for (const [k, v] of Object.entries(debugHeaders)) res.headers.set(k, v);
-    return res;
-  }
-
   function redirectWithCookies(url: URL) {
     const redirect = NextResponse.redirect(url);
     response.cookies.getAll().forEach((cookie) => {
       redirect.cookies.set(cookie);
     });
-    return applyDebug(redirect);
+    return redirect;
   }
 
   if (!user && !isPublic) {
@@ -75,5 +58,5 @@ export async function updateSession(request: NextRequest) {
     return redirectWithCookies(url);
   }
 
-  return applyDebug(response);
+  return response;
 }

@@ -7,6 +7,7 @@ import { Icon } from '@/components/ui/icon';
 import { StokuBadge } from '@/components/ui/stoku-badge';
 import { toggleProductActive, updateProduct, type ProductInput } from './actions';
 import { ProductFormDialog, type ProductFormValues } from './product-form-dialog';
+import { ProductPhotoDialog, type ProductImage } from './product-photo-dialog';
 
 type BadgeVariant = 'default' | 'ok' | 'warn' | 'danger' | 'info' | 'draft' | 'accent';
 
@@ -38,6 +39,7 @@ export type ProductRow = {
   description: string | null;
   category: { id: number; name: string } | null;
   stock: { available: number; total: number } | null;
+  images: ProductImage[];
 };
 
 type Category = { id: number; name: string };
@@ -74,6 +76,7 @@ export function ProductsRows({
   categories: Category[];
 }) {
   const [editing, setEditing] = useState<ProductRow | null>(null);
+  const [photosFor, setPhotosFor] = useState<ProductRow | null>(null);
   const [pending, startTransition] = useTransition();
 
   function handleToggle(product: ProductRow) {
@@ -152,6 +155,16 @@ export function ProductsRows({
                     type="button"
                     className="btn ghost sm"
                     style={{ width: 24, padding: 0, justifyContent: 'center' }}
+                    onClick={() => setPhotosFor(p)}
+                    title={p.images.length > 0 ? `Foto (${p.images.length})` : 'Gestisci foto'}
+                    aria-label="Gestisci foto"
+                  >
+                    <Icon name="image" size={12} />
+                  </button>
+                  <button
+                    type="button"
+                    className="btn ghost sm"
+                    style={{ width: 24, padding: 0, justifyContent: 'center' }}
                     onClick={() => setEditing(p)}
                     title="Modifica"
                     aria-label="Modifica"
@@ -184,6 +197,15 @@ export function ProductsRows({
           title={`Modifica ${editing.sku}`}
           categories={categories}
           initial={toFormValues(editing)}
+        />
+      )}
+      {photosFor && (
+        <ProductPhotoDialog
+          open={!!photosFor}
+          onOpenChange={(o) => !o && setPhotosFor(null)}
+          productId={photosFor.id}
+          productSku={photosFor.sku}
+          initialImages={photosFor.images}
         />
       )}
     </>

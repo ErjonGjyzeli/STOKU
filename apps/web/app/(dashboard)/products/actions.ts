@@ -118,3 +118,132 @@ export async function toggleProductActive(id: string, active: boolean): Promise<
   revalidatePath('/products');
   return { ok: true, data: null };
 }
+
+const IMAGE_BUCKET = 'product-images';
+const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+const IMAGE_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
+
+function extFromMime(mime: string) {
+  if (mime === 'image/jpeg') return 'jpg';
+  if (mime === 'image/png') return 'png';
+  if (mime === 'image/webp') return 'webp';
+  return 'bin';
+}
+
+export async function uploadProductImage(
+  formData: FormData,
+): Promise<ActionResult<{ id: string; storage_path: string }>> {
+  await requireSession();
+  const productId = String(formData.get('product_id') ?? '');
+  const file = formData.get('file');
+  if (!productId) return { ok: false, error: 'product_id mancante' };
+  if (!(file instanceof File) || file.size === 0) {
+    return { ok: false, error: 'File mancante' };
+  }
+  if (!IMAGE_MIME.has(file.type)) {
+    return { ok: false, error: 'Formato non supportato (JPEG / PNG / WebP)' };
+  }
+  if (file.size > IMAGE_MAX_BYTES) {
+    return { ok: false, error: 'File oltre 5 MB' };
+  }
+
+  const supabase = await createClient();
+
+  const { data: existing } = await supabase
+    .from('product_images')
+    .select('id, is_primary, sort_order')
+    .eq('product_id', productId)
+    .order('sort_order', { ascending: false })
+    .limit(1);
+
+  const shouldBePrimary = !existing || existing.length === 0;
+  const nextSort = existing && existing.length > 0 ? (existing[0].sort_order ?? 0) + 1 : 0;
+
+  const ext = extFromMime(file.type);
+  const storagePath = `${productId}/${crypto.randomUUID()}.${ext}`;
+  const { error: upErr } = await supabase.storage
+    .from(IMAGE_BUCKET)
+    .upload(storagePath, file, { contentType: file.type, upsert: false });
+  if (upErr) return { ok: false, error: upErr.message };
+
+  const { data: inserted, error: insErr } = await supabase
+    .from('product_images')
+    .insert({
+      product_id: productId,
+      storage_path: storagePath,
+      is_primary: shouldBePrimary,
+      sort_order: nextSort,
+    })
+    .select('id')
+    .single();
+
+  if (insErr) {
+    await supabase.storage.from(IMAGE_BUCKET).remove([storagePath]);
+    return { ok: false, error: insErr.message };
+  }
+
+  revalidatePath('/products');
+  return { ok: true, data: { id: inserted.id, storage_path: storagePath } };
+}
+
+export async function deleteProductImage(imageId: string): Promise<ActionResult> {
+  await requireSession();
+  const supabase = await createClient();
+
+  const { data: img, error: readErr } = await supabase
+    .from('product_images')
+    .select('id, product_id, storage_path, is_primary')
+    .eq('id', imageId)
+    .single();
+  if (readErr || !img) {
+    return { ok: false, error: readErr?.message ?? 'Immagine non trovata' };
+  }
+
+  const { error: storageErr } = await supabase.storage
+    .from(IMAGE_BUCKET)
+    .remove([img.storage_path]);
+  if (storageErr) return { ok: false, error: storageErr.message };
+
+  const { error: delErr } = await supabase.from('product_images').delete().eq('id', imageId);
+  if (delErr) return { ok: false, error: delErr.message };
+
+  if (img.is_primary && img.product_id) {
+    const { data: replacement } = await supabase
+      .from('product_images')
+      .select('id')
+      .eq('product_id', img.product_id)
+      .order('sort_order')
+      .limit(1);
+    const replacementId = replacement?.[0]?.id;
+    if (replacementId) {
+      await supabase.from('product_images').update({ is_primary: true }).eq('id', replacementId);
+    }
+  }
+
+  revalidatePath('/products');
+  return { ok: true, data: null };
+}
+
+export async function setPrimaryImage(
+  productId: string,
+  imageId: string,
+): Promise<ActionResult> {
+  await requireSession();
+  const supabase = await createClient();
+
+  const { error: clearErr } = await supabase
+    .from('product_images')
+    .update({ is_primary: false })
+    .eq('product_id', productId);
+  if (clearErr) return { ok: false, error: clearErr.message };
+
+  const { error: setErr } = await supabase
+    .from('product_images')
+    .update({ is_primary: true })
+    .eq('id', imageId)
+    .eq('product_id', productId);
+  if (setErr) return { ok: false, error: setErr.message };
+
+  revalidatePath('/products');
+  return { ok: true, data: null };
+}

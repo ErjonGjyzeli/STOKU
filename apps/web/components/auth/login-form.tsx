@@ -58,15 +58,9 @@ export function LoginForm() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        background: 'var(--bg)',
-      }}
-    >
+    <div className="login-shell" style={{ minHeight: '100vh', background: 'var(--bg)' }}>
       <aside
+        className="login-aside"
         style={{
           background: 'var(--sbar)',
           color: 'var(--sbar-ink)',
@@ -140,6 +134,7 @@ export function LoginForm() {
       </aside>
 
       <section
+        className="login-form-section"
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -147,7 +142,7 @@ export function LoginForm() {
           padding: 32,
         }}
       >
-        <div style={{ width: 360 }}>
+        <div style={{ width: '100%', maxWidth: 360 }}>
           <h2 style={{ fontSize: 22, fontWeight: 600, margin: 0, letterSpacing: '-0.01em' }}>
             Bentornato.
           </h2>

@@ -93,14 +93,7 @@ export default async function TransferDetailPage({
           </Link>
         }
       />
-      <div
-        style={{
-          padding: 24,
-          display: 'grid',
-          gridTemplateColumns: 'minmax(280px, 320px) 1fr',
-          gap: 16,
-        }}
-      >
+      <div className="grid-side" style={{ padding: 24 }}>
         <div className="col" style={{ gap: 16 }}>
           <Panel title="Dettagli">
             <dl className="col" style={{ gap: 8, margin: 0, fontSize: 13 }}>

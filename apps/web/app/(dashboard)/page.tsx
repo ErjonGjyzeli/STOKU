@@ -164,13 +164,7 @@ export default async function HomePage() {
       />
 
       <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-            gap: 12,
-          }}
-        >
+        <div className="grid-kpi-4">
           <Stat label="Ordini oggi" value={ordersToday.toLocaleString('it-IT')} />
           <Stat label="Fatturato MTD" value={currency(mtdTotal, 'EUR')} />
           <Stat
@@ -182,13 +176,7 @@ export default async function HomePage() {
           <Stat label="Prodotti attivi" value={productsActive.toLocaleString('it-IT')} />
         </div>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '2fr 1fr',
-            gap: 16,
-          }}
-        >
+        <div className="grid-main-aside">
           <Panel
             title={`Ordini recenti (${recentOrders.length})`}
             padded={false}

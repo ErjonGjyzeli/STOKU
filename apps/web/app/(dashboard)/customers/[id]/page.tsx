@@ -112,14 +112,7 @@ export default async function CustomerDetailPage({
           </Link>
         }
       />
-      <div
-        style={{
-          padding: 24,
-          display: 'grid',
-          gap: 16,
-          gridTemplateColumns: 'minmax(280px, 360px) 1fr',
-        }}
-      >
+      <div className="grid-side" style={{ padding: 24 }}>
         <div className="col" style={{ gap: 16 }}>
           <Panel title="Anagrafica">
             <dl className="col" style={{ gap: 8, margin: 0 }}>
@@ -147,13 +140,7 @@ export default async function CustomerDetailPage({
         </div>
 
         <div className="col" style={{ gap: 16 }}>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: 12,
-            }}
-          >
+          <div className="grid-triple">
             <Stat label="Ordini totali" value={countOrders.toString()} />
             <Stat
               label="Totale speso"

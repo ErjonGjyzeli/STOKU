@@ -494,16 +494,75 @@
     display: grid;
     grid-template-columns: var(--sb-w) 1fr;
     height: 100vh;
-    min-height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+  }
+  .stoku-app[data-sidebar='collapsed'] {
+    grid-template-columns: 56px 1fr;
   }
   .stoku-main {
     display: grid;
     grid-template-rows: var(--top-h) 1fr;
     min-width: 0;
     background: var(--bg);
+    height: 100vh;
   }
   .stoku-content {
     overflow: auto;
     min-height: 0;
+  }
+  .stoku-sidebar-backdrop {
+    display: none;
+  }
+
+  /* Responsive: overflow orizzontale sulle tabelle + content padding mobile */
+  .tbl {
+    width: 100%;
+  }
+  .stoku-content > * {
+    max-width: 100%;
+  }
+  @media (max-width: 640px) {
+    .topbar-bell,
+    .topbar-divider {
+      display: none;
+    }
+    .topbar-new-order-link span:not([class]) {
+      display: none;
+    }
+    .stoku-content {
+      padding: 0;
+    }
+  }
+
+  /* Mobile: sidebar diventa drawer fuori schermo, si apre con toggle */
+  @media (max-width: 768px) {
+    .stoku-app {
+      grid-template-columns: 1fr;
+    }
+    .stoku-app[data-sidebar='collapsed'] {
+      grid-template-columns: 1fr;
+    }
+    .stoku-app > aside {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: var(--sb-w);
+      max-width: 80vw;
+      z-index: 40;
+      transform: translateX(-100%);
+      transition: transform 180ms ease-out;
+    }
+    .stoku-app[data-sidebar='open'] > aside {
+      transform: translateX(0);
+    }
+    .stoku-app[data-sidebar='open'] .stoku-sidebar-backdrop {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 35;
+    }
   }
 }

@@ -8,6 +8,7 @@ import { StokuBadge } from '@/components/ui/stoku-badge';
 import { StokuButton } from '@/components/ui/stoku-button';
 import { requireSession } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
+import { OrderCreateButton } from './order-create-button';
 import { STATUS_LABEL } from './status';
 
 export const metadata = { title: 'Ordini — STOKU' };
@@ -70,7 +71,7 @@ export default async function OrdersPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  await requireSession();
+  const session = await requireSession();
   const params = await searchParams;
   const q = (params.q ?? '').trim();
   const status = params.status ?? '';
@@ -115,12 +116,14 @@ export default async function OrdersPage({
   const completedToday = todayRes.count ?? 0;
   const mtdTotal = (mtdRes.data ?? []).reduce((sum, o) => sum + Number(o.total ?? 0), 0);
 
-  // Filtri stores per select (visibili all'utente via RLS).
-  const { data: stores } = await supabase
-    .from('stores')
-    .select('id, code, name')
-    .eq('is_active', true)
-    .order('code');
+  // Filtri stores per select (visibili all'utente via RLS) + customers
+  // per il form di creazione ordine nella modal.
+  const [storesRes, customersRes] = await Promise.all([
+    supabase.from('stores').select('id, code, name').eq('is_active', true).order('code'),
+    supabase.from('customers').select('id, code, name').order('name').limit(500),
+  ]);
+  const stores = storesRes.data;
+  const customers = customersRes.data ?? [];
 
   // Query principale
   let query = supabase
@@ -172,11 +175,11 @@ export default async function OrdersPage({
             : 'Nessun ordine ancora — crea la prima bozza'
         }
         right={
-          <Link href="/orders/new">
-            <StokuButton icon="plus" variant="primary">
-              Nuovo ordine
-            </StokuButton>
-          </Link>
+          <OrderCreateButton
+            customers={customers}
+            stores={stores ?? []}
+            defaultStoreId={session.activeStoreId}
+          />
         }
       />
 
@@ -321,10 +324,9 @@ export default async function OrdersPage({
               }
               action={
                 activeFilters > 0 ? undefined : (
-                  <Link href="/orders/new">
-                    <StokuButton icon="plus" variant="primary">
-                      Nuovo ordine
-                    </StokuButton>
+                  <Link href="/orders?new=1" className="btn primary">
+                    <Icon name="plus" size={12} />
+                    Nuovo ordine
                   </Link>
                 )
               }

@@ -31,21 +31,21 @@ export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
     );
   }
 
-  const effectiveId = activeStoreId ?? stores[0].id;
-  const active = stores.find((s) => s.id === effectiveId) ?? stores[0];
+  const active = activeStoreId ? (stores.find((s) => s.id === activeStoreId) ?? null) : null;
 
-  function select(id: number) {
+  function select(id: number | null) {
     if (id === activeStoreId) {
       setOpen(false);
       return;
     }
+    const prev = activeStoreId;
     setActiveStoreId(id);
     setOpen(false);
     startTransition(async () => {
       const res = await setActiveStore(id);
       if (!res.ok) {
         toast.error('Errore cambio punto vendita', { description: res.error });
-        setActiveStoreId(activeStoreId);
+        setActiveStoreId(prev);
         return;
       }
       router.refresh();
@@ -62,10 +62,16 @@ export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
         onClick={() => setOpen((v) => !v)}
       >
         <Icon name="store" size={13} />
-        <span style={{ fontWeight: 500 }}>{active.code}</span>
-        <span className="dim" style={{ fontSize: 11 }}>
-          · {active.name}
-        </span>
+        {active ? (
+          <>
+            <span style={{ fontWeight: 500 }}>{active.code}</span>
+            <span className="dim" style={{ fontSize: 11 }}>
+              · {active.name}
+            </span>
+          </>
+        ) : (
+          <span style={{ fontWeight: 500 }}>Tutti i magazzini</span>
+        )}
         <Icon name="chevronDown" size={11} />
       </button>
 
@@ -84,14 +90,33 @@ export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
               padding: '6px 10px 4px',
             }}
           >
-            Cambia punto vendita
+            Cambia scope
           </div>
+
+          <button
+            type="button"
+            className="pop-item"
+            style={{ background: activeStoreId == null ? 'var(--stoku-accent-bg)' : undefined }}
+            onClick={() => select(null)}
+          >
+            <Icon name="grid" size={13} />
+            <div className="col stretch" style={{ gap: 0 }}>
+              <div style={{ fontSize: 12, fontWeight: 500 }}>Tutti i magazzini</div>
+              <div className="meta" style={{ fontSize: 10 }}>
+                Nessuno scope — liste non filtrate
+              </div>
+            </div>
+            {activeStoreId == null && <Icon name="check" size={13} />}
+          </button>
+
+          <div style={{ height: 6 }} />
+
           {stores.map((s) => (
             <button
               key={s.id}
               type="button"
               className="pop-item"
-              style={{ background: s.id === effectiveId ? 'var(--stoku-accent-bg)' : undefined }}
+              style={{ background: s.id === activeStoreId ? 'var(--stoku-accent-bg)' : undefined }}
               onClick={() => select(s.id)}
             >
               <Icon name="store" size={13} />
@@ -100,7 +125,7 @@ export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
                   {s.code} · {s.name}
                 </div>
               </div>
-              {s.id === effectiveId && <Icon name="check" size={13} />}
+              {s.id === activeStoreId && <Icon name="check" size={13} />}
             </button>
           ))}
         </div>

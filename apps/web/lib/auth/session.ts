@@ -24,20 +24,35 @@ export type Session = {
   profile: StaffProfile;
   stores: StoreLite[];
   activeStoreId: number | null;
+  /** true quando l'utente ha esplicitamente selezionato lo scope "Tutti i magazzini". */
+  isExplicitAllScope: boolean;
 };
 
 export const ACTIVE_STORE_COOKIE = 'stoku.active_store';
+export const ACTIVE_STORE_ALL = 'all';
 
-function parseActiveStoreCookie(raw: string | undefined, stores: StoreLite[]) {
-  if (!raw) return null;
-  const id = Number(raw);
-  if (!Number.isFinite(id)) return null;
-  return stores.some((s) => s.id === id) ? id : null;
-}
+type ActiveStoreResolution = {
+  activeStoreId: number | null;
+  isExplicitAllScope: boolean;
+};
 
-function pickDefaultStoreId(stores: StoreLite[]) {
-  if (stores.length === 0) return null;
-  return (stores.find((s) => s.is_default) ?? stores[0]).id;
+function resolveActiveStore(
+  raw: string | undefined,
+  stores: StoreLite[],
+): ActiveStoreResolution {
+  // "all" esplicito = l'utente ha scelto scope globale.
+  if (raw === ACTIVE_STORE_ALL) return { activeStoreId: null, isExplicitAllScope: true };
+
+  const id = raw ? Number(raw) : NaN;
+  if (Number.isFinite(id) && stores.some((s) => s.id === id)) {
+    return { activeStoreId: id, isExplicitAllScope: false };
+  }
+
+  // Nessun cookie o valore sconosciuto: default al primo store flaggato
+  // oppure al primo in lista.
+  if (stores.length === 0) return { activeStoreId: null, isExplicitAllScope: false };
+  const fallback = (stores.find((s) => s.is_default) ?? stores[0]).id;
+  return { activeStoreId: fallback, isExplicitAllScope: false };
 }
 
 export const getSession = cache(async (): Promise<Session | null> => {
@@ -86,7 +101,7 @@ export const getSession = cache(async (): Promise<Session | null> => {
 
   const cookieStore = await cookies();
   const rawCookie = cookieStore.get(ACTIVE_STORE_COOKIE)?.value;
-  const activeStoreId = parseActiveStoreCookie(rawCookie, stores) ?? pickDefaultStoreId(stores);
+  const { activeStoreId, isExplicitAllScope } = resolveActiveStore(rawCookie, stores);
 
   return {
     userId: user.id,
@@ -94,6 +109,7 @@ export const getSession = cache(async (): Promise<Session | null> => {
     profile: profile as StaffProfile,
     stores,
     activeStoreId,
+    isExplicitAllScope,
   };
 });
 

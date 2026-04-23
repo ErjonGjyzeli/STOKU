@@ -4,30 +4,21 @@ import { Empty } from '@/components/ui/empty';
 import { Icon } from '@/components/ui/icon';
 import { PageHeader } from '@/components/ui/page-header';
 import { Panel } from '@/components/ui/panel';
-import { StokuBadge } from '@/components/ui/stoku-badge';
 import { StokuButton } from '@/components/ui/stoku-button';
 import { requireSession } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { ProductsCreateButton } from './products-create-button';
+import { ProductsRows, type ProductRow } from './products-rows';
 
 export const metadata = { title: 'Inventario — STOKU' };
 
 const PAGE_SIZE = 25;
-
-type BadgeVariant = 'default' | 'ok' | 'warn' | 'danger' | 'info' | 'draft' | 'accent';
 
 const CONDITION_LABEL: Record<string, string> = {
   new: 'Nuovo',
   used: 'Usato',
   refurbished: 'Rigenerato',
   damaged: 'Danneggiato',
-};
-
-const CONDITION_VARIANT: Record<string, BadgeVariant> = {
-  new: 'ok',
-  used: 'default',
-  refurbished: 'info',
-  damaged: 'warn',
 };
 
 type SearchParams = {
@@ -37,15 +28,6 @@ type SearchParams = {
   status?: string;
   page?: string;
 };
-
-function currency(value: number | null, code: string | null) {
-  if (value == null) return null;
-  return new Intl.NumberFormat('it-IT', {
-    style: 'currency',
-    currency: code ?? 'EUR',
-    maximumFractionDigits: 2,
-  }).format(Number(value));
-}
 
 function buildQuery(base: SearchParams, patch: Partial<SearchParams>) {
   const params = new URLSearchParams();
@@ -75,7 +57,7 @@ export default async function ProductsPage({
   let query = supabase
     .from('products')
     .select(
-      'id, sku, legacy_nr, name, condition, price_sell, currency, is_active, category:product_categories(id, name)',
+      'id, sku, legacy_nr, name, condition, oem_code, description, price_sell, price_cost, currency, is_active, category:product_categories(id, name)',
       { count: 'exact' },
     )
     .order('created_at', { ascending: false });
@@ -257,64 +239,33 @@ export default async function ProductsPage({
                   <th style={{ width: 160 }}>Categoria</th>
                   <th style={{ width: 110 }}>Condizione</th>
                   <th style={{ width: 110, textAlign: 'right' }}>Prezzo</th>
-                  <th style={{ width: 110, textAlign: 'right' }}>Disp.</th>
+                  <th style={{ width: 90, textAlign: 'right' }}>Disp.</th>
                   <th style={{ width: 100 }}>Stato</th>
+                  <th style={{ width: 80 }} />
                 </tr>
               </thead>
-              <tbody>
-                {products.map((p) => {
-                  const stock = stockMap.get(p.id);
-                  const price = currency(p.price_sell, p.currency);
-                  return (
-                    <tr key={p.id}>
-                      <td className="mono" style={{ fontWeight: 500, fontSize: 11 }}>
-                        {p.sku}
-                      </td>
-                      <td className="truncate-1" style={{ maxWidth: 360 }}>
-                        {p.name}
-                        {p.legacy_nr && (
-                          <span className="faint mono" style={{ marginLeft: 8, fontSize: 11 }}>
-                            #{p.legacy_nr}
-                          </span>
-                        )}
-                      </td>
-                      <td>
-                        {p.category?.name ? (
-                          <StokuBadge>{p.category.name}</StokuBadge>
-                        ) : (
-                          <span className="faint">—</span>
-                        )}
-                      </td>
-                      <td>
-                        <StokuBadge variant={CONDITION_VARIANT[p.condition] ?? 'default'}>
-                          {CONDITION_LABEL[p.condition] ?? p.condition}
-                        </StokuBadge>
-                      </td>
-                      <td className="mono" style={{ textAlign: 'right' }}>
-                        {price ?? <span className="faint">—</span>}
-                      </td>
-                      <td className="mono" style={{ textAlign: 'right' }}>
-                        {stock ? (
-                          <span style={{ color: stock.available > 0 ? undefined : 'var(--ink-3)' }}>
-                            {stock.available}
-                          </span>
-                        ) : (
-                          <span className="faint">0</span>
-                        )}
-                      </td>
-                      <td>
-                        {p.is_active ? (
-                          <StokuBadge variant="ok" dot>
-                            Attivo
-                          </StokuBadge>
-                        ) : (
-                          <StokuBadge variant="draft">Disattivato</StokuBadge>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
+              <ProductsRows
+                products={products.map(
+                  (p): ProductRow => ({
+                    id: p.id,
+                    sku: p.sku,
+                    legacy_nr: p.legacy_nr,
+                    name: p.name,
+                    condition: p.condition,
+                    oem_code: p.oem_code,
+                    description: p.description,
+                    price_sell: p.price_sell,
+                    price_cost: p.price_cost,
+                    currency: p.currency,
+                    is_active: p.is_active,
+                    category: p.category
+                      ? { id: p.category.id, name: p.category.name }
+                      : null,
+                    stock: stockMap.get(p.id) ?? null,
+                  }),
+                )}
+                categories={categories}
+              />
             </table>
           )}
         </Panel>

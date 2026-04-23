@@ -8,6 +8,7 @@ import { StokuBadge } from '@/components/ui/stoku-badge';
 import { StokuButton } from '@/components/ui/stoku-button';
 import { requireSession } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
+import { ProductsCreateButton } from './products-create-button';
 
 export const metadata = { title: 'Inventario — STOKU' };
 
@@ -143,11 +144,7 @@ export default async function ProductsPage({
             ? `${total.toLocaleString('it-IT')} prodotti · ${rangeFrom}–${rangeTo}`
             : 'Nessun prodotto — crea il primo articolo per iniziare'
         }
-        right={
-          <StokuButton icon="plus" variant="primary" disabled title="Disponibile nel prossimo step">
-            Nuovo prodotto
-          </StokuButton>
-        }
+        right={<ProductsCreateButton categories={categories} />}
       />
 
       <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>

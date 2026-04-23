@@ -841,6 +841,7 @@ export type Database = {
       };
       has_store_access: { Args: { p_store_id: number }; Returns: boolean };
       is_admin: { Args: never; Returns: boolean };
+      next_product_sku: { Args: never; Returns: string };
       show_limit: { Args: never; Returns: number };
       show_trgm: { Args: { '': string }; Returns: string[] };
       unaccent: { Args: { '': string }; Returns: string };

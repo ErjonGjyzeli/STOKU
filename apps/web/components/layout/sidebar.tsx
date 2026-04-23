@@ -26,9 +26,9 @@ const MAIN_NAV: NavItem[] = [
 ];
 
 const SETTINGS_NAV: NavItem[] = [
-  { href: '/settings/company', label: 'Azienda', icon: 'building', roles: ['admin'] },
   { href: '/settings/stores', label: 'Punti vendita', icon: 'store', roles: ['admin'] },
-  { href: '/settings/users', label: 'Utenti staff', icon: 'users', roles: ['admin'] },
+  { href: '/settings/users', label: 'Utenti', icon: 'users', roles: ['admin'] },
+  { href: '/settings/company', label: 'Azienda', icon: 'building', roles: ['admin'] },
 ];
 
 const ROLE_LABEL: Record<Role, string> = {

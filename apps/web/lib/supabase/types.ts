@@ -910,6 +910,7 @@ export type Database = {
       next_customer_code: { Args: never; Returns: string }
       next_order_number: { Args: never; Returns: string }
       next_product_sku: { Args: never; Returns: string }
+      next_transfer_number: { Args: never; Returns: string }
       release_order_item: { Args: { p_item_id: string }; Returns: undefined }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }

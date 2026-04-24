@@ -399,7 +399,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
             label={`IVA ${order.tax_rate ?? 0}%`}
             value={currency(order.tax_amount, order.currency)}
           />
-          {order.discount_amount && order.discount_amount > 0 && (
+          {order.discount_amount != null && order.discount_amount > 0 && (
             <Row
               label="Sconto"
               value={`- ${currency(order.discount_amount, order.currency)}`}

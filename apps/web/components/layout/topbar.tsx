@@ -68,7 +68,7 @@ export function Topbar({ stores }: Props) {
         style={{ height: 20, alignSelf: 'center' }}
       />
 
-      <form onSubmit={submitSearch} className="topbar-search" style={{ flex: 1, maxWidth: 420 }}>
+      <form onSubmit={submitSearch} className="topbar-search" style={{ width: 220 }}>
         <label
           className="row"
           style={{

@@ -146,6 +146,7 @@ export default async function HomePage() {
   );
   const lowStockCount = lowStock.length;
   const lowStockTop = lowStock.slice(0, 5);
+  const totalUnits = (stockRows ?? []).reduce((sum, r) => sum + Number(r.quantity ?? 0), 0);
 
   return (
     <div>
@@ -173,7 +174,12 @@ export default async function HomePage() {
             warn={lowStockCount > 0}
             link="/stock?low=1"
           />
-          <Stat label="Prodotti attivi" value={productsActive.toLocaleString('it-IT')} />
+          <Stat
+            label="Prodotti attivi"
+            value={productsActive.toLocaleString('it-IT')}
+            hint={`${totalUnits.toLocaleString('it-IT')} pezzi totali`}
+            link="/products"
+          />
         </div>
 
         <div className="grid-main-aside">
@@ -353,11 +359,13 @@ const STATUS_LABEL_TRANSFER: Record<string, string> = {
 function Stat({
   label,
   value,
+  hint,
   warn,
   link,
 }: {
   label: string;
   value: string;
+  hint?: string;
   warn?: boolean;
   link?: string;
 }) {
@@ -394,6 +402,14 @@ function Stat({
       >
         {value}
       </div>
+      {hint && (
+        <div
+          className="mono"
+          style={{ marginTop: 2, fontSize: 11, color: 'var(--ink-3)' }}
+        >
+          {hint}
+        </div>
+      )}
     </div>
   );
   return link ? (

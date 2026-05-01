@@ -198,6 +198,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
             }
           />
         ) : (
+          <div style={{ overflowX: 'auto' }}>
           <table className="tbl">
             <thead>
               <tr>
@@ -244,6 +245,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </Panel>
 
@@ -317,8 +319,11 @@ export function OrderDetailClient({ order, items, products }: Props) {
               </div>
             )}
 
-            <div className="row" style={{ gap: 10, alignItems: 'flex-end' }}>
-              <div className="col" style={{ gap: 4, width: 100 }}>
+            <div
+              className="row"
+              style={{ gap: 10, alignItems: 'flex-end', flexWrap: 'wrap' }}
+            >
+              <div className="col" style={{ gap: 4, flex: '1 1 100px', minWidth: 90 }}>
                 <span className="meta" style={{ fontSize: 11 }}>
                   QTA
                 </span>
@@ -329,7 +334,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
                   onChange={(e) => setQty(e.target.value)}
                 />
               </div>
-              <div className="col" style={{ gap: 4, width: 160 }}>
+              <div className="col" style={{ gap: 4, flex: '1 1 160px', minWidth: 140 }}>
                 <span className="meta" style={{ fontSize: 11 }}>
                   PREZZO UNIT.
                 </span>
@@ -344,6 +349,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
                 type="button"
                 onClick={handleAdd}
                 disabled={submitting || !selectedProductId}
+                style={{ flex: '1 1 140px' }}
               >
                 {submitting ? 'Aggiungo…' : 'Aggiungi riga'}
               </Button>

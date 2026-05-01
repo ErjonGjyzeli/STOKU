@@ -454,7 +454,6 @@ export type Database = {
           name: string
           notes: string | null
           oem_code: string | null
-          oem_codes: string[]
           price_cost: number | null
           price_sell: number | null
           search_vector: unknown
@@ -478,7 +477,6 @@ export type Database = {
           name: string
           notes?: string | null
           oem_code?: string | null
-          oem_codes?: string[]
           price_cost?: number | null
           price_sell?: number | null
           search_vector?: unknown
@@ -502,7 +500,6 @@ export type Database = {
           name?: string
           notes?: string | null
           oem_code?: string | null
-          oem_codes?: string[]
           price_cost?: number | null
           price_sell?: number | null
           search_vector?: unknown

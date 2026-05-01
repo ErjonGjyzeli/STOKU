@@ -25,18 +25,6 @@ const yearSchema = z
   })
   .refine((v) => v === null || (v >= 1900 && v <= 2100), { message: 'Anno fuori range' });
 
-// Accetta sia textarea (uno per riga) che array di stringhe.
-// Normalizza a string[] dedup, trim, vuoti rimossi.
-const oemCodesSchema = z
-  .union([z.string(), z.array(z.string()), z.null(), z.undefined()])
-  .transform((v) => {
-    const list = Array.isArray(v) ? v : v ? String(v).split(/\r?\n|,/) : [];
-    const out = list
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0 && s.length <= 80);
-    return Array.from(new Set(out));
-  });
-
 const productSchema = z.object({
   sku: z
     .string()
@@ -61,7 +49,7 @@ const productSchema = z.object({
   vehicle_model: z.string().trim().max(120).optional().or(z.literal('')),
   vehicle_year_from: yearSchema,
   vehicle_year_to: yearSchema,
-  oem_codes: oemCodesSchema,
+  oem_code: z.string().trim().max(80).optional().or(z.literal('')),
 });
 
 export type ProductInput = z.input<typeof productSchema>;
@@ -82,7 +70,7 @@ function normalize(parsed: z.infer<typeof productSchema>) {
     vehicle_model: parsed.vehicle_model?.trim() || null,
     vehicle_year_from: parsed.vehicle_year_from,
     vehicle_year_to: parsed.vehicle_year_to,
-    oem_codes: parsed.oem_codes,
+    oem_code: parsed.oem_code?.trim() || null,
   };
 }
 
@@ -103,12 +91,9 @@ export async function createProduct(input: ProductInput): Promise<ActionResult<{
   const norm = normalize(parsed.data);
   const sku = norm.sku ?? (await generateSku());
   const supabase = await createClient();
-  // Cast richiesto finché types.ts non viene rigenerato con i campi
-  // vehicle_make / vehicle_model / vehicle_year_from / vehicle_year_to / oem_codes
-  // (vedi migrazione parallela §8 spec v1.2).
   const { data, error } = await supabase
     .from('products')
-    .insert({ ...norm, sku } as never)
+    .insert({ ...norm, sku })
     .select('id')
     .single();
   if (error) return { ok: false, error: error.message };
@@ -124,15 +109,13 @@ export async function updateProduct(id: string, input: ProductInput): Promise<Ac
   }
   const norm = normalize(parsed.data);
   const supabase = await createClient();
-  // Cast richiesto finché types.ts non viene rigenerato con i campi liberi
-  // su products (vedi migrazione parallela §8 spec v1.2).
   const { error } = await supabase
     .from('products')
     .update({
       ...norm,
       sku: norm.sku ?? undefined,
       updated_at: new Date().toISOString(),
-    } as never)
+    })
     .eq('id', id);
   if (error) return { ok: false, error: error.message };
   revalidatePath('/products');

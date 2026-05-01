@@ -57,7 +57,7 @@ export default async function ProductsPage({
   let query = supabase
     .from('products')
     .select(
-      'id, sku, legacy_nr, name, condition, oem_code, description, price_sell, price_cost, currency, is_active, category:product_categories(id, name)',
+      'id, sku, legacy_nr, name, condition, oem_code, vehicle_make, vehicle_model, vehicle_year_from, vehicle_year_to, description, price_sell, price_cost, currency, is_active, category:product_categories(id, name)',
       { count: 'exact' },
     )
     .order('created_at', { ascending: false });
@@ -280,6 +280,10 @@ export default async function ProductsPage({
                     name: p.name,
                     condition: p.condition,
                     oem_code: p.oem_code,
+                    vehicle_make: p.vehicle_make,
+                    vehicle_model: p.vehicle_model,
+                    vehicle_year_from: p.vehicle_year_from,
+                    vehicle_year_to: p.vehicle_year_to,
                     description: p.description,
                     price_sell: p.price_sell,
                     price_cost: p.price_cost,

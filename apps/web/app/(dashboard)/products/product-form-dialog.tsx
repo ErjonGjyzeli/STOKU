@@ -39,7 +39,7 @@ const schema = z.object({
   vehicle_model: z.string().optional().or(z.literal('')),
   vehicle_year_from: z.string().optional().or(z.literal('')),
   vehicle_year_to: z.string().optional().or(z.literal('')),
-  oem_codes: z.string().optional().or(z.literal('')),
+  oem_code: z.string().optional().or(z.literal('')),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -69,7 +69,7 @@ const EMPTY: FormValues = {
   vehicle_model: '',
   vehicle_year_from: '',
   vehicle_year_to: '',
-  oem_codes: '',
+  oem_code: '',
 };
 
 export function ProductFormDialog({
@@ -112,7 +112,7 @@ export function ProductFormDialog({
       vehicle_model: values.vehicle_model ?? '',
       vehicle_year_from: values.vehicle_year_from ?? '',
       vehicle_year_to: values.vehicle_year_to ?? '',
-      oem_codes: values.oem_codes ?? '',
+      oem_code: values.oem_code ?? '',
     };
     const ok = await onSubmit(payload);
     setSubmitting(false);
@@ -230,14 +230,8 @@ export function ProductFormDialog({
             </Field>
           </div>
 
-          <Field label="Codici OEM (uno per riga)" error={errors.oem_codes?.message}>
-            <textarea
-              {...register('oem_codes')}
-              className="stoku-input"
-              style={{ minHeight: 72, padding: 8, width: '100%', resize: 'vertical' }}
-              rows={3}
-              placeholder={'0265 800 1234\n8E0 614 517'}
-            />
+          <Field label="Codice OEM" error={errors.oem_code?.message}>
+            <Input {...register('oem_code')} placeholder="0265 800 1234" />
           </Field>
 
           <label className="row" style={{ gap: 8, fontSize: 13, color: 'var(--ink-2)' }}>

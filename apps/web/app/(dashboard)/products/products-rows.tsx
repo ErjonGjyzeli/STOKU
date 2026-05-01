@@ -36,6 +36,10 @@ export type ProductRow = {
   currency: string | null;
   is_active: boolean | null;
   oem_code: string | null;
+  vehicle_make: string | null;
+  vehicle_model: string | null;
+  vehicle_year_from: number | null;
+  vehicle_year_to: number | null;
   description: string | null;
   category: { id: number; name: string } | null;
   stock: { available: number; total: number } | null;
@@ -64,11 +68,11 @@ function toFormValues(p: ProductRow): ProductFormValues {
     price_cost: p.price_cost != null ? String(p.price_cost) : '',
     description: p.description ?? '',
     is_active: !!p.is_active,
-    vehicle_make: '',
-    vehicle_model: '',
-    vehicle_year_from: '',
-    vehicle_year_to: '',
-    oem_codes: '',
+    vehicle_make: p.vehicle_make ?? '',
+    vehicle_model: p.vehicle_model ?? '',
+    vehicle_year_from: p.vehicle_year_from != null ? String(p.vehicle_year_from) : '',
+    vehicle_year_to: p.vehicle_year_to != null ? String(p.vehicle_year_to) : '',
+    oem_code: p.oem_code ?? '',
   };
 }
 

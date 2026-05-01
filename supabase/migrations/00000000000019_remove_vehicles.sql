@@ -40,11 +40,12 @@ drop table if exists vehicle_makes cascade;
 ------------------------------------------------------------
 -- 3) Colonne libere su products (idempotente)
 ------------------------------------------------------------
+-- Nota: `oem_code text` esiste già da mig 001 ed è incluso nell'FTS
+-- (mig 011). Non lo duplichiamo: spec §8 lo descrive come singolare.
 alter table products add column if not exists vehicle_make      text;
 alter table products add column if not exists vehicle_model     text;
 alter table products add column if not exists vehicle_year_from int;
 alter table products add column if not exists vehicle_year_to   int;
-alter table products add column if not exists oem_codes         text[] not null default '{}';
 
 ------------------------------------------------------------
 -- 4) Index trigram per ricerca su marca/modello

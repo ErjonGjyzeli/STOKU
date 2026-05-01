@@ -934,6 +934,12 @@ export type Database = {
         Args: { p_product_id: string; p_store_id: number }
         Returns: number
       }
+      get_dashboard_stock:
+        | { Args: { p_store_id?: number }; Returns: Json }
+        | {
+            Args: { p_store_id?: number; p_tire_ids?: string[] }
+            Returns: Json
+          }
       has_store_access: { Args: { p_store_id: number }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
       next_customer_code: { Args: never; Returns: string }

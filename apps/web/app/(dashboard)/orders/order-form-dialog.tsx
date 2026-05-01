@@ -1,8 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { ChevronDown } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -45,6 +46,9 @@ export function OrderFormDialog({
 }: Props) {
   const router = useRouter();
   const [customerId, setCustomerId] = useState<string>(COUNTER_SENTINEL_NONE);
+  const [customerSearch, setCustomerSearch] = useState('');
+  const [customerOpen, setCustomerOpen] = useState(false);
+  const customerRef = useRef<HTMLDivElement>(null);
   const [storeId, setStoreId] = useState<string>(
     defaultStoreId != null ? String(defaultStoreId) : '',
   );
@@ -55,10 +59,42 @@ export function OrderFormDialog({
   useEffect(() => {
     if (!open) return;
     setCustomerId(COUNTER_SENTINEL_NONE);
+    setCustomerSearch('');
+    setCustomerOpen(false);
     setStoreId(defaultStoreId != null ? String(defaultStoreId) : '');
     setNotes('');
   }, [open, defaultStoreId]);
   /* eslint-enable react-hooks/set-state-in-effect */
+
+  useEffect(() => {
+    if (!customerOpen) return;
+    function handleClick(e: MouseEvent) {
+      if (!customerRef.current?.contains(e.target as Node)) {
+        setCustomerOpen(false);
+        setCustomerSearch('');
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [customerOpen]);
+
+  const selectedCustomer = customers.find((c) => c.id === customerId);
+  const customerLabel =
+    customerId === COUNTER_SENTINEL_NONE
+      ? 'Vendita banco'
+      : selectedCustomer
+        ? selectedCustomer.code
+          ? `${selectedCustomer.code} · ${selectedCustomer.name}`
+          : selectedCustomer.name
+        : 'Vendita banco';
+
+  const filteredCustomers = customerSearch
+    ? customers.filter(
+        (c) =>
+          c.name.toLowerCase().includes(customerSearch.toLowerCase()) ||
+          (c.code?.toLowerCase().includes(customerSearch.toLowerCase()) ?? false),
+      )
+    : customers;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -95,19 +131,114 @@ export function OrderFormDialog({
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <Label>Cliente (opzionale — vendita banco se vuoto)</Label>
-            <Select value={customerId} onValueChange={(v) => setCustomerId(v ?? COUNTER_SENTINEL_NONE)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={COUNTER_SENTINEL_NONE}>— Vendita banco</SelectItem>
-                {customers.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.code ? `${c.code} · ${c.name}` : c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div ref={customerRef} style={{ position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => setCustomerOpen((v) => !v)}
+                className="stoku-input"
+                style={{
+                  width: '100%',
+                  textAlign: 'left',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  height: 32,
+                  padding: '0 10px',
+                  gap: 8,
+                }}
+              >
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+                  {customerLabel}
+                </span>
+                <ChevronDown size={14} style={{ flexShrink: 0 }} />
+              </button>
+              {customerOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 4px)',
+                    left: 0,
+                    right: 0,
+                    zIndex: 50,
+                    background: 'var(--panel)',
+                    border: '1px solid var(--border-strong)',
+                    borderRadius: 'var(--r-md)',
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
+                  }}
+                >
+                  <div style={{ padding: '6px 10px', borderBottom: '1px solid var(--stoku-border)' }}>
+                    <input
+                      autoFocus
+                      type="text"
+                      value={customerSearch}
+                      onChange={(e) => setCustomerSearch(e.target.value)}
+                      placeholder="Cerca cliente…"
+                      style={{
+                        width: '100%',
+                        background: 'transparent',
+                        border: 'none',
+                        outline: 'none',
+                        fontSize: 13,
+                        color: 'inherit',
+                      }}
+                    />
+                  </div>
+                  <div style={{ maxHeight: 200, overflowY: 'auto' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCustomerId(COUNTER_SENTINEL_NONE);
+                        setCustomerOpen(false);
+                        setCustomerSearch('');
+                      }}
+                      style={{
+                        width: '100%',
+                        textAlign: 'left',
+                        padding: '7px 10px',
+                        fontSize: 13,
+                        background: customerId === COUNTER_SENTINEL_NONE ? 'var(--accent)' : 'transparent',
+                        cursor: 'pointer',
+                        display: 'block',
+                        border: 'none',
+                        color: 'inherit',
+                      }}
+                    >
+                      Vendita banco
+                    </button>
+                    {filteredCustomers.map((c) => (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => {
+                          setCustomerId(c.id);
+                          setCustomerOpen(false);
+                          setCustomerSearch('');
+                        }}
+                        style={{
+                          width: '100%',
+                          textAlign: 'left',
+                          padding: '7px 10px',
+                          fontSize: 13,
+                          background: customerId === c.id ? 'var(--accent)' : 'transparent',
+                          cursor: 'pointer',
+                          display: 'block',
+                          border: 'none',
+                          color: 'inherit',
+                        }}
+                      >
+                        {c.code ? `${c.code} · ${c.name}` : c.name}
+                      </button>
+                    ))}
+                    {filteredCustomers.length === 0 && (
+                      <div style={{ padding: '7px 10px', fontSize: 13, color: 'var(--muted-foreground)' }}>
+                        Nessun cliente trovato
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col gap-1">

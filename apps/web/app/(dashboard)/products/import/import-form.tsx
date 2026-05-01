@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { Icon } from '@/components/ui/icon';
 import { Panel } from '@/components/ui/panel';
 import { StokuButton } from '@/components/ui/stoku-button';
+import { formatInt } from '@/lib/format';
 import { importProducts, type ImportResult } from './actions';
 
 export function ImportForm() {
@@ -144,7 +145,7 @@ export function ImportForm() {
             {result.inserted > 0 && (
               <div className="row" style={{ gap: 8, marginTop: 4 }}>
                 <Link href="/products" className="btn primary sm">
-                  <Icon name="check" size={12} /> Vai all&apos;inventario
+                  <Icon name="check" size={12} /> Vai ai prodotti
                 </Link>
               </div>
             )}
@@ -182,7 +183,7 @@ function Stat({
         {label.toUpperCase()}
       </span>
       <span className="mono" style={{ fontSize: 20, fontWeight: 600, color }}>
-        {value.toLocaleString('it-IT')}
+        {formatInt(value)}
       </span>
     </div>
   );

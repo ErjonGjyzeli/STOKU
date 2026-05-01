@@ -245,6 +245,61 @@ export async function GET(req: Request) {
       // QR per prodotto: SKU raw (stesso schema di /products/[id]/label).
       qrPayload: p.sku,
     }));
+  } else if (kind === 'tires') {
+    let q =
+      store_id !== null
+        ? supabase
+            .from('products')
+            .select(
+              'id, sku, name, vehicle_make, vehicle_model, tire_width, tire_aspect, tire_diameter, tire_tread_mm, tire_dot, category:product_categories!inner(slug), stock!inner(store_id)',
+            )
+            .eq('product_categories.kind', 'gomma')
+            .eq('stock.store_id', store_id)
+            .eq('is_active', true)
+            .order('sku')
+        : supabase
+            .from('products')
+            .select(
+              'id, sku, name, vehicle_make, vehicle_model, tire_width, tire_aspect, tire_diameter, tire_tread_mm, tire_dot, category:product_categories!inner(slug)',
+            )
+            .eq('product_categories.kind', 'gomma')
+            .eq('is_active', true)
+            .order('sku');
+    if (ids && ids.length > 0) q = q.in('id', ids);
+    if (only_unprinted) q = q.is('last_label_printed_at', null);
+    if (since_days !== null) q = q.gte('created_at', sinceIso(since_days));
+    const { data, error } = await q;
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    rows = (data ?? []).map((t) => {
+      const size =
+        t.tire_width && t.tire_aspect && t.tire_diameter
+          ? `${t.tire_width}/${t.tire_aspect} R${t.tire_diameter}`
+          : null;
+      const brand = [t.vehicle_make, t.vehicle_model].filter(Boolean).join(' ');
+      const cat = Array.isArray(t.category) ? t.category[0] : t.category;
+      const slug = cat?.slug ?? '';
+      const seasonLabel = slug.includes('winter')
+        ? 'Invernale'
+        : slug.includes('allseason')
+          ? '4 Stagioni'
+          : slug.includes('summer')
+            ? 'Estiva'
+            : null;
+      const metaParts = [
+        seasonLabel,
+        t.tire_tread_mm != null ? `${t.tire_tread_mm}mm` : null,
+        t.tire_dot ? `DOT ${t.tire_dot}` : null,
+      ].filter(Boolean);
+      return {
+        id: t.id,
+        code: size ?? t.sku,
+        name: brand || t.name,
+        meta: metaParts.length > 0 ? metaParts.join(' · ') : null,
+        qrPayload: t.sku,
+      };
+    });
   } else {
     let q = supabase
       .from('shelves')
@@ -282,7 +337,7 @@ export async function GET(req: Request) {
   // il PDF e un retry è innocuo.
   const printedIds = rows.map((r) => r.id);
   const now = new Date().toISOString();
-  if (kind === 'products') {
+  if (kind === 'products' || kind === 'tires') {
     await supabase
       .from('products')
       .update({ last_label_printed_at: now })

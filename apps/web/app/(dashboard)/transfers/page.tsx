@@ -7,6 +7,7 @@ import { Panel } from '@/components/ui/panel';
 import { StokuBadge } from '@/components/ui/stoku-badge';
 import { StokuButton } from '@/components/ui/stoku-button';
 import { requireSession } from '@/lib/auth/session';
+import { formatDateLong, formatInt } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 import { STATUS_LABEL } from './status';
 import { TransferCreateButton } from './transfer-create-button';
@@ -29,12 +30,7 @@ type SearchParams = {
 };
 
 function formatDate(iso: string | null) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleDateString('it-IT', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
+  return formatDateLong(iso);
 }
 
 export default async function TransfersPage({
@@ -85,7 +81,7 @@ export default async function TransfersPage({
         title="Trasferimenti"
         subtitle={
           rows.length > 0
-            ? `${rows.length.toLocaleString('it-IT')} trasferimenti · ultimi 200`
+            ? `${formatInt(rows.length)} trasferimenti · ultimi 200`
             : 'Nessun trasferimento — crea il primo'
         }
         right={

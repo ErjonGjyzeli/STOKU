@@ -6,6 +6,11 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Panel } from '@/components/ui/panel';
 import { StokuBadge } from '@/components/ui/stoku-badge';
 import { requireSession } from '@/lib/auth/session';
+import {
+  formatCurrency,
+  formatDate as fmtDate,
+  formatDateTime as fmtDateTime,
+} from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 import {
   fetchInventory,
@@ -57,32 +62,15 @@ function resolveTab(raw: string | undefined): ReportTab {
 }
 
 function currency(value: number | null, code: string | null) {
-  if (value == null) return '—';
-  return new Intl.NumberFormat('it-IT', {
-    style: 'currency',
-    currency: code ?? 'EUR',
-    maximumFractionDigits: 2,
-  }).format(Number(value));
+  return formatCurrency(value, code);
 }
 
 function formatDate(iso: string | null) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleDateString('it-IT', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
+  return fmtDate(iso);
 }
 
 function formatDateTime(iso: string | null) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleString('it-IT', {
-    day: '2-digit',
-    month: '2-digit',
-    year: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  return fmtDateTime(iso, { shortYear: true });
 }
 
 function buildQuery(base: SearchParams, patch: Partial<SearchParams>) {

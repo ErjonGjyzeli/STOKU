@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import type { CSSProperties } from 'react';
 import { Icon, type IconName } from '@/components/ui/icon';
 import { useSidebar } from '@/lib/context/sidebar-context';
+import { formatInt } from '@/lib/format';
 
 type Role = 'admin' | 'sales' | 'warehouse' | 'viewer';
 
@@ -25,12 +26,9 @@ export type NavCounts = {
 
 const MAIN_NAV: NavItem[] = [
   { href: '/', label: 'Dashboard', icon: 'dashboard' },
-  { href: '/products', label: 'Inventario', icon: 'box', countKey: 'products' },
-  { href: '/tires', label: 'Pneumatici', icon: 'disc' },
-  { href: '/stock', label: 'Magazzino', icon: 'building' },
-  { href: '/shelves', label: 'Scaffali', icon: 'shelves' },
   { href: '/scanner', label: 'Scanner', icon: 'scanner' },
-  { href: '/labels', label: 'Etichette', icon: 'tag' },
+  { href: '/products', label: 'Prodotti', icon: 'box', countKey: 'products' },
+  { href: '/tires', label: 'Pneumatici', icon: 'disc' },
   { href: '/orders', label: 'Ordini', icon: 'cart', countKey: 'orders' },
   { href: '/customers', label: 'Clienti', icon: 'users', countKey: 'customers' },
   {
@@ -45,6 +43,9 @@ const MAIN_NAV: NavItem[] = [
 
 const SETTINGS_NAV: NavItem[] = [
   { href: '/settings/stores', label: 'Punti vendita', icon: 'store', roles: ['admin'] },
+  { href: '/stock', label: 'Magazzino', icon: 'building', roles: ['admin', 'warehouse'] },
+  { href: '/shelves', label: 'Scaffali', icon: 'shelves', roles: ['admin', 'warehouse'] },
+  { href: '/labels', label: 'Etichette', icon: 'tag', roles: ['admin', 'warehouse'] },
   { href: '/settings/users', label: 'Utenti', icon: 'users', roles: ['admin'] },
   { href: '/settings/company', label: 'Azienda', icon: 'building', roles: ['admin'] },
 ];
@@ -324,7 +325,7 @@ function SidebarLink({
                 fontVariantNumeric: 'tabular-nums',
               }}
             >
-              {count.toLocaleString('it-IT')}
+              {formatInt(count)}
             </span>
           )}
         </>

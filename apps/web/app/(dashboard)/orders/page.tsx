@@ -7,6 +7,7 @@ import { Panel } from '@/components/ui/panel';
 import { StokuBadge } from '@/components/ui/stoku-badge';
 import { StokuButton } from '@/components/ui/stoku-button';
 import { requireSession } from '@/lib/auth/session';
+import { formatCurrency, formatDateLong, formatInt } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 import { OrderCreateButton } from './order-create-button';
 import { STATUS_LABEL } from './status';
@@ -39,21 +40,11 @@ type SearchParams = {
 };
 
 function formatDate(iso: string | null) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleDateString('it-IT', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
+  return formatDateLong(iso);
 }
 
 function currency(value: number | null, code: string | null) {
-  if (value == null) return '—';
-  return new Intl.NumberFormat('it-IT', {
-    style: 'currency',
-    currency: code ?? 'EUR',
-    maximumFractionDigits: 2,
-  }).format(Number(value));
+  return formatCurrency(value, code);
 }
 
 function buildQuery(base: SearchParams, patch: Partial<SearchParams>) {
@@ -194,7 +185,7 @@ export default async function OrdersPage({
         title="Ordini"
         subtitle={
           total > 0
-            ? `${total.toLocaleString('it-IT')} ordini · pagina ${page}/${totalPages}`
+            ? `${formatInt(total)} ordini · pagina ${page}/${totalPages}`
             : 'Nessun ordine ancora — crea la prima bozza'
         }
         right={
@@ -210,12 +201,12 @@ export default async function OrdersPage({
         <div className="grid-kpi-4">
           <Stat
             label="Ordini aperti"
-            value={openCount.toLocaleString('it-IT')}
+            value={formatInt(openCount)}
             hint="confermati · pagati · spediti"
           />
           <Stat
             label="Da confermare"
-            value={draftCount.toLocaleString('it-IT')}
+            value={formatInt(draftCount)}
             hint="bozze prenotate"
           />
           <Stat
@@ -225,7 +216,7 @@ export default async function OrdersPage({
           />
           <Stat
             label="Completati oggi"
-            value={completedToday.toLocaleString('it-IT')}
+            value={formatInt(completedToday)}
             hint="consegne chiuse"
           />
         </div>

@@ -6,11 +6,12 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Panel } from '@/components/ui/panel';
 import { StokuButton } from '@/components/ui/stoku-button';
 import { requireSession } from '@/lib/auth/session';
+import { formatInt } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 import { ProductsCreateButton } from './products-create-button';
 import { ProductsRows, type ProductRow } from './products-rows';
 
-export const metadata = { title: 'Inventario — STOKU' };
+export const metadata = { title: 'Prodotti — STOKU' };
 
 const PAGE_SIZE = 25;
 
@@ -87,7 +88,7 @@ export default async function ProductsPage({
   if (productsRes.error) {
     return (
       <div>
-        <PageHeader title="Inventario" />
+        <PageHeader title="Prodotti" />
         <div style={{ padding: 24 }}>
           <p style={{ color: 'var(--danger)' }}>Errore: {productsRes.error.message}</p>
         </div>
@@ -147,10 +148,10 @@ export default async function ProductsPage({
   return (
     <div>
       <PageHeader
-        title="Inventario"
+        title="Prodotti"
         subtitle={
           total > 0
-            ? `${total.toLocaleString('it-IT')} prodotti · ${rangeFrom}–${rangeTo}`
+            ? `${formatInt(total)} prodotti · ${rangeFrom}–${rangeTo}`
             : 'Nessun prodotto — crea il primo articolo per iniziare'
         }
         right={<ProductsCreateButton categories={categories} />}

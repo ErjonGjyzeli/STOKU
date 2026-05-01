@@ -1,5 +1,7 @@
 import { Document, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 
+import { formatCurrency, formatDate as fmtDate } from '@/lib/format';
+
 export type InvoiceCompany = {
   legal_name: string;
   vat_number: string | null;
@@ -194,19 +196,11 @@ const styles = StyleSheet.create({
 });
 
 function formatMoney(value: number, currency: string) {
-  return new Intl.NumberFormat('it-IT', {
-    style: 'currency',
-    currency: currency || 'EUR',
-    maximumFractionDigits: 2,
-  }).format(Number(value));
+  return formatCurrency(value, currency || 'EUR');
 }
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('it-IT', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
+  return fmtDate(iso);
 }
 
 function join(...parts: (string | null | undefined)[]) {

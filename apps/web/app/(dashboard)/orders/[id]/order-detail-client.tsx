@@ -10,6 +10,7 @@ import { Icon } from '@/components/ui/icon';
 import { Input } from '@/components/ui/input';
 import { Panel } from '@/components/ui/panel';
 import { StokuBadge } from '@/components/ui/stoku-badge';
+import { formatCurrency } from '@/lib/format';
 import { addOrderItem, removeOrderItem, transitionOrderStatus } from '../actions';
 import {
   allowedNextStatuses,
@@ -67,12 +68,7 @@ type Props = {
 };
 
 function currency(value: number | null, code: string | null) {
-  if (value == null) return '—';
-  return new Intl.NumberFormat('it-IT', {
-    style: 'currency',
-    currency: code ?? 'EUR',
-    maximumFractionDigits: 2,
-  }).format(Number(value));
+  return formatCurrency(value, code);
 }
 
 export function OrderDetailClient({ order, items, products }: Props) {

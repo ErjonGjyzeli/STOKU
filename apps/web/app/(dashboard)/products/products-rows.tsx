@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 
 import { Icon } from '@/components/ui/icon';
 import { StokuBadge } from '@/components/ui/stoku-badge';
+import { formatCurrency } from '@/lib/format';
 import { toggleProductActive, updateProduct, type ProductInput } from './actions';
 import { ProductFormDialog, type ProductFormValues } from './product-form-dialog';
 import { ProductPhotoDialog, type ProductImage } from './product-photo-dialog';
@@ -50,11 +51,7 @@ type Category = { id: number; name: string };
 
 function currency(value: number | null, code: string | null) {
   if (value == null) return null;
-  return new Intl.NumberFormat('it-IT', {
-    style: 'currency',
-    currency: code ?? 'EUR',
-    maximumFractionDigits: 2,
-  }).format(Number(value));
+  return formatCurrency(value, code);
 }
 
 function toFormValues(p: ProductRow): ProductFormValues {

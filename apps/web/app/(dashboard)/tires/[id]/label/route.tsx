@@ -6,19 +6,14 @@ import { requireSession } from '@/lib/auth/session';
 import { formatCurrency } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 
-// Etichetta 80×50mm (formato comune per stampanti termiche),
-// renderizzata dentro una pagina PDF A4 ritagliabile. Una pagina per
-// etichetta: così l'operatore può stampare su label-printer o su carta
-// normale e tagliare.
-
 const styles = StyleSheet.create({
   page: {
     padding: 24,
     fontFamily: 'Helvetica',
   },
   label: {
-    width: 226, // 80mm a 72dpi ≈ 226pt
-    height: 142, // 50mm ≈ 142pt
+    width: 226,
+    height: 142,
     border: '1pt solid #ccc',
     padding: 8,
     flexDirection: 'row',
@@ -34,16 +29,21 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-between',
   },
-  sku: {
-    fontSize: 10,
+  size: {
+    fontSize: 13,
     fontWeight: 700,
-    letterSpacing: 0.5,
-    color: '#222',
+    fontFamily: 'Courier',
+    color: '#111',
   },
-  name: {
+  brand: {
     fontSize: 9,
-    lineHeight: 1.2,
     color: '#333',
+    marginTop: 3,
+  },
+  season: {
+    fontSize: 8,
+    color: '#555',
+    marginTop: 2,
   },
   bottomRow: {
     flexDirection: 'row',
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     color: '#666',
     marginTop: 6,
   },
-  brand: {
+  sku: {
     fontSize: 7,
     color: '#999',
     marginTop: 3,
@@ -62,13 +62,15 @@ const styles = StyleSheet.create({
 type LabelProps = {
   qrDataUrl: string;
   sku: string;
-  name: string;
-  legacy_nr: string | null;
-  oem_code: string | null;
+  size: string | null;
+  brand: string | null;
+  season: string | null;
+  tread: string | null;
+  dot: string | null;
   price: string | null;
 };
 
-function LabelDocument({ data }: { data: LabelProps }) {
+function TireLabelDocument({ data }: { data: LabelProps }) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -79,14 +81,13 @@ function LabelDocument({ data }: { data: LabelProps }) {
           </View>
           <View style={styles.info}>
             <View>
+              <Text style={styles.size}>{data.size ?? data.sku}</Text>
+              {data.brand && <Text style={styles.brand}>{data.brand}</Text>}
+              {data.season && <Text style={styles.season}>{data.season}</Text>}
               <Text style={styles.sku}>{data.sku}</Text>
-              <Text style={styles.name}>
-                {data.name.length > 120 ? `${data.name.slice(0, 117)}…` : data.name}
-              </Text>
-              {data.oem_code && <Text style={styles.brand}>OEM {data.oem_code}</Text>}
             </View>
             <View style={styles.bottomRow}>
-              <Text>{data.legacy_nr ? `#${data.legacy_nr}` : ''}</Text>
+              <Text>{[data.tread ? `${data.tread}mm` : null, data.dot ? `DOT ${data.dot}` : null].filter(Boolean).join(' · ')}</Text>
               {data.price && <Text>{data.price}</Text>}
             </View>
           </View>
@@ -96,10 +97,11 @@ function LabelDocument({ data }: { data: LabelProps }) {
   );
 }
 
-function formatPrice(value: number | null, currency: string | null) {
-  if (value == null) return null;
-  return formatCurrency(value, currency);
-}
+const SEASON_LABELS: Record<string, string> = {
+  'tires-summer': 'Estiva',
+  'tires-winter': 'Invernale',
+  'tires-allseason': '4 Stagioni',
+};
 
 export async function GET(
   _req: Request,
@@ -111,16 +113,25 @@ export async function GET(
 
   const { data: product, error } = await supabase
     .from('products')
-    .select('id, sku, name, legacy_nr, oem_code, price_sell, currency')
+    .select(
+      'id, sku, vehicle_make, vehicle_model, tire_width, tire_aspect, tire_diameter, tire_tread_mm, tire_dot, price_sell, currency, category:product_categories!inner(slug)',
+    )
     .eq('id', id)
     .single();
   if (error || !product) {
-    return NextResponse.json({ error: 'Prodotto non trovato' }, { status: 404 });
+    return NextResponse.json({ error: 'Pneumatico non trovato' }, { status: 404 });
   }
 
-  // QR payload: solo SKU. L'operatore scansionando ottiene l'identificativo
-  // e l'app può lookare il prodotto. Alternativa futura: URL completo
-  // https://.../products?q=SKU quando avremo mobile-PWA.
+  const size =
+    product.tire_width && product.tire_aspect && product.tire_diameter
+      ? `${product.tire_width}/${product.tire_aspect} R${product.tire_diameter}`
+      : null;
+
+  const brand = [product.vehicle_make, product.vehicle_model].filter(Boolean).join(' ') || null;
+
+  const cat = Array.isArray(product.category) ? product.category[0] : product.category;
+  const season = cat?.slug ? (SEASON_LABELS[cat.slug] ?? null) : null;
+
   const qrDataUrl = await QRCode.toDataURL(product.sku, {
     errorCorrectionLevel: 'M',
     margin: 0,
@@ -128,14 +139,19 @@ export async function GET(
   });
 
   const buffer = await renderToBuffer(
-    <LabelDocument
+    <TireLabelDocument
       data={{
         qrDataUrl,
         sku: product.sku,
-        name: product.name,
-        legacy_nr: product.legacy_nr,
-        oem_code: product.oem_code,
-        price: formatPrice(product.price_sell, product.currency),
+        size,
+        brand,
+        season,
+        tread: product.tire_tread_mm != null ? String(product.tire_tread_mm) : null,
+        dot: product.tire_dot ?? null,
+        price:
+          product.price_sell != null
+            ? formatCurrency(product.price_sell, product.currency)
+            : null,
       }}
     />,
   );

@@ -6,6 +6,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Panel } from '@/components/ui/panel';
 import { StokuBadge } from '@/components/ui/stoku-badge';
 import { requireSession } from '@/lib/auth/session';
+import { formatCurrency, formatInt } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 import { TiresCreateButton } from './tires-create-button';
 import { TiresFilterBar, type TiresFilters } from './tires-filter-bar';
@@ -62,11 +63,7 @@ function formatSize(
 
 function formatPrice(value: number | null, code: string | null) {
   if (value == null) return null;
-  return new Intl.NumberFormat('it-IT', {
-    style: 'currency',
-    currency: code ?? 'EUR',
-    maximumFractionDigits: 2,
-  }).format(Number(value));
+  return formatCurrency(value, code);
 }
 
 export default async function TiresPage({
@@ -222,7 +219,7 @@ export default async function TiresPage({
         title="Pneumatici"
         subtitle={
           total > 0
-            ? `${total.toLocaleString('it-IT')} pneumatici · ${rangeFrom}–${rangeTo}`
+            ? `${formatInt(total)} pneumatici · ${rangeFrom}–${rangeTo}`
             : 'Nessun pneumatico trovato'
         }
         right={<TiresCreateButton categories={tireCategories} />}
@@ -256,6 +253,7 @@ export default async function TiresPage({
                   <th style={{ width: 90, textAlign: 'right' }}>Battistr.</th>
                   <th style={{ width: 110, textAlign: 'right' }}>Prezzo</th>
                   <th style={{ width: 90, textAlign: 'right' }}>Disp.</th>
+                  <th style={{ width: 36 }} />
                 </tr>
               </thead>
               <tbody>
@@ -357,6 +355,18 @@ export default async function TiresPage({
                         ) : (
                           <span className="faint">0</span>
                         )}
+                      </td>
+                      <td>
+                        <a
+                          href={`/tires/${p.id}/label`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="btn ghost"
+                          style={{ padding: 4, width: 28, height: 28 }}
+                          title="Stampa etichetta"
+                        >
+                          <Icon name="tag" size={13} />
+                        </a>
                       </td>
                     </tr>
                   );

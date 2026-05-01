@@ -441,46 +441,6 @@ export type Database = {
           },
         ]
       }
-      product_vehicle_compatibility: {
-        Row: {
-          notes: string | null
-          product_id: string
-          vehicle_id: number
-        }
-        Insert: {
-          notes?: string | null
-          product_id: string
-          vehicle_id: number
-        }
-        Update: {
-          notes?: string | null
-          product_id?: string
-          vehicle_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "product_vehicle_compatibility_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "product_vehicle_compatibility_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "v_product_stock_total"
-            referencedColumns: ["product_id"]
-          },
-          {
-            foreignKeyName: "product_vehicle_compatibility_vehicle_id_fkey"
-            columns: ["vehicle_id"]
-            isOneToOne: false
-            referencedRelation: "vehicles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       products: {
         Row: {
           category_id: number | null
@@ -499,6 +459,10 @@ export type Database = {
           search_vector: unknown
           sku: string
           updated_at: string | null
+          vehicle_make: string | null
+          vehicle_model: string | null
+          vehicle_year_from: number | null
+          vehicle_year_to: number | null
           weight_kg: number | null
         }
         Insert: {
@@ -518,6 +482,10 @@ export type Database = {
           search_vector?: unknown
           sku: string
           updated_at?: string | null
+          vehicle_make?: string | null
+          vehicle_model?: string | null
+          vehicle_year_from?: number | null
+          vehicle_year_to?: number | null
           weight_kg?: number | null
         }
         Update: {
@@ -537,6 +505,10 @@ export type Database = {
           search_vector?: unknown
           sku?: string
           updated_at?: string | null
+          vehicle_make?: string | null
+          vehicle_model?: string | null
+          vehicle_year_from?: number | null
+          vehicle_year_to?: number | null
           weight_kg?: number | null
         }
         Relationships: [
@@ -831,59 +803,6 @@ export type Database = {
           type?: string
         }
         Relationships: []
-      }
-      vehicle_makes: {
-        Row: {
-          id: number
-          name: string
-        }
-        Insert: {
-          id?: number
-          name: string
-        }
-        Update: {
-          id?: number
-          name?: string
-        }
-        Relationships: []
-      }
-      vehicles: {
-        Row: {
-          chassis_code: string | null
-          engine: string | null
-          id: number
-          make_id: number | null
-          model: string
-          year_from: number | null
-          year_to: number | null
-        }
-        Insert: {
-          chassis_code?: string | null
-          engine?: string | null
-          id?: number
-          make_id?: number | null
-          model: string
-          year_from?: number | null
-          year_to?: number | null
-        }
-        Update: {
-          chassis_code?: string | null
-          engine?: string | null
-          id?: number
-          make_id?: number | null
-          model?: string
-          year_from?: number | null
-          year_to?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "vehicles_make_id_fkey"
-            columns: ["make_id"]
-            isOneToOne: false
-            referencedRelation: "vehicle_makes"
-            referencedColumns: ["id"]
-          },
-        ]
       }
     }
     Views: {

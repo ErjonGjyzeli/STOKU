@@ -393,18 +393,21 @@ export type Database = {
       product_categories: {
         Row: {
           id: number
+          kind: string
           name: string
           parent_id: number | null
           slug: string
         }
         Insert: {
           id?: number
+          kind?: string
           name: string
           parent_id?: number | null
           slug: string
         }
         Update: {
           id?: number
+          kind?: string
           name?: string
           parent_id?: number | null
           slug?: string

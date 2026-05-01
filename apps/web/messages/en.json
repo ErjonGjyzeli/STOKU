@@ -16,6 +16,7 @@
     "dashboard": "Dashboard",
     "products": "Products",
     "stock": "Inventory",
+    "shelves": "Shelves",
     "orders": "Orders",
     "customers": "Customers",
     "transfers": "Transfers",

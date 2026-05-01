@@ -15,8 +15,10 @@
   "nav": {
     "dashboard": "Dashboard",
     "products": "Prodotti",
+    "tires": "Pneumatici",
     "stock": "Magazzino",
     "shelves": "Scaffali",
+    "scanner": "Scanner",
     "labels": "Etichette",
     "orders": "Ordini",
     "customers": "Clienti",

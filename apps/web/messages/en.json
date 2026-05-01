@@ -15,8 +15,10 @@
   "nav": {
     "dashboard": "Dashboard",
     "products": "Products",
+    "tires": "Tires",
     "stock": "Inventory",
     "shelves": "Shelves",
+    "scanner": "Scanner",
     "labels": "Labels",
     "orders": "Orders",
     "customers": "Customers",

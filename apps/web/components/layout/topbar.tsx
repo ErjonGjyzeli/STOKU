@@ -108,6 +108,18 @@ export function Topbar({ stores }: Props) {
         aria-label="Notifiche"
       >
         <Icon name="bell" size={14} />
+        <span
+          aria-hidden
+          style={{
+            position: 'absolute',
+            top: 4,
+            right: 4,
+            width: 6,
+            height: 6,
+            borderRadius: '50%',
+            background: 'var(--danger)',
+          }}
+        />
       </button>
     </header>
   );

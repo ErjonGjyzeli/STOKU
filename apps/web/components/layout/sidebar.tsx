@@ -13,25 +13,33 @@ type NavItem = {
   label: string;
   icon: IconName;
   roles?: Role[];
+  countKey?: 'products' | 'orders' | 'customers' | 'transfers';
+};
+
+export type NavCounts = {
+  products: number;
+  orders: number;
+  customers: number;
+  transfers: number;
 };
 
 const MAIN_NAV: NavItem[] = [
   { href: '/', label: 'Dashboard', icon: 'dashboard' },
-  { href: '/products', label: 'Inventario', icon: 'box' },
+  { href: '/products', label: 'Inventario', icon: 'box', countKey: 'products' },
   { href: '/tires', label: 'Pneumatici', icon: 'disc' },
   { href: '/stock', label: 'Magazzino', icon: 'building' },
   { href: '/shelves', label: 'Scaffali', icon: 'shelves' },
   { href: '/scanner', label: 'Scanner', icon: 'scanner' },
   { href: '/labels', label: 'Etichette', icon: 'tag' },
+  { href: '/orders', label: 'Ordini', icon: 'cart', countKey: 'orders' },
+  { href: '/customers', label: 'Clienti', icon: 'users', countKey: 'customers' },
   {
-    href: '/inventory',
-    label: 'Inventario fisico',
-    icon: 'check',
+    href: '/transfers',
+    label: 'Trasferimenti',
+    icon: 'transfer',
     roles: ['admin', 'warehouse'],
+    countKey: 'transfers',
   },
-  { href: '/orders', label: 'Ordini', icon: 'cart' },
-  { href: '/customers', label: 'Clienti', icon: 'users' },
-  { href: '/transfers', label: 'Trasferimenti', icon: 'transfer', roles: ['admin', 'warehouse'] },
   { href: '/reports', label: 'Report', icon: 'history' },
 ];
 
@@ -52,6 +60,7 @@ type Props = {
   role: Role;
   email: string;
   fullName: string | null;
+  counts?: NavCounts;
 };
 
 function initialsFrom(name: string | null, email: string) {
@@ -72,13 +81,18 @@ function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function Sidebar({ role, email, fullName }: Props) {
+export function Sidebar({ role, email, fullName, counts }: Props) {
   const pathname = usePathname();
   const { mode, close } = useSidebar();
   const collapsed = mode === 'collapsed';
   const mainItems = MAIN_NAV.filter((i) => !i.roles || i.roles.includes(role));
   const settingsItems = SETTINGS_NAV.filter((i) => !i.roles || i.roles.includes(role));
   const initials = initialsFrom(fullName, email);
+
+  function countFor(item: NavItem) {
+    if (!counts || !item.countKey) return null;
+    return counts[item.countKey];
+  }
 
   return (
     <aside
@@ -148,6 +162,7 @@ export function Sidebar({ role, email, fullName }: Props) {
             item={item}
             active={isActive(pathname, item.href)}
             collapsed={collapsed}
+            count={countFor(item)}
             onNavigate={close}
           />
         ))}
@@ -162,6 +177,7 @@ export function Sidebar({ role, email, fullName }: Props) {
                 item={item}
                 active={isActive(pathname, item.href)}
                 collapsed={collapsed}
+                count={null}
                 onNavigate={close}
               />
             ))}
@@ -250,11 +266,13 @@ function SidebarLink({
   item,
   active,
   collapsed,
+  count,
   onNavigate,
 }: {
   item: NavItem;
   active: boolean;
   collapsed: boolean;
+  count: number | null;
   onNavigate: () => void;
 }) {
   const style: CSSProperties = {
@@ -291,7 +309,26 @@ function SidebarLink({
         />
       )}
       <Icon name={item.icon} size={15} />
-      {!collapsed && <span className="stretch">{item.label}</span>}
+      {!collapsed && (
+        <>
+          <span className="stretch">{item.label}</span>
+          {count != null && count > 0 && (
+            <span
+              className="mono"
+              style={{
+                fontSize: 10.5,
+                padding: '1px 5px',
+                borderRadius: 3,
+                color: active ? 'var(--sbar-ink)' : 'var(--sbar-ink-dim)',
+                background: active ? 'rgba(255,255,255,0.08)' : 'transparent',
+                fontVariantNumeric: 'tabular-nums',
+              }}
+            >
+              {count.toLocaleString('it-IT')}
+            </span>
+          )}
+        </>
+      )}
     </Link>
   );
 }

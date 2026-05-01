@@ -57,6 +57,7 @@ export type ProductOption = {
   name: string;
   price_sell: number | null;
   currency: string | null;
+  available: number;
 };
 
 type Props = {
@@ -109,6 +110,13 @@ export function OrderDetailClient({ order, items, products }: Props) {
     const qtyNum = Number(qty);
     if (!Number.isInteger(qtyNum) || qtyNum <= 0) {
       toast.error('Quantità deve essere intero > 0');
+      return;
+    }
+    const sel = products.find((p) => p.id === selectedProductId);
+    if (sel && qtyNum > sel.available) {
+      toast.error('Stock insufficiente', {
+        description: `Disponibili in questo PV: ${sel.available}`,
+      });
       return;
     }
     setSubmitting(true);
@@ -288,6 +296,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
                         <button
                           type="button"
                           onClick={() => handleSelectProduct(p.id)}
+                          disabled={p.available <= 0}
                           style={{
                             width: '100%',
                             padding: '6px 12px',
@@ -297,17 +306,34 @@ export function OrderDetailClient({ order, items, products }: Props) {
                                 ? 'var(--stoku-accent-bg-weak)'
                                 : 'transparent',
                             border: 'none',
-                            cursor: 'pointer',
+                            cursor: p.available <= 0 ? 'not-allowed' : 'pointer',
+                            opacity: p.available <= 0 ? 0.5 : 1,
                             fontSize: 13,
                             display: 'flex',
                             gap: 10,
                             alignItems: 'center',
                           }}
+                          title={
+                            p.available <= 0
+                              ? 'Nessuna disponibilità in questo punto vendita'
+                              : `Disponibili: ${p.available}`
+                          }
                         >
                           <span className="mono" style={{ fontSize: 11, minWidth: 80 }}>
                             {p.sku}
                           </span>
                           <span style={{ flex: 1 }}>{p.name}</span>
+                          <span
+                            className="mono"
+                            style={{
+                              fontSize: 11,
+                              color: p.available > 0 ? 'var(--ok)' : 'var(--danger)',
+                              minWidth: 60,
+                              textAlign: 'right',
+                            }}
+                          >
+                            {p.available > 0 ? `Disp: ${p.available}` : 'Esaurito'}
+                          </span>
                           <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                             {currency(p.price_sell, p.currency)}
                           </span>

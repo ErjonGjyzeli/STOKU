@@ -17,6 +17,7 @@ export function PageHeader({ title, subtitle, right, breadcrumb }: Props) {
         display: 'flex',
         alignItems: 'flex-end',
         justifyContent: 'space-between',
+        flexWrap: 'wrap',
         padding: '20px 24px 16px',
         borderBottom: '1px solid var(--stoku-border)',
         background: 'var(--bg)',

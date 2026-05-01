@@ -64,13 +64,17 @@ export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
         <Icon name="store" size={13} />
         {active ? (
           <>
-            <span style={{ fontWeight: 500 }}>{active.code}</span>
-            <span className="dim" style={{ fontSize: 11 }}>
+            <span className="topbar-store-code" style={{ fontWeight: 500 }}>
+              {active.code}
+            </span>
+            <span className="dim topbar-store-name" style={{ fontSize: 11 }}>
               · {active.name}
             </span>
           </>
         ) : (
-          <span style={{ fontWeight: 500 }}>Tutti i magazzini</span>
+          <span className="topbar-store-code" style={{ fontWeight: 500 }}>
+            Tutti i magazzini
+          </span>
         )}
         <Icon name="chevronDown" size={11} />
       </button>

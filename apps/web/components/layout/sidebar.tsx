@@ -21,6 +21,7 @@ const MAIN_NAV: NavItem[] = [
   { href: '/tires', label: 'Pneumatici', icon: 'disc' },
   { href: '/stock', label: 'Magazzino', icon: 'building' },
   { href: '/shelves', label: 'Scaffali', icon: 'shelves' },
+  { href: '/scanner', label: 'Scanner', icon: 'scanner' },
   { href: '/orders', label: 'Ordini', icon: 'cart' },
   { href: '/customers', label: 'Clienti', icon: 'users' },
   { href: '/transfers', label: 'Trasferimenti', icon: 'transfer', roles: ['admin', 'warehouse'] },

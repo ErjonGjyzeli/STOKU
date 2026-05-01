@@ -18,6 +18,7 @@
     "tires": "Tires",
     "stock": "Inventory",
     "shelves": "Shelves",
+    "scanner": "Scanner",
     "orders": "Orders",
     "customers": "Customers",
     "transfers": "Transfers",

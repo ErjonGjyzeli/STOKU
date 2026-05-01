@@ -7,6 +7,7 @@ import { Panel } from '@/components/ui/panel';
 import { StokuBadge } from '@/components/ui/stoku-badge';
 import { requireSession } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
+import { TiresCreateButton } from './tires-create-button';
 import { TiresFilterBar, type TiresFilters } from './tires-filter-bar';
 
 export const metadata = { title: 'Pneumatici — STOKU' };
@@ -135,7 +136,15 @@ export default async function TiresPage({
   const from = (page - 1) * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;
 
-  const productsRes = await query.range(from, to);
+  const [productsRes, tireCategoriesRes] = await Promise.all([
+    query.range(from, to),
+    supabase
+      .from('product_categories')
+      .select('id, name, slug')
+      .eq('kind', 'gomma')
+      .order('name'),
+  ]);
+  const tireCategories = tireCategoriesRes.data ?? [];
 
   if (productsRes.error) {
     return (
@@ -216,6 +225,7 @@ export default async function TiresPage({
             ? `${total.toLocaleString('it-IT')} pneumatici · ${rangeFrom}–${rangeTo}`
             : 'Nessun pneumatico trovato'
         }
+        right={<TiresCreateButton categories={tireCategories} />}
       />
 
       <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>

@@ -6,6 +6,12 @@ import { Select as SelectPrimitive } from '@base-ui/react/select';
 import { cn } from '@/lib/utils';
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from 'lucide-react';
 
+// Base UI's <Select.Value /> renders the raw `value` by default rather than
+// the selected item's label, and the popup mounts lazily so we can't rely on
+// SelectItem effects to populate a registry. Instead, the wrapper walks the
+// children tree at render time, collects every <SelectItem value=...>label</SelectItem>
+// pair, and exposes the lookup via context so <SelectValue/> can render the
+// label corresponding to the current selection.
 const SelectLabelContext = React.createContext<Map<unknown, React.ReactNode> | null>(null);
 
 function collectSelectItemLabels(

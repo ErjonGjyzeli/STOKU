@@ -6,10 +6,6 @@ import { toast } from 'sonner';
 import { Icon } from '@/components/ui/icon';
 import { StokuBadge } from '@/components/ui/stoku-badge';
 import { toggleProductActive, updateProduct, type ProductInput } from './actions';
-import {
-  ProductCompatibilityDialog,
-  type CompatVehicle,
-} from './product-compatibility-dialog';
 import { ProductFormDialog, type ProductFormValues } from './product-form-dialog';
 import { ProductPhotoDialog, type ProductImage } from './product-photo-dialog';
 
@@ -44,7 +40,6 @@ export type ProductRow = {
   category: { id: number; name: string } | null;
   stock: { available: number; total: number } | null;
   images: ProductImage[];
-  vehicleIds: number[];
 };
 
 type Category = { id: number; name: string };
@@ -63,29 +58,30 @@ function toFormValues(p: ProductRow): ProductFormValues {
     sku: p.sku,
     name: p.name,
     legacy_nr: p.legacy_nr ?? '',
-    oem_code: p.oem_code ?? '',
     category_id: p.category?.id ? String(p.category.id) : '',
     condition: (p.condition as ProductFormValues['condition']) ?? 'used',
     price_sell: p.price_sell != null ? String(p.price_sell) : '',
     price_cost: p.price_cost != null ? String(p.price_cost) : '',
     description: p.description ?? '',
     is_active: !!p.is_active,
+    vehicle_make: '',
+    vehicle_model: '',
+    vehicle_year_from: '',
+    vehicle_year_to: '',
+    oem_codes: '',
   };
 }
 
 export function ProductsRows({
   products: initialProducts,
   categories,
-  allVehicles,
 }: {
   products: ProductRow[];
   categories: Category[];
-  allVehicles: CompatVehicle[];
 }) {
-  const [products, setProducts] = useState(initialProducts);
+  const [products] = useState(initialProducts);
   const [editing, setEditing] = useState<ProductRow | null>(null);
   const [photosFor, setPhotosFor] = useState<ProductRow | null>(null);
-  const [compatFor, setCompatFor] = useState<ProductRow | null>(null);
   const [pending, startTransition] = useTransition();
 
   function handleToggle(product: ProductRow) {
@@ -175,20 +171,6 @@ export function ProductsRows({
                     type="button"
                     className="btn ghost sm"
                     style={{ width: 24, padding: 0, justifyContent: 'center' }}
-                    onClick={() => setCompatFor(p)}
-                    title={
-                      p.vehicleIds.length > 0
-                        ? `Veicoli compatibili (${p.vehicleIds.length})`
-                        : 'Compatibilità veicoli'
-                    }
-                    aria-label="Compatibilità veicoli"
-                  >
-                    <Icon name="car" size={12} />
-                  </button>
-                  <button
-                    type="button"
-                    className="btn ghost sm"
-                    style={{ width: 24, padding: 0, justifyContent: 'center' }}
                     onClick={() => setPhotosFor(p)}
                     title={p.images.length > 0 ? `Foto (${p.images.length})` : 'Gestisci foto'}
                     aria-label="Gestisci foto"
@@ -240,21 +222,6 @@ export function ProductsRows({
           productId={photosFor.id}
           productSku={photosFor.sku}
           initialImages={photosFor.images}
-        />
-      )}
-      {compatFor && (
-        <ProductCompatibilityDialog
-          open={!!compatFor}
-          onOpenChange={(o) => !o && setCompatFor(null)}
-          productId={compatFor.id}
-          productSku={compatFor.sku}
-          allVehicles={allVehicles}
-          initialSelected={compatFor.vehicleIds}
-          onSaved={(ids) =>
-            setProducts((prev) =>
-              prev.map((p) => (p.id === compatFor.id ? { ...p, vehicleIds: ids } : p)),
-            )
-          }
         />
       )}
     </>

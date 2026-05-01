@@ -26,7 +26,6 @@ type SearchParams = {
   category?: string;
   condition?: string;
   status?: string;
-  vehicle?: string;
   page?: string;
 };
 
@@ -51,25 +50,9 @@ export default async function ProductsPage({
   const categoryId = params.category ? Number(params.category) : null;
   const condition = params.condition ?? '';
   const status = params.status ?? 'active';
-  const vehicleFilter = params.vehicle ? Number(params.vehicle) : null;
   const page = Math.max(1, Number(params.page) || 1);
 
   const supabase = await createClient();
-
-  // Pre-fetch product IDs compatibili col veicolo richiesto (serve come
-  // .in() sulla query principale). Una query a parte è l'unico modo
-  // pulito via supabase-js: i join PostgREST non supportano filtri
-  // su tabella figlia come predicato di scoping sulla tabella padre.
-  let vehicleCompatIds: string[] | null = null;
-  if (vehicleFilter) {
-    const { data } = await supabase
-      .from('product_vehicle_compatibility')
-      .select('product_id')
-      .eq('vehicle_id', vehicleFilter);
-    vehicleCompatIds = (data ?? [])
-      .map((r) => r.product_id)
-      .filter((id): id is string => !!id);
-  }
 
   let query = supabase
     .from('products')
@@ -78,17 +61,6 @@ export default async function ProductsPage({
       { count: 'exact' },
     )
     .order('created_at', { ascending: false });
-
-  if (vehicleCompatIds !== null) {
-    if (vehicleCompatIds.length === 0) {
-      // Nessun prodotto compatibile: forza risultato vuoto usando un UUID
-      // impossibile. Alternativa: skip della query — ma perderemmo i meta
-      // (count totale reale ecc.) che servono alla UI per dire "0 risultati".
-      query = query.in('id', ['00000000-0000-0000-0000-000000000000']);
-    } else {
-      query = query.in('id', vehicleCompatIds);
-    }
-  }
 
   if (q) {
     // Full-text via colonna generated `search_vector` (simple config) che
@@ -131,9 +103,8 @@ export default async function ProductsPage({
   const productIds = products.map((p) => p.id);
   const stockMap = new Map<string, { available: number; total: number }>();
   const imagesMap = new Map<string, { id: string; storage_path: string; is_primary: boolean }[]>();
-  const compatMap = new Map<string, number[]>();
   if (productIds.length > 0) {
-    const [stockRes, imagesRes, compatRes] = await Promise.all([
+    const [stockRes, imagesRes] = await Promise.all([
       supabase
         .from('v_product_stock_total')
         .select('product_id, total_quantity, total_available')
@@ -144,10 +115,6 @@ export default async function ProductsPage({
         .in('product_id', productIds)
         .order('is_primary', { ascending: false })
         .order('sort_order'),
-      supabase
-        .from('product_vehicle_compatibility')
-        .select('product_id, vehicle_id')
-        .in('product_id', productIds),
     ]);
     for (const row of stockRes.data ?? []) {
       if (row.product_id) {
@@ -167,29 +134,7 @@ export default async function ProductsPage({
       });
       imagesMap.set(img.product_id, list);
     }
-    for (const row of compatRes.data ?? []) {
-      if (!row.product_id) continue;
-      const list = compatMap.get(row.product_id) ?? [];
-      list.push(row.vehicle_id);
-      compatMap.set(row.product_id, list);
-    }
   }
-
-  const { data: allVehiclesData } = await supabase
-    .from('vehicles')
-    .select(
-      'id, model, chassis_code, year_from, year_to, engine, make:vehicle_makes(name)',
-    )
-    .order('model');
-  const allVehicles = (allVehiclesData ?? []).map((v) => ({
-    id: v.id,
-    make_name: v.make?.name ?? null,
-    model: v.model,
-    chassis_code: v.chassis_code,
-    year_from: v.year_from,
-    year_to: v.year_to,
-    engine: v.engine,
-  }));
 
   const rangeFrom = total === 0 ? 0 : from + 1;
   const rangeTo = Math.min(to + 1, total);
@@ -197,7 +142,6 @@ export default async function ProductsPage({
     (q ? 1 : 0) +
     (categoryId ? 1 : 0) +
     (condition ? 1 : 0) +
-    (vehicleFilter ? 1 : 0) +
     (status !== 'active' ? 1 : 0);
 
   return (
@@ -273,29 +217,6 @@ export default async function ProductsPage({
               </select>
             </label>
 
-            <label className="col" style={{ gap: 4, width: 220 }}>
-              <span className="meta" style={{ fontSize: 11 }}>
-                VEICOLO
-              </span>
-              <select
-                name="vehicle"
-                defaultValue={vehicleFilter ? String(vehicleFilter) : ''}
-                className="stoku-input"
-                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
-              >
-                <option value="">Qualsiasi</option>
-                {allVehicles.map((v) => {
-                  const yrs =
-                    v.year_from && v.year_to ? ` ${v.year_from}–${v.year_to}` : '';
-                  return (
-                    <option key={v.id} value={v.id}>
-                      {`${v.make_name ?? '?'} ${v.model}${yrs}`}
-                    </option>
-                  );
-                })}
-              </select>
-            </label>
-
             <label className="col" style={{ gap: 4, width: 140 }}>
               <span className="meta" style={{ fontSize: 11 }}>
                 STATO
@@ -367,11 +288,9 @@ export default async function ProductsPage({
                     category: p.category ? { id: p.category.id, name: p.category.name } : null,
                     stock: stockMap.get(p.id) ?? null,
                     images: imagesMap.get(p.id) ?? [],
-                    vehicleIds: compatMap.get(p.id) ?? [],
                   }),
                 )}
                 categories={categories}
-                allVehicles={allVehicles}
               />
             </table>
           )}

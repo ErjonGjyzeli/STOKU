@@ -29,13 +29,17 @@ const schema = z.object({
   sku: z.string().optional().or(z.literal('')),
   name: z.string().min(2, 'Nome minimo 2 caratteri'),
   legacy_nr: z.string().optional().or(z.literal('')),
-  oem_code: z.string().optional().or(z.literal('')),
   category_id: z.string().optional().or(z.literal('')),
   condition: z.enum(['new', 'used', 'refurbished', 'damaged']),
   price_sell: z.string().optional().or(z.literal('')),
   price_cost: z.string().optional().or(z.literal('')),
   description: z.string().optional().or(z.literal('')),
   is_active: z.boolean(),
+  vehicle_make: z.string().optional().or(z.literal('')),
+  vehicle_model: z.string().optional().or(z.literal('')),
+  vehicle_year_from: z.string().optional().or(z.literal('')),
+  vehicle_year_to: z.string().optional().or(z.literal('')),
+  oem_codes: z.string().optional().or(z.literal('')),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -55,13 +59,17 @@ const EMPTY: FormValues = {
   sku: '',
   name: '',
   legacy_nr: '',
-  oem_code: '',
   category_id: '',
   condition: 'used',
   price_sell: '',
   price_cost: '',
   description: '',
   is_active: true,
+  vehicle_make: '',
+  vehicle_model: '',
+  vehicle_year_from: '',
+  vehicle_year_to: '',
+  oem_codes: '',
 };
 
 export function ProductFormDialog({
@@ -94,13 +102,17 @@ export function ProductFormDialog({
       sku: values.sku ?? '',
       name: values.name,
       legacy_nr: values.legacy_nr ?? '',
-      oem_code: values.oem_code ?? '',
       category_id: values.category_id && values.category_id !== '_none' ? values.category_id : null,
       condition: values.condition,
       price_sell: values.price_sell ?? '',
       price_cost: values.price_cost ?? '',
       description: values.description ?? '',
       is_active: values.is_active,
+      vehicle_make: values.vehicle_make ?? '',
+      vehicle_model: values.vehicle_model ?? '',
+      vehicle_year_from: values.vehicle_year_from ?? '',
+      vehicle_year_to: values.vehicle_year_to ?? '',
+      oem_codes: values.oem_codes ?? '',
     };
     const ok = await onSubmit(payload);
     setSubmitting(false);
@@ -117,15 +129,12 @@ export function ProductFormDialog({
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(submit)} className="flex flex-col gap-4">
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <Field label="SKU" error={errors.sku?.message}>
               <Input {...register('sku')} placeholder="Auto" />
             </Field>
             <Field label="Num. ex-Excel" error={errors.legacy_nr?.message}>
               <Input {...register('legacy_nr')} placeholder="5920" />
-            </Field>
-            <Field label="Codice OEM" error={errors.oem_code?.message}>
-              <Input {...register('oem_code')} placeholder="0265 800 1234" />
             </Field>
           </div>
 
@@ -192,6 +201,42 @@ export function ProductFormDialog({
               style={{ minHeight: 72, padding: 8, width: '100%', resize: 'vertical' }}
               rows={3}
               placeholder="Anno, modello, note compatibilità…"
+            />
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Marca auto" error={errors.vehicle_make?.message}>
+              <Input {...register('vehicle_make')} placeholder="Audi" />
+            </Field>
+            <Field label="Modello" error={errors.vehicle_model?.message}>
+              <Input {...register('vehicle_model')} placeholder="A4 B7" />
+            </Field>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Anno da" error={errors.vehicle_year_from?.message}>
+              <Input
+                {...register('vehicle_year_from')}
+                inputMode="numeric"
+                placeholder="2004"
+              />
+            </Field>
+            <Field label="Anno a" error={errors.vehicle_year_to?.message}>
+              <Input
+                {...register('vehicle_year_to')}
+                inputMode="numeric"
+                placeholder="2008"
+              />
+            </Field>
+          </div>
+
+          <Field label="Codici OEM (uno per riga)" error={errors.oem_codes?.message}>
+            <textarea
+              {...register('oem_codes')}
+              className="stoku-input"
+              style={{ minHeight: 72, padding: 8, width: '100%', resize: 'vertical' }}
+              rows={3}
+              placeholder={'0265 800 1234\n8E0 614 517'}
             />
           </Field>
 

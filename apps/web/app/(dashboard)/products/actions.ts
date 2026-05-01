@@ -16,6 +16,27 @@ const priceSchema = z
   })
   .refine((v) => v === null || v >= 0, { message: 'Prezzo non negativo' });
 
+const yearSchema = z
+  .union([z.string(), z.number(), z.null(), z.undefined()])
+  .transform((v) => {
+    if (v === null || v === undefined || v === '') return null;
+    const n = typeof v === 'number' ? v : Number(String(v).trim());
+    return Number.isInteger(n) ? n : null;
+  })
+  .refine((v) => v === null || (v >= 1900 && v <= 2100), { message: 'Anno fuori range' });
+
+// Accetta sia textarea (uno per riga) che array di stringhe.
+// Normalizza a string[] dedup, trim, vuoti rimossi.
+const oemCodesSchema = z
+  .union([z.string(), z.array(z.string()), z.null(), z.undefined()])
+  .transform((v) => {
+    const list = Array.isArray(v) ? v : v ? String(v).split(/\r?\n|,/) : [];
+    const out = list
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0 && s.length <= 80);
+    return Array.from(new Set(out));
+  });
+
 const productSchema = z.object({
   sku: z
     .string()
@@ -26,7 +47,6 @@ const productSchema = z.object({
     .or(z.literal('')),
   name: z.string().trim().min(2, 'Nome minimo 2 caratteri').max(200),
   legacy_nr: z.string().trim().max(40).optional().or(z.literal('')),
-  oem_code: z.string().trim().max(80).optional().or(z.literal('')),
   category_id: z.union([z.string(), z.number(), z.null(), z.undefined()]).transform((v) => {
     if (v === null || v === undefined || v === '') return null;
     const n = typeof v === 'number' ? v : Number(v);
@@ -37,6 +57,11 @@ const productSchema = z.object({
   price_cost: priceSchema,
   description: z.string().trim().max(2000).optional().or(z.literal('')),
   is_active: z.boolean().default(true),
+  vehicle_make: z.string().trim().max(80).optional().or(z.literal('')),
+  vehicle_model: z.string().trim().max(120).optional().or(z.literal('')),
+  vehicle_year_from: yearSchema,
+  vehicle_year_to: yearSchema,
+  oem_codes: oemCodesSchema,
 });
 
 export type ProductInput = z.input<typeof productSchema>;
@@ -47,13 +72,17 @@ function normalize(parsed: z.infer<typeof productSchema>) {
     sku: parsed.sku?.trim() || undefined,
     name: parsed.name,
     legacy_nr: parsed.legacy_nr?.trim() || null,
-    oem_code: parsed.oem_code?.trim() || null,
     category_id: parsed.category_id,
     condition: parsed.condition,
     price_sell: parsed.price_sell,
     price_cost: parsed.price_cost,
     description: parsed.description?.trim() || null,
     is_active: parsed.is_active,
+    vehicle_make: parsed.vehicle_make?.trim() || null,
+    vehicle_model: parsed.vehicle_model?.trim() || null,
+    vehicle_year_from: parsed.vehicle_year_from,
+    vehicle_year_to: parsed.vehicle_year_to,
+    oem_codes: parsed.oem_codes,
   };
 }
 
@@ -74,9 +103,12 @@ export async function createProduct(input: ProductInput): Promise<ActionResult<{
   const norm = normalize(parsed.data);
   const sku = norm.sku ?? (await generateSku());
   const supabase = await createClient();
+  // Cast richiesto finché types.ts non viene rigenerato con i campi
+  // vehicle_make / vehicle_model / vehicle_year_from / vehicle_year_to / oem_codes
+  // (vedi migrazione parallela §8 spec v1.2).
   const { data, error } = await supabase
     .from('products')
-    .insert({ ...norm, sku })
+    .insert({ ...norm, sku } as never)
     .select('id')
     .single();
   if (error) return { ok: false, error: error.message };
@@ -92,13 +124,15 @@ export async function updateProduct(id: string, input: ProductInput): Promise<Ac
   }
   const norm = normalize(parsed.data);
   const supabase = await createClient();
+  // Cast richiesto finché types.ts non viene rigenerato con i campi liberi
+  // su products (vedi migrazione parallela §8 spec v1.2).
   const { error } = await supabase
     .from('products')
     .update({
       ...norm,
       sku: norm.sku ?? undefined,
       updated_at: new Date().toISOString(),
-    })
+    } as never)
     .eq('id', id);
   if (error) return { ok: false, error: error.message };
   revalidatePath('/products');
@@ -243,27 +277,3 @@ export async function setPrimaryImage(productId: string, imageId: string): Promi
   return { ok: true, data: null };
 }
 
-export async function setProductCompatibility(
-  productId: string,
-  vehicleIds: number[],
-): Promise<ActionResult> {
-  await requireSession();
-  const supabase = await createClient();
-
-  // Sostituzione atomica: delete + insert. Il PK composito
-  // (product_id, vehicle_id) previene duplicati a livello DB.
-  const { error: delErr } = await supabase
-    .from('product_vehicle_compatibility')
-    .delete()
-    .eq('product_id', productId);
-  if (delErr) return { ok: false, error: delErr.message };
-
-  if (vehicleIds.length > 0) {
-    const rows = vehicleIds.map((vid) => ({ product_id: productId, vehicle_id: vid }));
-    const { error: insErr } = await supabase.from('product_vehicle_compatibility').insert(rows);
-    if (insErr) return { ok: false, error: insErr.message };
-  }
-
-  revalidatePath('/products');
-  return { ok: true, data: null };
-}

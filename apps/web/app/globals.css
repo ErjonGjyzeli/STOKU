@@ -276,12 +276,6 @@
   .report-date-input::-webkit-calendar-picker-indicator:hover {
     opacity: 0.7;
   }
-  /* Prevent iOS Safari auto-zoom on input focus (only real touch screens) */
-  @media (hover: none) and (pointer: coarse) {
-    .topbar-search-input {
-      font-size: 16px !important;
-    }
-  }
 
   /* button primitive */
   .btn {

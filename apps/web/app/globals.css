@@ -459,7 +459,7 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    font-size: var(--fs-base);
+    font-size: var(--fs-sm);
   }
   .tbl thead th {
     position: sticky;

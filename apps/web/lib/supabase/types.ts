@@ -132,6 +132,7 @@ export type Database = {
         Row: {
           change: number
           created_at: string | null
+          from_shelf_id: string | null
           from_store_id: number | null
           id: number
           notes: string | null
@@ -140,12 +141,14 @@ export type Database = {
           reference_order_id: string | null
           staff_id: string | null
           store_id: number | null
+          to_shelf_id: string | null
           to_store_id: number | null
           transfer_id: string | null
         }
         Insert: {
           change: number
           created_at?: string | null
+          from_shelf_id?: string | null
           from_store_id?: number | null
           id?: number
           notes?: string | null
@@ -154,12 +157,14 @@ export type Database = {
           reference_order_id?: string | null
           staff_id?: string | null
           store_id?: number | null
+          to_shelf_id?: string | null
           to_store_id?: number | null
           transfer_id?: string | null
         }
         Update: {
           change?: number
           created_at?: string | null
+          from_shelf_id?: string | null
           from_store_id?: number | null
           id?: number
           notes?: string | null
@@ -168,10 +173,18 @@ export type Database = {
           reference_order_id?: string | null
           staff_id?: string | null
           store_id?: number | null
+          to_shelf_id?: string | null
           to_store_id?: number | null
           transfer_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "inventory_movements_from_shelf_id_fkey"
+            columns: ["from_shelf_id"]
+            isOneToOne: false
+            referencedRelation: "shelves"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "inventory_movements_from_store_id_fkey"
             columns: ["from_store_id"]
@@ -212,6 +225,13 @@ export type Database = {
             columns: ["store_id"]
             isOneToOne: false
             referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_to_shelf_id_fkey"
+            columns: ["to_shelf_id"]
+            isOneToOne: false
+            referencedRelation: "shelves"
             referencedColumns: ["id"]
           },
           {
@@ -373,18 +393,21 @@ export type Database = {
       product_categories: {
         Row: {
           id: number
+          kind: string
           name: string
           parent_id: number | null
           slug: string
         }
         Insert: {
           id?: number
+          kind?: string
           name: string
           parent_id?: number | null
           slug: string
         }
         Update: {
           id?: number
+          kind?: string
           name?: string
           parent_id?: number | null
           slug?: string
@@ -521,6 +544,50 @@ export type Database = {
           },
         ]
       }
+      shelves: {
+        Row: {
+          capacity: number | null
+          code: string
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          kind: string
+          store_id: number
+          updated_at: string | null
+        }
+        Insert: {
+          capacity?: number | null
+          code: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          kind?: string
+          store_id: number
+          updated_at?: string | null
+        }
+        Update: {
+          capacity?: number | null
+          code?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          kind?: string
+          store_id?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shelves_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       staff_profiles: {
         Row: {
           created_at: string | null
@@ -592,6 +659,7 @@ export type Database = {
           product_id: string
           quantity: number
           reserved_quantity: number
+          shelf_id: string | null
           store_id: number
           updated_at: string | null
         }
@@ -602,6 +670,7 @@ export type Database = {
           product_id: string
           quantity?: number
           reserved_quantity?: number
+          shelf_id?: string | null
           store_id: number
           updated_at?: string | null
         }
@@ -612,6 +681,7 @@ export type Database = {
           product_id?: string
           quantity?: number
           reserved_quantity?: number
+          shelf_id?: string | null
           store_id?: number
           updated_at?: string | null
         }
@@ -629,6 +699,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_product_stock_total"
             referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "stock_shelf_id_fkey"
+            columns: ["shelf_id"]
+            isOneToOne: false
+            referencedRelation: "shelves"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "stock_store_id_fkey"

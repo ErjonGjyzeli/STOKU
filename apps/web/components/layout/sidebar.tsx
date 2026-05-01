@@ -18,6 +18,7 @@ type NavItem = {
 const MAIN_NAV: NavItem[] = [
   { href: '/', label: 'Dashboard', icon: 'dashboard' },
   { href: '/products', label: 'Inventario', icon: 'box' },
+  { href: '/tires', label: 'Pneumatici', icon: 'disc' },
   { href: '/stock', label: 'Magazzino', icon: 'building' },
   { href: '/shelves', label: 'Scaffali', icon: 'shelves' },
   { href: '/orders', label: 'Ordini', icon: 'cart' },

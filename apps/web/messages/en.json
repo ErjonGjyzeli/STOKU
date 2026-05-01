@@ -17,6 +17,7 @@
     "products": "Products",
     "stock": "Inventory",
     "shelves": "Shelves",
+    "inventory": "Physical inventory",
     "labels": "Labels",
     "orders": "Orders",
     "customers": "Customers",

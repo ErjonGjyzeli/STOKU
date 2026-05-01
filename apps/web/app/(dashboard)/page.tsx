@@ -131,14 +131,16 @@ export default async function HomePage() {
   const openTransfers = transfersOpenRes.data ?? [];
   const recentOrders = recentOrdersRes.data ?? [];
 
-  // Stock basso: fetch tutto stock + filtro in memoria (no server aggregate
-  // via PostgREST). Abbiamo già l'index stock_low_idx per quando cresce.
+  // Stock basso + totale pezzi: fetch stock + aggrega in memoria. Limit
+  // alto per coprire dataset attuale (~5.5k righe per PV) + headroom.
+  // Bug precedente: limit 2000 tagliava sum totale (mostrava 2851 vs 16408).
+  // Oltre i 20k rows servirà aggregato server (RPC) o paginazione.
   const stockQuery = supabase
     .from('stock')
     .select(
       'product_id, store_id, quantity, reserved_quantity, min_stock, store:stores(code), product:products(sku, name)',
     )
-    .limit(2000);
+    .limit(20000);
   if (scopeStoreId) stockQuery.eq('store_id', scopeStoreId);
   const { data: stockRows } = await stockQuery;
   const lowStock = (stockRows ?? []).filter(

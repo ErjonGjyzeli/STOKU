@@ -598,10 +598,19 @@
       display: none !important;
     }
   }
-  @media (max-width: 640px) {
+  @media (max-width: 768px) {
     .topbar-bell,
-    .topbar-divider {
+    .topbar-divider,
+    .topbar-divider-store,
+    .topbar-search,
+    .topbar-store-name {
       display: none;
+    }
+    .topbar-store-code {
+      max-width: 14ch;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .topbar-new-order-link span:not([class]) {
       display: none;

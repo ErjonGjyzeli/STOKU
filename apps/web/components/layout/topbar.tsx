@@ -53,7 +53,10 @@ export function Topbar({ stores }: Props) {
       </button>
 
       <StoreSwitcher stores={stores} />
-      <div className="vdivider" style={{ height: 20, alignSelf: 'center' }} />
+      <div
+        className="vdivider topbar-divider-store"
+        style={{ height: 20, alignSelf: 'center' }}
+      />
 
       <form onSubmit={submitSearch} className="topbar-search" style={{ flex: 1, maxWidth: 420 }}>
         <label

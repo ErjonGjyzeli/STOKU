@@ -20,6 +20,7 @@
     "shelves": "Shelves",
     "scanner": "Scanner",
     "labels": "Labels",
+    "inventory": "Physical inventory",
     "orders": "Orders",
     "customers": "Customers",
     "transfers": "Transfers",

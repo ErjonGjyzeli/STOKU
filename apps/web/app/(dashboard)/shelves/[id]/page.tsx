@@ -141,15 +141,14 @@ export default async function ShelfDetailPage({
             >
               <Icon name="tag" size={12} /> A4
             </Link>
-            <button
-              type="button"
+            <Link
+              href={`/shelves/${shelf.id}/inventory`}
               className="btn ghost sm"
-              disabled
-              title={futureTooltip}
               aria-label="Inventario"
+              title="Conta scaffale e applica rettifica"
             >
               <Icon name="check" size={12} /> Inventario
-            </button>
+            </Link>
           </div>
         }
       />

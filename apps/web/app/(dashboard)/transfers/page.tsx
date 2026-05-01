@@ -89,7 +89,7 @@ export default async function TransfersPage({
         }
       />
 
-      <div className="stoku-page">
+      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
         <Panel padded>
           <form
             method="get"

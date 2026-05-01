@@ -3,6 +3,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Panel } from '@/components/ui/panel';
 import { StokuButton } from '@/components/ui/stoku-button';
 import { requireSession } from '@/lib/auth/session';
+import { formatInt } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 import { countLabelTargets, type LabelFilters, type LabelKind } from './filters';
 
@@ -227,7 +228,7 @@ export default async function LabelsPage({
                 Anteprima
               </span>
               <div style={{ fontSize: 22, fontWeight: 600 }}>
-                {count.toLocaleString('it-IT')} etichett{count === 1 ? 'a' : 'e'}
+                {formatInt(count)} etichett{count === 1 ? 'a' : 'e'}
               </div>
               <div className="meta" style={{ fontSize: 12 }}>
                 {kind === 'products' ? 'Prodotti' : 'Scaffali'} ·{' '}

@@ -7,6 +7,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Panel } from '@/components/ui/panel';
 import { StokuBadge } from '@/components/ui/stoku-badge';
 import { requireSession } from '@/lib/auth/session';
+import { formatCurrency, formatDateLong } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 
 type BadgeVariant = 'default' | 'ok' | 'warn' | 'danger' | 'info' | 'draft' | 'accent';
@@ -35,20 +36,12 @@ const REVENUE_STATUSES = new Set(['confirmed', 'paid', 'shipped', 'completed']);
 
 function currency(value: number | null, code: string | null) {
   if (value == null) return null;
-  return new Intl.NumberFormat('it-IT', {
-    style: 'currency',
-    currency: code ?? 'EUR',
-    maximumFractionDigits: 2,
-  }).format(Number(value));
+  return formatCurrency(value, code);
 }
 
 function formatDate(iso: string | null) {
   if (!iso) return null;
-  return new Date(iso).toLocaleDateString('it-IT', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
+  return formatDateLong(iso);
 }
 
 export default async function CustomerDetailPage({

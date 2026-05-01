@@ -10,6 +10,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Panel } from '@/components/ui/panel';
 import { StokuBadge } from '@/components/ui/stoku-badge';
 import { StokuButton } from '@/components/ui/stoku-button';
+import { formatInt } from '@/lib/format';
 import { createCustomer, deleteCustomer, updateCustomer, type CustomerInput } from './actions';
 import { CustomerFormDialog, type CustomerFormValues } from './customer-form-dialog';
 
@@ -92,7 +93,7 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
         title="Clienti"
         subtitle={
           total > 0
-            ? `${total.toLocaleString('it-IT')} clienti`
+            ? `${formatInt(total)} clienti`
             : 'Nessun cliente ancora — crea il primo'
         }
         right={

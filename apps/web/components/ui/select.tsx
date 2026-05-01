@@ -6,7 +6,40 @@ import { Select as SelectPrimitive } from '@base-ui/react/select';
 import { cn } from '@/lib/utils';
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from 'lucide-react';
 
-const Select = SelectPrimitive.Root;
+const SelectLabelContext = React.createContext<Map<unknown, React.ReactNode> | null>(null);
+
+function collectSelectItemLabels(
+  node: React.ReactNode,
+  map: Map<unknown, React.ReactNode>,
+): void {
+  React.Children.forEach(node, (child) => {
+    if (!React.isValidElement(child)) return;
+    const childProps = child.props as { value?: unknown; children?: React.ReactNode };
+    if (child.type === SelectItem && childProps.value !== undefined) {
+      map.set(childProps.value, childProps.children);
+    }
+    if (childProps.children !== undefined) {
+      collectSelectItemLabels(childProps.children, map);
+    }
+  });
+}
+
+function Select<Value, Multiple extends boolean | undefined = false>({
+  children,
+  ...props
+}: SelectPrimitive.Root.Props<Value, Multiple>) {
+  const labels = React.useMemo(() => {
+    const map = new Map<unknown, React.ReactNode>();
+    collectSelectItemLabels(children, map);
+    return map;
+  }, [children]);
+
+  return (
+    <SelectLabelContext.Provider value={labels}>
+      <SelectPrimitive.Root {...props}>{children}</SelectPrimitive.Root>
+    </SelectLabelContext.Provider>
+  );
+}
 
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   return (
@@ -18,13 +51,24 @@ function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   );
 }
 
-function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
+function SelectValue({ className, placeholder, children, ...props }: SelectPrimitive.Value.Props) {
+  const labels = React.useContext(SelectLabelContext);
+
   return (
     <SelectPrimitive.Value
       data-slot="select-value"
       className={cn('flex flex-1 text-left', className)}
+      placeholder={placeholder}
       {...props}
-    />
+    >
+      {typeof children === 'function'
+        ? (children as (value: unknown) => React.ReactNode)
+        : (value: unknown) => {
+            if (value == null || value === '') return children ?? placeholder ?? null;
+            if (labels?.has(value)) return labels.get(value);
+            return children ?? placeholder ?? String(value);
+          }}
+    </SelectPrimitive.Value>
   );
 }
 

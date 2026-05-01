@@ -240,10 +240,10 @@ export function TireFormDialog({ open, onOpenChange, onSubmit, title, categories
                     onValueChange={(v) => field.onChange(v === '_none' ? '' : v)}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="—" />
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="_none">— Nessuno</SelectItem>
+                      <SelectItem value="_none">Nessuno</SelectItem>
                       {SPEED_INDEXES.map((s) => (
                         <SelectItem key={s} value={s}>
                           {s}

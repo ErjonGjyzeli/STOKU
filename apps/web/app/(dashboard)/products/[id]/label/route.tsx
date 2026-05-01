@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import QRCode from 'qrcode';
 
 import { requireSession } from '@/lib/auth/session';
+import { formatCurrency } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 
 // Etichetta 80×50mm (formato comune per stampanti termiche),
@@ -97,11 +98,7 @@ function LabelDocument({ data }: { data: LabelProps }) {
 
 function formatPrice(value: number | null, currency: string | null) {
   if (value == null) return null;
-  return new Intl.NumberFormat('it-IT', {
-    style: 'currency',
-    currency: currency ?? 'EUR',
-    maximumFractionDigits: 2,
-  }).format(Number(value));
+  return formatCurrency(value, currency);
 }
 
 export async function GET(

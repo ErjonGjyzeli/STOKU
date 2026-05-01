@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import type { CSSProperties } from 'react';
 import { Icon, type IconName } from '@/components/ui/icon';
 import { useSidebar } from '@/lib/context/sidebar-context';
+import { formatInt } from '@/lib/format';
 
 type Role = 'admin' | 'sales' | 'warehouse' | 'viewer';
 
@@ -25,7 +26,7 @@ export type NavCounts = {
 
 const MAIN_NAV: NavItem[] = [
   { href: '/', label: 'Dashboard', icon: 'dashboard' },
-  { href: '/products', label: 'Inventario', icon: 'box', countKey: 'products' },
+  { href: '/products', label: 'Prodotti', icon: 'box', countKey: 'products' },
   { href: '/tires', label: 'Pneumatici', icon: 'disc' },
   { href: '/stock', label: 'Magazzino', icon: 'building' },
   { href: '/shelves', label: 'Scaffali', icon: 'shelves' },
@@ -324,7 +325,7 @@ function SidebarLink({
                 fontVariantNumeric: 'tabular-nums',
               }}
             >
-              {count.toLocaleString('it-IT')}
+              {formatInt(count)}
             </span>
           )}
         </>

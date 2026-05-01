@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { PageHeader } from '@/components/ui/page-header';
 import { Panel } from '@/components/ui/panel';
 import { requireSession } from '@/lib/auth/session';
+import { formatDateTimeLong } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 import {
   OrderDetailClient,
@@ -16,13 +17,7 @@ export const metadata = { title: 'Ordine — STOKU' };
 
 function formatDate(iso: string | null) {
   if (!iso) return null;
-  return new Date(iso).toLocaleString('it-IT', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  return formatDateTimeLong(iso);
 }
 
 export default async function OrderDetailPage({

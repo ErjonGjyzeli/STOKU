@@ -5,6 +5,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Panel } from '@/components/ui/panel';
 import { StokuButton } from '@/components/ui/stoku-button';
 import { requireSession } from '@/lib/auth/session';
+import { formatInt } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 import { ShelfCreateButton } from './shelf-create-button';
 import { ShelvesClient, type ShelfRow } from './shelves-client';
@@ -150,7 +151,7 @@ export default async function ShelvesPage({
         title={`Scaffali — ${storeLabel}`}
         subtitle={
           total > 0
-            ? `${total.toLocaleString('it-IT')} scaffali · mappa fisica del PV`
+            ? `${formatInt(total)} scaffali · mappa fisica del PV`
             : 'Nessuno scaffale ancora — crea il primo per iniziare'
         }
         right={

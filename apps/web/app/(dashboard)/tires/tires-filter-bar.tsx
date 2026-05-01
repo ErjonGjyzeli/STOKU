@@ -35,7 +35,7 @@ const SEASONS: Array<{ value: TiresFilters['season']; label: string }> = [
   { value: '', label: 'Tutte' },
   { value: 'summer', label: 'Estive' },
   { value: 'winter', label: 'Invernali' },
-  { value: 'allseason', label: '4 stagioni' },
+  { value: 'allseason', label: '4 Stagioni' },
 ];
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -217,6 +217,7 @@ export function TiresFilterBar({ initial, hasFilters }: Props) {
                     color: active ? 'var(--ink-1)' : 'var(--ink-3)',
                     fontWeight: active ? 500 : 400,
                     cursor: 'pointer',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {s.label}

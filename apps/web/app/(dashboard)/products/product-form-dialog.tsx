@@ -153,7 +153,7 @@ export function ProductFormDialog({
                       <SelectValue placeholder="Seleziona" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="_none">— Nessuna</SelectItem>
+                      <SelectItem value="_none">Nessuna</SelectItem>
                       {categories.map((c) => (
                         <SelectItem key={c.id} value={String(c.id)}>
                           {c.name}

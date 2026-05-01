@@ -1,11 +1,9 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Icon } from '@/components/ui/icon';
-import { StokuButton } from '@/components/ui/stoku-button';
 import { StoreSwitcher } from '@/components/layout/store-switcher';
 import { useSidebar } from '@/lib/context/sidebar-context';
 import type { StoreLite } from '@/lib/auth/session';
@@ -76,13 +74,13 @@ export function Topbar({ stores }: Props) {
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Cerca prodotti, SKU, OEM, numero ex-Excel…"
+            placeholder="Cerca prodotti, SKU, OEM…"
+            className="topbar-search-input"
             style={{
               flex: 1,
               background: 'transparent',
               border: 'none',
               outline: 'none',
-              fontSize: 12,
               color: 'inherit',
               minWidth: 0,
             }}
@@ -91,36 +89,6 @@ export function Topbar({ stores }: Props) {
         </label>
       </form>
 
-      <div style={{ flex: 1 }} />
-
-      <Link href="/orders?new=1" className="topbar-new-order-link">
-        <StokuButton icon="plus" variant="primary" size="sm">
-          <span>Nuovo ordine</span>
-        </StokuButton>
-      </Link>
-
-      <div className="vdivider topbar-divider" style={{ height: 20 }} />
-      <button
-        type="button"
-        className="btn ghost topbar-bell"
-        style={{ padding: 6, width: 28, position: 'relative' }}
-        title="Notifiche"
-        aria-label="Notifiche"
-      >
-        <Icon name="bell" size={14} />
-        <span
-          aria-hidden
-          style={{
-            position: 'absolute',
-            top: 4,
-            right: 4,
-            width: 6,
-            height: 6,
-            borderRadius: '50%',
-            background: 'var(--danger)',
-          }}
-        />
-      </button>
     </header>
   );
 }

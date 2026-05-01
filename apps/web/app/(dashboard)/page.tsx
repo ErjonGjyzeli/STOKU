@@ -7,6 +7,12 @@ import { Panel } from '@/components/ui/panel';
 import { StokuBadge } from '@/components/ui/stoku-badge';
 import { StokuButton } from '@/components/ui/stoku-button';
 import { requireSession } from '@/lib/auth/session';
+import {
+  formatCurrency,
+  formatDayMonthShort,
+  formatInt,
+  formatWeekdayDayMonth,
+} from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 
 type BadgeVariant = 'default' | 'ok' | 'warn' | 'danger' | 'info' | 'draft' | 'accent';
@@ -31,15 +37,6 @@ const STATUS_VARIANT: Record<string, BadgeVariant> = {
 
 const REVENUE_STATUSES = ['confirmed', 'paid', 'shipped', 'completed'];
 
-function currency(value: number | null, code: string | null) {
-  if (value == null) return '—';
-  return new Intl.NumberFormat('it-IT', {
-    style: 'currency',
-    currency: code ?? 'EUR',
-    maximumFractionDigits: 2,
-  }).format(Number(value));
-}
-
 function relativeTime(iso: string | null) {
   if (!iso) return '—';
   const diffMs = Date.now() - new Date(iso).getTime();
@@ -51,7 +48,7 @@ function relativeTime(iso: string | null) {
   const days = Math.floor(hours / 24);
   if (days === 1) return 'ieri';
   if (days < 7) return `${days} giorni fa`;
-  return new Date(iso).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
+  return formatDayMonthShort(iso);
 }
 
 const REASON_LABEL: Record<string, string> = {
@@ -82,11 +79,7 @@ export default async function HomePage() {
   const session = await requireSession();
   const firstName = session.profile.full_name?.split(' ')[0] ?? '';
   const greet = firstName ? `Benvenuto, ${firstName}` : 'Benvenuto';
-  const todayLabel = new Date().toLocaleDateString('it-IT', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  });
+  const todayLabel = formatWeekdayDayMonth(new Date());
 
   const supabase = await createClient();
 
@@ -118,6 +111,11 @@ export default async function HomePage() {
     .from('products')
     .select('id', { count: 'exact', head: true })
     .eq('is_active', true);
+  const tiresActiveQuery = supabase
+    .from('products')
+    .select('id, category:product_categories!inner(kind)', { count: 'exact' })
+    .eq('category.kind', 'gomma')
+    .eq('is_active', true);
   const transfersOpenQuery = supabase
     .from('stock_transfers')
     .select(
@@ -143,11 +141,12 @@ export default async function HomePage() {
     recentOrdersQuery.eq('store_id', scopeStoreId);
   }
 
-  const [todayOrdersRes, mtdOrdersRes, productsActiveRes, transfersOpenRes, recentOrdersRes] =
+  const [todayOrdersRes, mtdOrdersRes, productsActiveRes, tiresActiveRes, transfersOpenRes, recentOrdersRes] =
     await Promise.all([
       todayOrdersQuery,
       mtdOrdersQuery,
       productsActiveQuery,
+      tiresActiveQuery,
       transfersOpenQuery,
       recentOrdersQuery,
     ]);
@@ -158,27 +157,37 @@ export default async function HomePage() {
     0,
   );
   const productsActive = productsActiveRes.count ?? 0;
+  const tiresActive = tiresActiveRes.count ?? 0;
   const openTransfers = transfersOpenRes.data ?? [];
   const recentOrders = recentOrdersRes.data ?? [];
 
-  // Stock basso + totale pezzi: fetch stock + aggrega in memoria. Limit
-  // alto per coprire dataset attuale (~5.5k righe per PV) + headroom.
-  // Bug precedente: limit 2000 tagliava sum totale (mostrava 2851 vs 16408).
-  // Oltre i 20k rows servirà aggregato server (RPC) o paginazione.
-  const stockQuery = supabase
-    .from('stock')
-    .select(
-      'product_id, store_id, quantity, reserved_quantity, min_stock, store:stores(code), product:products(sku, name)',
-    )
-    .limit(20000);
-  if (scopeStoreId) stockQuery.eq('store_id', scopeStoreId);
-  const { data: stockRows } = await stockQuery;
-  const lowStock = (stockRows ?? []).filter(
-    (r) => r.quantity - r.reserved_quantity <= (r.min_stock ?? 0),
-  );
-  const lowStockCount = lowStock.length;
-  const lowStockTop = lowStock.slice(0, 6);
-  const totalUnits = (stockRows ?? []).reduce((sum, r) => sum + Number(r.quantity ?? 0), 0);
+  // Aggregati stock via RPC server-side: corregge il bug in-memory
+  // dove .limit() troncava il dataset e sum risultava errato (2851 vs 16408+).
+  const tireIds = (tiresActiveRes.data ?? []).map((r) => r.id).filter(Boolean) as string[];
+  const { data: stockData } = await supabase.rpc('get_dashboard_stock', {
+    ...(scopeStoreId != null ? { p_store_id: scopeStoreId } : {}),
+    ...(tireIds.length > 0 ? { p_tire_ids: tireIds } : {}),
+  });
+  const stockResult = stockData as {
+    total_units: number;
+    low_stock_count: number;
+    low_stock_top: Array<{
+      product_id: string;
+      store_id: number;
+      quantity: number;
+      reserved_quantity: number;
+      min_stock: number | null;
+      store_code: string;
+      product_sku: string;
+      product_name: string;
+    }>;
+    tire_total_units: number;
+  } | null;
+
+  const totalUnits = Number(stockResult?.total_units ?? 0);
+  const totalTireUnits = Number(stockResult?.tire_total_units ?? 0);
+  const lowStockCount = Number(stockResult?.low_stock_count ?? 0);
+  const lowStockTop = stockResult?.low_stock_top ?? [];
 
   // Activity feed: ultimi 10 movimenti stock (vendite, carichi, transfer, etc)
   const activityQuery = supabase
@@ -208,20 +217,26 @@ export default async function HomePage() {
       />
 
       <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div className="grid-kpi-4">
-          <Stat label="Ordini oggi" value={ordersToday.toLocaleString('it-IT')} />
-          <Stat label="Fatturato MTD" value={currency(mtdTotal, 'EUR')} />
+        <div className="grid-kpi-5">
+          <Stat label="Ordini oggi" value={formatInt(ordersToday)} />
+          <Stat label="Fatturato MTD" value={formatCurrency(mtdTotal, 'EUR')} />
           <Stat
             label="Stock basso"
-            value={lowStockCount.toLocaleString('it-IT')}
+            value={formatInt(lowStockCount)}
             warn={lowStockCount > 0}
             link="/stock?low=1"
           />
           <Stat
             label="Prodotti attivi"
-            value={productsActive.toLocaleString('it-IT')}
-            hint={`${totalUnits.toLocaleString('it-IT')} pezzi totali`}
+            value={formatInt(productsActive)}
+            hint={`${formatInt(totalUnits)} pezzi totali`}
             link="/products"
+          />
+          <Stat
+            label="Pneumatici attivi"
+            value={formatInt(tiresActive)}
+            hint={`${formatInt(totalTireUnits)} pezzi totali`}
+            link="/tires"
           />
         </div>
 
@@ -277,7 +292,7 @@ export default async function HomePage() {
                         </StokuBadge>
                       </td>
                       <td className="mono" style={{ textAlign: 'right' }}>
-                        {currency(Number(o.total), o.currency)}
+                        {formatCurrency(Number(o.total), o.currency)}
                       </td>
                       <td
                         className="meta"
@@ -340,10 +355,10 @@ export default async function HomePage() {
                               className="truncate-1"
                               style={{ fontSize: 12, fontWeight: 500 }}
                             >
-                              {r.product?.name ?? '—'}
+                              {r.product_name ?? '—'}
                             </div>
                             <div className="mono meta" style={{ fontSize: 10.5 }}>
-                              {r.product?.sku ?? '—'} · {r.store?.code ?? '—'}
+                              {r.product_sku ?? '—'} · {r.store_code ?? '—'}
                             </div>
                           </div>
                           <span

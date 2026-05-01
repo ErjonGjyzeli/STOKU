@@ -59,37 +59,34 @@ export default async function OrderDetailPage({
     line_total: r.line_total != null ? Number(r.line_total) : null,
   }));
 
-  const { data: productsRaw } = await supabase
-    .from('products')
-    .select('id, sku, name, price_sell, currency, is_active')
-    .eq('is_active', true)
-    .order('name')
+  // Picker prodotti: parte dallo stock del PV dell'ordine, non da products.
+  // Una sola query con join, già scopata al PV → max ~N righe (prodotti con
+  // stock in quel PV) anziché 500 prodotti + 500 UUID in URL .in() che
+  // sforava il limite PostgREST e tornava vuoto (tutti "Esaurito").
+  // available = quantity - reserved_quantity (stessa logica del trigger
+  // reserve_stock / funzione get_available).
+  const { data: stockRows } = await supabase
+    .from('stock')
+    .select(
+      'quantity, reserved_quantity, product:products!inner(id, sku, name, price_sell, currency, is_active)',
+    )
+    .eq('store_id', order.store_id)
+    .eq('product.is_active', true)
+    .order('name', { foreignTable: 'products', ascending: true })
     .limit(500);
-  const productIds = (productsRaw ?? []).map((p) => p.id);
-  // Disponibilità per (product, store ordine) — il trigger reserve_stock
-  // confronta con get_available(); replichiamo la logica qui per UX:
-  // available = quantity - reserved_quantity.
-  const stockMap = new Map<string, number>();
-  if (productIds.length > 0) {
-    const { data: stockRows } = await supabase
-      .from('stock')
-      .select('product_id, quantity, reserved_quantity')
-      .eq('store_id', order.store_id)
-      .in('product_id', productIds);
-    for (const r of stockRows ?? []) {
-      if (r.product_id) {
-        stockMap.set(r.product_id, Number(r.quantity ?? 0) - Number(r.reserved_quantity ?? 0));
-      }
-    }
-  }
-  const products: ProductOption[] = (productsRaw ?? []).map((p) => ({
-    id: p.id,
-    sku: p.sku,
-    name: p.name,
-    price_sell: p.price_sell != null ? Number(p.price_sell) : null,
-    currency: p.currency,
-    available: stockMap.get(p.id) ?? 0,
-  }));
+  const products: ProductOption[] = (stockRows ?? [])
+    .filter((r) => r.product)
+    .map((r) => {
+      const p = r.product!;
+      return {
+        id: p.id,
+        sku: p.sku,
+        name: p.name,
+        price_sell: p.price_sell != null ? Number(p.price_sell) : null,
+        currency: p.currency,
+        available: Number(r.quantity ?? 0) - Number(r.reserved_quantity ?? 0),
+      };
+    });
 
   const summary: OrderSummary = {
     id: order.id,

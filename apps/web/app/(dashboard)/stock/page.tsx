@@ -15,7 +15,6 @@ const PAGE_SIZE = 50;
 
 type SearchParams = {
   q?: string;
-  store?: string;
   low?: string;
   page?: string;
 };
@@ -38,14 +37,8 @@ export default async function StockPage({
   const session = await requireSession();
   const params = await searchParams;
   const q = (params.q ?? '').trim();
-  const storeFilter =
-    params.store !== undefined
-      ? params.store
-        ? Number(params.store)
-        : null
-      : session.isExplicitAllScope
-        ? null
-        : session.activeStoreId;
+  // Scope PV deriva esclusivamente dal selettore in topbar (session).
+  const storeFilter = session.isExplicitAllScope ? null : session.activeStoreId;
   const lowOnly = params.low === '1';
   const page = Math.max(1, Number(params.page) || 1);
 
@@ -80,10 +73,7 @@ export default async function StockPage({
   const fromIdx = (page - 1) * PAGE_SIZE;
   const toIdx = fromIdx + PAGE_SIZE - 1;
 
-  const [stockRes, storesRes] = await Promise.all([
-    stockQuery.range(fromIdx, toIdx),
-    supabase.from('stores').select('id, code, name').eq('is_active', true).order('code'),
-  ]);
+  const stockRes = await stockQuery.range(fromIdx, toIdx);
 
   if (stockRes.error) {
     return <p style={{ padding: 24, color: 'var(--danger)' }}>Errore: {stockRes.error.message}</p>;
@@ -94,10 +84,9 @@ export default async function StockPage({
     rows = rows.filter((r) => r.quantity - r.reserved_quantity <= (r.min_stock ?? 0));
   }
 
-  const stores = storesRes.data ?? [];
   const total = stockRes.count ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const activeFilters = (q ? 1 : 0) + (storeFilter ? 1 : 0) + (lowOnly ? 1 : 0);
+  const activeFilters = (q ? 1 : 0) + (lowOnly ? 1 : 0);
 
   return (
     <div>
@@ -137,25 +126,6 @@ export default async function StockPage({
                   autoComplete="off"
                 />
               </div>
-            </label>
-
-            <label className="col" style={{ gap: 4, width: 200 }}>
-              <span className="meta" style={{ fontSize: 11 }}>
-                STORE
-              </span>
-              <select
-                name="store"
-                defaultValue={storeFilter ? String(storeFilter) : ''}
-                className="stoku-input"
-                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
-              >
-                <option value="">Tutti</option>
-                {stores.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.code} · {s.name}
-                  </option>
-                ))}
-              </select>
             </label>
 
             <label

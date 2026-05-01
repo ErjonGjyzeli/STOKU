@@ -141,7 +141,7 @@ export default async function ReportsPage({
         }
       />
 
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="stoku-page">
         <div className="row" style={{ gap: 0, borderBottom: '1px solid var(--stoku-border)' }}>
           <TabLink current={tab} label="Vendite" target="sales" params={params} />
           <TabLink current={tab} label="Inventario" target="inventory" params={params} />

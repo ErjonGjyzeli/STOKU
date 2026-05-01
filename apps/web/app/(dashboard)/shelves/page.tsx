@@ -161,7 +161,7 @@ export default async function ShelvesPage({
         }
       />
 
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="stoku-page">
         <Panel padded>
           <form
             method="get"

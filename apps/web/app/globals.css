@@ -262,6 +262,9 @@
   .topbar-search-input {
     font-size: 12px;
   }
+  .search-result-row:hover {
+    background: var(--panel-2);
+  }
   /* Prevent iOS Safari auto-zoom on input focus (only real touch screens) */
   @media (hover: none) and (pointer: coarse) {
     .topbar-search-input {

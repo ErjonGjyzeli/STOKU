@@ -7,7 +7,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/supabase/types';
 
-export type LabelKind = 'products' | 'shelves';
+export type LabelKind = 'products' | 'tires' | 'shelves';
 export type LabelFormat = 'a4' | 'thermal';
 
 export type LabelFilters = {
@@ -28,8 +28,8 @@ type Result =
 
 export function parseLabelParams(sp: URLSearchParams): Result {
   const kindRaw = sp.get('kind');
-  if (kindRaw !== 'products' && kindRaw !== 'shelves') {
-    return { ok: false, error: 'Parametro `kind` obbligatorio: products|shelves' };
+  if (kindRaw !== 'products' && kindRaw !== 'tires' && kindRaw !== 'shelves') {
+    return { ok: false, error: 'Parametro `kind` obbligatorio: products|tires|shelves' };
   }
   const formatRaw = sp.get('format') ?? 'a4';
   if (formatRaw !== 'a4' && formatRaw !== 'thermal') {
@@ -100,6 +100,26 @@ export async function countLabelTargets(
         : supabase
             .from('products')
             .select('id', { count: 'exact', head: true })
+            .eq('is_active', true);
+    if (filters.ids && filters.ids.length > 0) q = q.in('id', filters.ids);
+    if (filters.only_unprinted) q = q.is('last_label_printed_at', null);
+    if (filters.since_days !== null) q = q.gte('created_at', sinceIso(filters.since_days));
+    const { count } = await q;
+    return count ?? 0;
+  }
+  if (kind === 'tires') {
+    let q =
+      filters.store_id !== null
+        ? supabase
+            .from('products')
+            .select('id, product_categories!inner(kind), stock!inner(store_id)', { count: 'exact', head: true })
+            .eq('product_categories.kind', 'gomma')
+            .eq('stock.store_id', filters.store_id)
+            .eq('is_active', true)
+        : supabase
+            .from('products')
+            .select('id, product_categories!inner(kind)', { count: 'exact', head: true })
+            .eq('product_categories.kind', 'gomma')
             .eq('is_active', true);
     if (filters.ids && filters.ids.length > 0) q = q.in('id', filters.ids);
     if (filters.only_unprinted) q = q.is('last_label_printed_at', null);

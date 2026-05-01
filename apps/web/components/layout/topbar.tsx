@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 import { Icon } from '@/components/ui/icon';
 import { StoreSwitcher } from '@/components/layout/store-switcher';
+import { SearchModal } from '@/components/layout/search-modal';
 import { useSidebar } from '@/lib/context/sidebar-context';
 import type { StoreLite } from '@/lib/auth/session';
 
@@ -16,6 +17,7 @@ export function Topbar({ stores }: Props) {
   const router = useRouter();
   const { toggle, mode } = useSidebar();
   const [q, setQ] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
 
   function submitSearch(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -23,7 +25,17 @@ export function Topbar({ stores }: Props) {
     router.push(trimmed ? `/products?q=${encodeURIComponent(trimmed)}` : '/products');
   }
 
+  function openModal() {
+    setModalOpen(true);
+  }
+
+  function closeModal() {
+    setModalOpen(false);
+    setQ('');
+  }
+
   return (
+    <>
     <header
       style={{
         display: 'flex',
@@ -74,7 +86,8 @@ export function Topbar({ stores }: Props) {
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Cerca prodotti, SKU, OEM…"
+            onFocus={openModal}
+            placeholder="Cerca"
             className="topbar-search-input"
             style={{
               flex: 1,
@@ -85,10 +98,14 @@ export function Topbar({ stores }: Props) {
               minWidth: 0,
             }}
             autoComplete="off"
+            readOnly
           />
         </label>
       </form>
 
     </header>
+
+    {modalOpen && <SearchModal initialQ={q} onClose={closeModal} />}
+    </>
   );
 }

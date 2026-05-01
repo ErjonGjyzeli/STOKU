@@ -107,15 +107,30 @@ export default async function HomePage() {
     .select('total')
     .in('status', REVENUE_STATUSES)
     .gte('created_at', monthIso);
-  const productsActiveQuery = supabase
-    .from('products')
-    .select('id', { count: 'exact', head: true })
-    .eq('is_active', true);
-  const tiresActiveQuery = supabase
-    .from('products')
-    .select('id, category:product_categories!inner(kind)', { count: 'exact' })
-    .eq('category.kind', 'gomma')
-    .eq('is_active', true);
+  const productsActiveQuery =
+    scopeStoreId !== null
+      ? supabase
+          .from('products')
+          .select('id, stock!inner(store_id)', { count: 'exact', head: true })
+          .eq('stock.store_id', scopeStoreId)
+          .eq('is_active', true)
+      : supabase
+          .from('products')
+          .select('id', { count: 'exact', head: true })
+          .eq('is_active', true);
+  const tiresActiveQuery =
+    scopeStoreId !== null
+      ? supabase
+          .from('products')
+          .select('id, product_categories!inner(kind), stock!inner(store_id)', { count: 'exact' })
+          .eq('product_categories.kind', 'gomma')
+          .eq('stock.store_id', scopeStoreId)
+          .eq('is_active', true)
+      : supabase
+          .from('products')
+          .select('id, category:product_categories!inner(kind)', { count: 'exact' })
+          .eq('category.kind', 'gomma')
+          .eq('is_active', true);
   const transfersOpenQuery = supabase
     .from('stock_transfers')
     .select(

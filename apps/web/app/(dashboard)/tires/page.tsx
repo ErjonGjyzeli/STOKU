@@ -253,6 +253,7 @@ export default async function TiresPage({
                   <th style={{ width: 90, textAlign: 'right' }}>Battistr.</th>
                   <th style={{ width: 110, textAlign: 'right' }}>Prezzo</th>
                   <th style={{ width: 90, textAlign: 'right' }}>Disp.</th>
+                  <th style={{ width: 36 }} />
                 </tr>
               </thead>
               <tbody>
@@ -354,6 +355,18 @@ export default async function TiresPage({
                         ) : (
                           <span className="faint">0</span>
                         )}
+                      </td>
+                      <td>
+                        <a
+                          href={`/tires/${p.id}/label`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="btn ghost"
+                          style={{ padding: 4, width: 28, height: 28 }}
+                          title="Stampa etichetta"
+                        >
+                          <Icon name="tag" size={13} />
+                        </a>
                       </td>
                     </tr>
                   );

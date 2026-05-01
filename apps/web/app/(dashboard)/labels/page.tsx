@@ -22,7 +22,8 @@ function parseUiParams(sp: SearchParams): {
   format: 'a4' | 'thermal';
   filters: LabelFilters;
 } {
-  const kind: LabelKind = sp.kind === 'shelves' ? 'shelves' : 'products';
+  const kind: LabelKind =
+    sp.kind === 'shelves' ? 'shelves' : sp.kind === 'tires' ? 'tires' : 'products';
   const format = sp.format === 'thermal' ? 'thermal' : 'a4';
   const store_id = sp.store_id ? Number(sp.store_id) : null;
   const only_unprinted = sp.only_unprinted === '1';
@@ -114,6 +115,15 @@ export default async function LabelsPage({
                     defaultChecked={kind === 'products'}
                   />
                   Prodotti
+                </label>
+                <label className="row" style={{ gap: 6, alignItems: 'center' }}>
+                  <input
+                    type="radio"
+                    name="kind"
+                    value="tires"
+                    defaultChecked={kind === 'tires'}
+                  />
+                  Pneumatici
                 </label>
                 <label className="row" style={{ gap: 6, alignItems: 'center' }}>
                   <input
@@ -231,7 +241,7 @@ export default async function LabelsPage({
                 {formatInt(count)} etichett{count === 1 ? 'a' : 'e'}
               </div>
               <div className="meta" style={{ fontSize: 12 }}>
-                {kind === 'products' ? 'Prodotti' : 'Scaffali'} ·{' '}
+                {kind === 'products' ? 'Prodotti' : kind === 'tires' ? 'Pneumatici' : 'Scaffali'} ·{' '}
                 {format === 'a4' ? 'A4 24-up' : 'Termico singolo'}
               </div>
             </div>

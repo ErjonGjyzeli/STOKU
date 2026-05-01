@@ -90,7 +90,7 @@ export default async function LabelsPage({
         subtitle="Genera PDF per stampante A4 (24-up) o termica singola (Brother QL)"
       />
 
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="stoku-page">
         <Panel padded>
           <form
             method="get"

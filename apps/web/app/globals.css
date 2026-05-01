@@ -540,6 +540,24 @@
     max-width: 100%;
   }
 
+  /* Page body wrapper — responsive padding */
+  .stoku-page {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  @media (max-width: 640px) {
+    .stoku-page {
+      padding: 12px;
+      gap: 12px;
+    }
+    .grid-side {
+      padding: 12px !important;
+      gap: 12px;
+    }
+  }
+
   /* Utility grid responsive per pagine che non possono usare Tailwind
      inline (componenti che passano style={} diretto). */
   .grid-kpi-4 {

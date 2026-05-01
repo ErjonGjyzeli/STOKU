@@ -129,7 +129,7 @@ export default async function StockPage({
           ) : undefined
         }
       />
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="stoku-page">
         {/* Filtri */}
         <Panel padded>
           <form

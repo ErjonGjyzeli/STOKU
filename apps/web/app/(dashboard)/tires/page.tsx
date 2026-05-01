@@ -225,7 +225,7 @@ export default async function TiresPage({
         right={<TiresCreateButton categories={tireCategories} />}
       />
 
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="stoku-page">
         <Panel padded>
           <TiresFilterBar initial={initialFilters} hasFilters={hasFilters} />
         </Panel>
@@ -334,7 +334,7 @@ export default async function TiresPage({
                           {p.name}
                         </span>
                       </td>
-                      <td className="mono" style={{ fontSize: 12 }}>
+                      <td className="mono" style={{ fontSize: 11 }}>
                         {p.tire_dot ?? <span className="faint">—</span>}
                       </td>
                       <td className="mono" style={{ textAlign: 'right' }}>

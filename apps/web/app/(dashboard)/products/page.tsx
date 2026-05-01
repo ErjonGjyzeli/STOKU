@@ -157,7 +157,7 @@ export default async function ProductsPage({
         right={<ProductsCreateButton categories={categories} />}
       />
 
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="stoku-page">
         <Panel padded>
           <form
             method="get"

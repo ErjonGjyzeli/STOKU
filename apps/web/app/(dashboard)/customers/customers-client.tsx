@@ -103,7 +103,7 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
         }
       />
 
-      <div style={{ padding: 24 }}>
+      <div className="stoku-page">
         <Panel padded={false}>
           {customers.length === 0 ? (
             <Empty

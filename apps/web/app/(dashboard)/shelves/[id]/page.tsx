@@ -121,15 +121,26 @@ export default async function ShelfDetailPage({
             >
               <Icon name="swap" size={12} /> Sposta
             </button>
-            <button
-              type="button"
+            <Link
+              href={`/shelves/${shelf.id}/label?format=thermal`}
+              target="_blank"
+              rel="noreferrer"
               className="btn ghost sm"
-              disabled
-              title={futureTooltip}
-              aria-label="Stampa etichette"
+              aria-label="Stampa etichetta termica"
+              title="PDF singolo 80×50mm"
             >
-              <Icon name="print" size={12} /> Etichette
-            </button>
+              <Icon name="print" size={12} /> Termica
+            </Link>
+            <Link
+              href={`/labels/pdf?kind=shelves&ids=${shelf.id}&format=a4`}
+              target="_blank"
+              rel="noreferrer"
+              className="btn ghost sm"
+              aria-label="Stampa etichetta in foglio A4"
+              title="PDF A4 24-up"
+            >
+              <Icon name="tag" size={12} /> A4
+            </Link>
             <button
               type="button"
               className="btn ghost sm"

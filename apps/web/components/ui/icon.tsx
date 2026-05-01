@@ -47,6 +47,7 @@ export type IconName =
   | 'logout'
   | 'shelves'
   | 'scanner'
+  | 'tag'
   | 'disc'
   | 'spinner';
 
@@ -247,6 +248,12 @@ const paths: Record<IconName, React.ReactNode> = {
       <path d="M20 16v3a1 1 0 0 1-1 1h-3" />
       <path d="M8 20H5a1 1 0 0 1-1-1v-3" />
       <path d="M3 12h18" />
+    </>
+  ),
+  tag: (
+    <>
+      <path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9-9-9z" />
+      <circle cx="8" cy="8" r="1.5" />
     </>
   ),
   spinner: (

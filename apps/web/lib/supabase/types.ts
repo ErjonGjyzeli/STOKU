@@ -473,6 +473,7 @@ export type Database = {
           description: string | null
           id: string
           is_active: boolean | null
+          last_label_printed_at: string | null
           legacy_nr: string | null
           name: string
           notes: string | null
@@ -505,6 +506,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_active?: boolean | null
+          last_label_printed_at?: string | null
           legacy_nr?: string | null
           name: string
           notes?: string | null
@@ -537,6 +539,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_active?: boolean | null
+          last_label_printed_at?: string | null
           legacy_nr?: string | null
           name?: string
           notes?: string | null
@@ -580,6 +583,7 @@ export type Database = {
           id: string
           is_active: boolean
           kind: string
+          last_label_printed_at: string | null
           store_id: number
           updated_at: string | null
         }
@@ -591,6 +595,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           kind?: string
+          last_label_printed_at?: string | null
           store_id: number
           updated_at?: string | null
         }
@@ -602,6 +607,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           kind?: string
+          last_label_printed_at?: string | null
           store_id?: number
           updated_at?: string | null
         }

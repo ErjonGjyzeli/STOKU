@@ -231,7 +231,7 @@ export default async function HomePage() {
         }
       />
 
-      <div className="stoku-page">
+      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div className="grid-kpi-5">
           <Stat label="Ordini oggi" value={formatInt(ordersToday)} />
           <Stat label="Fatturato MTD" value={formatCurrency(mtdTotal, 'EUR')} />

@@ -481,6 +481,15 @@ export type Database = {
           price_sell: number | null
           search_vector: unknown
           sku: string
+          tire_aspect: number | null
+          tire_diameter: number | null
+          tire_dot: string | null
+          tire_load_index: number | null
+          tire_reinforced: boolean | null
+          tire_runflat: boolean | null
+          tire_speed_index: string | null
+          tire_tread_mm: number | null
+          tire_width: number | null
           updated_at: string | null
           vehicle_make: string | null
           vehicle_model: string | null
@@ -504,6 +513,15 @@ export type Database = {
           price_sell?: number | null
           search_vector?: unknown
           sku: string
+          tire_aspect?: number | null
+          tire_diameter?: number | null
+          tire_dot?: string | null
+          tire_load_index?: number | null
+          tire_reinforced?: boolean | null
+          tire_runflat?: boolean | null
+          tire_speed_index?: string | null
+          tire_tread_mm?: number | null
+          tire_width?: number | null
           updated_at?: string | null
           vehicle_make?: string | null
           vehicle_model?: string | null
@@ -527,6 +545,15 @@ export type Database = {
           price_sell?: number | null
           search_vector?: unknown
           sku?: string
+          tire_aspect?: number | null
+          tire_diameter?: number | null
+          tire_dot?: string | null
+          tire_load_index?: number | null
+          tire_reinforced?: boolean | null
+          tire_runflat?: boolean | null
+          tire_speed_index?: string | null
+          tire_tread_mm?: number | null
+          tire_width?: number | null
           updated_at?: string | null
           vehicle_make?: string | null
           vehicle_model?: string | null

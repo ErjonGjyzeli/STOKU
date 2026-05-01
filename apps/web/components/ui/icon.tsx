@@ -45,8 +45,9 @@ export type IconName =
   | 'clock'
   | 'user'
   | 'logout'
-  | 'spinner'
-  | 'disc';
+  | 'shelves'
+  | 'disc'
+  | 'spinner';
 
 type IconProps = Omit<SVGProps<SVGSVGElement>, 'name' | 'stroke' | 'strokeWidth'> & {
   name: IconName;
@@ -229,6 +230,13 @@ const paths: Record<IconName, React.ReactNode> = {
     <>
       <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" />
       <path d="M10 17l-5-5 5-5M5 12h12" />
+    </>
+  ),
+  shelves: (
+    <>
+      <rect x="3" y="4" width="18" height="5" rx="1" />
+      <rect x="3" y="11" width="18" height="5" rx="1" />
+      <path d="M5 16v4M19 16v4M5 4V2M19 4V2" />
     </>
   ),
   spinner: (

@@ -17,6 +17,7 @@
     "products": "Products",
     "stock": "Inventory",
     "shelves": "Shelves",
+    "labels": "Labels",
     "orders": "Orders",
     "customers": "Customers",
     "transfers": "Transfers",

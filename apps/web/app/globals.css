@@ -265,6 +265,17 @@
   .search-result-row:hover {
     background: var(--panel-2);
   }
+  .report-date-input {
+    color-scheme: light;
+    cursor: pointer;
+  }
+  .report-date-input::-webkit-calendar-picker-indicator {
+    opacity: 0.4;
+    cursor: pointer;
+  }
+  .report-date-input::-webkit-calendar-picker-indicator:hover {
+    opacity: 0.7;
+  }
   /* Prevent iOS Safari auto-zoom on input focus (only real touch screens) */
   @media (hover: none) and (pointer: coarse) {
     .topbar-search-input {

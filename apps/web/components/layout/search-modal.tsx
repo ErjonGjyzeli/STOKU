@@ -267,7 +267,7 @@ export function SearchModal({ initialQ, onClose }: Props) {
               background: 'transparent',
               border: 'none',
               outline: 'none',
-              fontSize: 13,
+              fontSize: 12,
               color: 'inherit',
             }}
           />
@@ -295,13 +295,13 @@ export function SearchModal({ initialQ, onClose }: Props) {
         {/* Results */}
         <div style={{ overflowY: 'auto', flex: 1, padding: '6px 0' }}>
           {q.trim().length < 2 && (
-            <div style={{ padding: '24px 16px', textAlign: 'center', fontSize: 12, color: 'var(--ink-4)' }}>
+            <div style={{ padding: '24px 16px', textAlign: 'center', fontSize: 11, color: 'var(--ink-4)' }}>
               Digita per cercare
             </div>
           )}
 
           {q.trim().length >= 2 && !loading && items.length === 0 && (
-            <div style={{ padding: '24px 16px', textAlign: 'center', fontSize: 12, color: 'var(--ink-4)' }}>
+            <div style={{ padding: '24px 16px', textAlign: 'center', fontSize: 11, color: 'var(--ink-4)' }}>
               Nessun risultato per <strong>"{q}"</strong>
             </div>
           )}
@@ -326,7 +326,7 @@ export function SearchModal({ initialQ, onClose }: Props) {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div
                   style={{
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: 500,
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -336,14 +336,14 @@ export function SearchModal({ initialQ, onClose }: Props) {
                   {item.primary}
                 </div>
                 {item.secondary && (
-                  <div style={{ fontSize: 10, color: 'var(--ink-4)', marginTop: 1 }}>
+                  <div style={{ fontSize: 9, color: 'var(--ink-4)', marginTop: 1 }}>
                     {item.secondary}
                   </div>
                 )}
               </div>
               <span
                 style={{
-                  fontSize: 9,
+                  fontSize: 8,
                   fontWeight: 600,
                   letterSpacing: 0.5,
                   color: item.typeColor,

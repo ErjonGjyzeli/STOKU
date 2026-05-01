@@ -155,32 +155,38 @@ export default async function ReportsPage({
             style={{ gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}
           >
             <input type="hidden" name="tab" value={tab} />
-            <label className="col" style={{ gap: 4, width: 140 }}>
-              <span className="meta" style={{ fontSize: 11 }}>
-                DA
+            {tab === 'inventory' ? (
+              <span style={{ fontSize: 11, color: 'var(--ink-4)', alignSelf: 'center' }}>
+                Snapshot corrente — nessun filtro data
               </span>
-              <input
-                type="date"
-                name="from"
-                defaultValue={from ?? ''}
-                className="stoku-input"
-                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
-                disabled={tab === 'inventory'}
-              />
-            </label>
-            <label className="col" style={{ gap: 4, width: 140 }}>
-              <span className="meta" style={{ fontSize: 11 }}>
-                A
-              </span>
-              <input
-                type="date"
-                name="to"
-                defaultValue={to ?? ''}
-                className="stoku-input"
-                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
-                disabled={tab === 'inventory'}
-              />
-            </label>
+            ) : (
+              <>
+                <label className="col" style={{ gap: 4 }}>
+                  <span className="meta" style={{ fontSize: 11 }}>
+                    DA
+                  </span>
+                  <input
+                    type="date"
+                    name="from"
+                    defaultValue={from ?? ''}
+                    className="stoku-input report-date-input"
+                    style={{ height: 32, paddingLeft: 10, paddingRight: 10, width: 150 }}
+                  />
+                </label>
+                <label className="col" style={{ gap: 4 }}>
+                  <span className="meta" style={{ fontSize: 11 }}>
+                    A
+                  </span>
+                  <input
+                    type="date"
+                    name="to"
+                    defaultValue={to ?? ''}
+                    className="stoku-input report-date-input"
+                    style={{ height: 32, paddingLeft: 10, paddingRight: 10, width: 150 }}
+                  />
+                </label>
+              </>
+            )}
             <label className="col" style={{ gap: 4, width: 200 }}>
               <span className="meta" style={{ fontSize: 11 }}>
                 STORE

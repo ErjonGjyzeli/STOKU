@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
 
 import { Icon } from '@/components/ui/icon';
-import { StokuButton } from '@/components/ui/stoku-button';
 
 export type TiresFilters = {
   q: string;
@@ -20,26 +19,10 @@ export type TiresFilters = {
 type Props = {
   initial: TiresFilters;
   hasFilters: boolean;
+  availableWidths: number[];
+  availableAspects: number[];
+  availableDiameters: number[];
 };
-
-// Misure comuni mercato albanese/europeo (citroën C3, Fiat Punto, Golf, A3, ecc.)
-const COMMON_SIZES: Array<{ width: string; aspect: string; diameter: string; label: string }> = [
-  { width: '205', aspect: '55', diameter: '16', label: '205/55 R16' },
-  { width: '195', aspect: '65', diameter: '15', label: '195/65 R15' },
-  { width: '225', aspect: '45', diameter: '17', label: '225/45 R17' },
-  { width: '215', aspect: '55', diameter: '17', label: '215/55 R17' },
-  { width: '175', aspect: '65', diameter: '14', label: '175/65 R14' },
-];
-
-const SEASONS: Array<{ value: TiresFilters['season']; label: string }> = [
-  { value: '', label: 'Tutte' },
-  { value: 'summer', label: 'Estive' },
-  { value: 'winter', label: 'Invernali' },
-  { value: 'allseason', label: '4 Stagioni' },
-];
-
-const CURRENT_YEAR = new Date().getFullYear();
-const DOT_YEARS = Array.from({ length: CURRENT_YEAR - 2017 }, (_, i) => CURRENT_YEAR - i);
 
 function buildHref(values: TiresFilters): string {
   const params = new URLSearchParams();
@@ -55,7 +38,20 @@ function buildHref(values: TiresFilters): string {
   return s ? `/tires?${s}` : '/tires';
 }
 
-export function TiresFilterBar({ initial, hasFilters }: Props) {
+const SEASONS: Array<{ value: TiresFilters['season']; label: string }> = [
+  { value: '', label: 'Tutte' },
+  { value: 'summer', label: '☀ Estate' },
+  { value: 'winter', label: '❄ Inverno' },
+  { value: 'allseason', label: '◐ 4 Stagioni' },
+];
+
+export function TiresFilterBar({
+  initial,
+  hasFilters,
+  availableWidths,
+  availableAspects,
+  availableDiameters,
+}: Props) {
   const router = useRouter();
   const [values, setValues] = useState<TiresFilters>(initial);
 
@@ -63,8 +59,7 @@ export function TiresFilterBar({ initial, hasFilters }: Props) {
     setValues((prev) => ({ ...prev, [key]: value }));
   }
 
-  function applySize(width: string, aspect: string, diameter: string) {
-    const next = { ...values, width, aspect, diameter };
+  function nav(next: TiresFilters) {
     setValues(next);
     router.push(buildHref(next));
   }
@@ -74,219 +69,133 @@ export function TiresFilterBar({ initial, hasFilters }: Props) {
     router.push(buildHref(values));
   }
 
-  function handleReset() {
-    router.push('/tires');
-  }
-
   return (
     <form
       onSubmit={handleSubmit}
-      className="col"
-      style={{ gap: 12 }}
+      style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}
     >
-      {/* Riga 1: ricerca + misura */}
-      <div className="row" style={{ gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-        <label className="col" style={{ gap: 4, flex: '1 1 240px' }}>
-          <span className="meta" style={{ fontSize: 11 }}>CERCA</span>
-          <div className="stoku-input" style={{ height: 32 }}>
-            <Icon name="search" size={13} />
-            <input
-              type="search"
-              name="q"
-              value={values.q}
-              onChange={(e) => update('q', e.target.value)}
-              placeholder='Marca, modello, SKU · "frase esatta"'
-              autoComplete="off"
-            />
-          </div>
-        </label>
-        <label className="col" style={{ gap: 4, width: 88 }}>
-          <span className="meta" style={{ fontSize: 11 }}>LARG. (mm)</span>
-          <input
-            type="number"
-            inputMode="numeric"
-            min={100}
-            max={400}
-            value={values.width}
-            onChange={(e) => update('width', e.target.value)}
-            className="stoku-input"
-            style={{ height: 32, padding: '0 10px' }}
-            placeholder="205"
-          />
-        </label>
-        <label className="col" style={{ gap: 4, width: 80 }}>
-          <span className="meta" style={{ fontSize: 11 }}>SPALLA (%)</span>
-          <input
-            type="number"
-            inputMode="numeric"
-            min={20}
-            max={90}
-            value={values.aspect}
-            onChange={(e) => update('aspect', e.target.value)}
-            className="stoku-input"
-            style={{ height: 32, padding: '0 10px' }}
-            placeholder="55"
-          />
-        </label>
-        <label className="col" style={{ gap: 4, width: 88 }}>
-          <span className="meta" style={{ fontSize: 11 }}>DIAM. (″)</span>
-          <input
-            type="number"
-            inputMode="decimal"
-            step="0.5"
-            min={8}
-            max={24}
-            value={values.diameter}
-            onChange={(e) => update('diameter', e.target.value)}
-            className="stoku-input"
-            style={{ height: 32, padding: '0 10px' }}
-            placeholder="16"
-          />
-        </label>
-        <div className="row" style={{ gap: 6, marginLeft: 'auto' }}>
-          <StokuButton type="submit" variant="primary" size="sm" icon="search">
-            Filtra
-          </StokuButton>
-          {hasFilters && (
-            <StokuButton type="button" variant="ghost" size="sm" onClick={handleReset}>
-              Pulisci filtri
-            </StokuButton>
-          )}
-        </div>
+      {/* Search */}
+      <div className="stoku-input" style={{ width: 200, height: 28 }}>
+        <Icon name="search" size={13} />
+        <input
+          type="search"
+          value={values.q}
+          onChange={(e) => update('q', e.target.value)}
+          placeholder="Marca, modello, SKU…"
+          autoComplete="off"
+        />
       </div>
 
-      {/* Riga 2: chip misure comuni */}
-      <div className="row" style={{ gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-        <span className="meta" style={{ fontSize: 11 }}>MISURE FREQUENTI</span>
-        {COMMON_SIZES.map((s) => {
-          const active =
-            values.width === s.width &&
-            values.aspect === s.aspect &&
-            values.diameter === s.diameter;
-          return (
-            <button
-              key={s.label}
-              type="button"
-              className={`btn ${active ? 'primary' : 'ghost'} sm`}
-              onClick={() => applySize(s.width, s.aspect, s.diameter)}
-              style={{ fontFamily: 'var(--font-jetbrains-mono, monospace)' }}
-            >
-              {s.label}
-            </button>
-          );
-        })}
+      {/* Width / Aspect / Diameter */}
+      <div className="stoku-input" style={{ width: 80, height: 28 }}>
+        <select value={values.width} onChange={(e) => update('width', e.target.value)}>
+          <option value="">Larg.</option>
+          {availableWidths.map((w) => (
+            <option key={w} value={w}>{w}</option>
+          ))}
+        </select>
+      </div>
+      <span className="meta" style={{ fontSize: 13 }}>/</span>
+      <div className="stoku-input" style={{ width: 70, height: 28 }}>
+        <select value={values.aspect} onChange={(e) => update('aspect', e.target.value)}>
+          <option value="">Prof.</option>
+          {availableAspects.map((a) => (
+            <option key={a} value={a}>{a}</option>
+          ))}
+        </select>
+      </div>
+      <span className="meta" style={{ fontSize: 13 }}>R</span>
+      <div className="stoku-input" style={{ width: 70, height: 28 }}>
+        <select value={values.diameter} onChange={(e) => update('diameter', e.target.value)}>
+          <option value="">Diam.</option>
+          {availableDiameters.map((d) => (
+            <option key={d} value={d}>{d}</option>
+          ))}
+        </select>
       </div>
 
-      {/* Riga 3: stagione + battistrada + DOT + set4 */}
-      <div className="row" style={{ gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-        <label className="col" style={{ gap: 4, width: 280 }}>
-          <span className="meta" style={{ fontSize: 11 }}>STAGIONE</span>
-          <div
-            className="row"
-            role="radiogroup"
-            aria-label="Stagione"
-            style={{
-              gap: 0,
-              border: '1px solid var(--stoku-border)',
-              borderRadius: 'var(--r-sm)',
-              padding: 2,
-              height: 32,
-              alignItems: 'stretch',
-            }}
+      {/* Season */}
+      <div
+        className="row"
+        style={{ gap: 0, border: '1px solid var(--stoku-border)', borderRadius: 'var(--r-md)', overflow: 'hidden' }}
+      >
+        {SEASONS.map((s, i) => (
+          <button
+            key={s.value || 'all'}
+            type="button"
+            onClick={() => nav({ ...values, season: s.value })}
+            className={values.season === s.value ? 'btn primary sm' : 'btn ghost sm'}
+            style={{ borderRadius: 0, borderLeft: i > 0 ? '1px solid var(--stoku-border)' : 'none' }}
           >
-            {SEASONS.map((s) => {
-              const active = values.season === s.value;
-              return (
-                <button
-                  key={s.value || 'all'}
-                  type="button"
-                  role="radio"
-                  aria-checked={active}
-                  onClick={() => {
-                    const next = { ...values, season: s.value };
-                    setValues(next);
-                    router.push(buildHref(next));
-                  }}
-                  style={{
-                    flex: 1,
-                    padding: '0 8px',
-                    fontSize: 12,
-                    border: 'none',
-                    borderRadius: 'var(--r-xs)',
-                    background: active ? 'var(--panel-2)' : 'transparent',
-                    color: active ? 'var(--ink-1)' : 'var(--ink-3)',
-                    fontWeight: active ? 500 : 400,
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {s.label}
-                </button>
-              );
-            })}
-          </div>
-        </label>
+            {s.label}
+          </button>
+        ))}
+      </div>
 
-        <label className="col" style={{ gap: 4, width: 140 }}>
-          <span className="meta" style={{ fontSize: 11 }}>BATTISTRADA MIN (mm)</span>
-          <input
-            type="number"
-            inputMode="decimal"
-            step="0.5"
-            min={0}
-            max={20}
-            value={values.treadMin}
-            onChange={(e) => update('treadMin', e.target.value)}
-            className="stoku-input"
-            style={{ height: 32, padding: '0 10px' }}
-            placeholder="3.0"
-          />
-        </label>
+      <div style={{ flex: 1 }} />
 
-        <label className="col" style={{ gap: 4, width: 140 }}>
-          <span className="meta" style={{ fontSize: 11 }}>DOT NON OLTRE</span>
-          <select
-            value={values.dotMax}
-            onChange={(e) => {
-              const next = { ...values, dotMax: e.target.value };
-              setValues(next);
-              router.push(buildHref(next));
-            }}
-            className="stoku-input"
-            style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
-          >
-            <option value="">Qualsiasi</option>
-            {DOT_YEARS.map((y) => (
-              <option key={y} value={String(y)}>
-                {y}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label
-          className="row"
+      {/* Tread min */}
+      <label className="row meta" style={{ gap: 4, fontSize: 11 }}>
+        Battist. ≥
+        <input
+          type="number"
+          value={values.treadMin}
+          onChange={(e) => update('treadMin', e.target.value)}
           style={{
-            gap: 6,
-            alignItems: 'center',
-            height: 32,
-            paddingLeft: 4,
-            cursor: 'pointer',
-            userSelect: 'none',
+            width: 40,
+            fontFamily: 'var(--f-mono)',
+            fontSize: 11,
+            border: '1px solid var(--stoku-border)',
+            borderRadius: 3,
+            padding: '2px 4px',
           }}
+          placeholder="0"
+        />
+        mm
+      </label>
+
+      {/* DOT max */}
+      <label className="row meta" style={{ gap: 4, fontSize: 11 }}>
+        DOT ≤
+        <input
+          type="number"
+          value={values.dotMax}
+          onChange={(e) => update('dotMax', e.target.value)}
+          style={{
+            width: 52,
+            fontFamily: 'var(--f-mono)',
+            fontSize: 11,
+            border: '1px solid var(--stoku-border)',
+            borderRadius: 3,
+            padding: '2px 4px',
+          }}
+          placeholder={String(new Date().getFullYear())}
+        />
+      </label>
+
+      {/* Set 4 */}
+      <label className="row" style={{ gap: 4, fontSize: 11 }}>
+        <input
+          type="checkbox"
+          checked={values.set4}
+          onChange={(e) => nav({ ...values, set4: e.target.checked })}
+        />
+        Set ≥4
+      </label>
+
+      <button type="submit" className="btn ghost sm">
+        <Icon name="filter" size={12} />
+      </button>
+
+      {hasFilters && (
+        <button
+          type="button"
+          className="btn ghost sm"
+          onClick={() => nav({ q: '', width: '', aspect: '', diameter: '', season: '', treadMin: '', dotMax: '', set4: false })}
         >
-          <input
-            type="checkbox"
-            checked={values.set4}
-            onChange={(e) => {
-              const next = { ...values, set4: e.target.checked };
-              setValues(next);
-              router.push(buildHref(next));
-            }}
-          />
-          <span style={{ fontSize: 12 }}>Solo set di 4</span>
-        </label>
-      </div>
+          Reset
+        </button>
+      )}
     </form>
   );
 }

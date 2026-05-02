@@ -1,29 +1,22 @@
 import { Suspense } from 'react';
 
-import { PageHeader } from '@/components/ui/page-header';
 import { requireSession } from '@/lib/auth/session';
 import { ScannerClient } from './scanner-client';
 
 export const metadata = { title: 'Scanner — STOKU' };
 
-// Spec §7.bis "Pagina Scanner integrata in app". Server component minimo:
-// auth-required + intestazione + boundary attorno al client component che
-// gestisce camera/USB-HID.
 export default async function ScannerPage() {
-  await requireSession();
+  const session = await requireSession();
+  const store =
+    session.stores.find((s) => s.id === session.activeStoreId) ?? session.stores[0];
 
   return (
-    <div>
-      <PageHeader
-        title="Scanner"
-        subtitle="Fotocamera continua o scanner USB — scansioni multiple di seguito"
+    <Suspense fallback={null}>
+      <ScannerClient
+        storeCode={store?.code ?? ''}
+        activeStoreId={session.activeStoreId}
+        userName={session.profile.full_name ?? ''}
       />
-
-      <div style={{ padding: 24 }}>
-        <Suspense fallback={null}>
-          <ScannerClient />
-        </Suspense>
-      </div>
-    </div>
+    </Suspense>
   );
 }

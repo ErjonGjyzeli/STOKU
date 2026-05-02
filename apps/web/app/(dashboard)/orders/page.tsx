@@ -5,16 +5,15 @@ import { Icon } from '@/components/ui/icon';
 import { PageHeader } from '@/components/ui/page-header';
 import { Panel } from '@/components/ui/panel';
 import { StokuBadge } from '@/components/ui/stoku-badge';
-import { StokuButton } from '@/components/ui/stoku-button';
 import { requireSession } from '@/lib/auth/session';
-import { formatCurrency, formatDateLong, formatInt } from '@/lib/format';
+import { formatCurrency, formatInt } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 import { OrderCreateButton } from './order-create-button';
 import { STATUS_LABEL } from './status';
 
 export const metadata = { title: 'Ordini — STOKU' };
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 50;
 
 type BadgeVariant = 'default' | 'ok' | 'warn' | 'danger' | 'info' | 'draft' | 'accent';
 
@@ -27,21 +26,11 @@ const STATUS_VARIANT: Record<string, BadgeVariant> = {
   cancelled: 'danger',
 };
 
-const REVENUE_STATUSES = ['confirmed', 'paid', 'shipped', 'completed'];
-
 type SearchParams = {
   q?: string;
   status?: string;
-  store?: string;
-  customer?: string;
-  from?: string;
-  to?: string;
   page?: string;
 };
-
-function formatDate(iso: string | null) {
-  return formatDateLong(iso);
-}
 
 function currency(value: number | null, code: string | null) {
   return formatCurrency(value, code);
@@ -57,6 +46,14 @@ function buildQuery(base: SearchParams, patch: Partial<SearchParams>) {
   return s ? `?${s}` : '';
 }
 
+const TABS = [
+  { value: '', label: 'Tutti' },
+  { value: 'draft', label: 'Bozza' },
+  { value: 'confirmed', label: 'Confermati' },
+  { value: 'completed', label: 'Completati' },
+  { value: 'cancelled', label: 'Annullati' },
+];
+
 export default async function OrdersPage({
   searchParams,
 }: {
@@ -66,72 +63,12 @@ export default async function OrdersPage({
   const params = await searchParams;
   const q = (params.q ?? '').trim();
   const status = params.status ?? '';
-  // Scope store: URL esplicito ha priorità, poi activeStoreId della session
-  // (a meno che l'utente abbia scelto scope globale "Tutti i magazzini").
-  const storeId =
-    params.store !== undefined
-      ? params.store
-        ? Number(params.store)
-        : null
-      : session.isExplicitAllScope
-        ? null
-        : session.activeStoreId;
-  const customerId = params.customer || null;
-  const from = params.from || null;
-  const to = params.to || null;
   const page = Math.max(1, Number(params.page) || 1);
+
+  const storeId = session.isExplicitAllScope ? null : session.activeStoreId;
 
   const supabase = await createClient();
 
-  // Stat tiles: 4 count/sum separati (lightweight, 4 round-trip ma
-  // rapidi grazie all'index orders_status_idx).
-  const nowMonthStart = new Date();
-  nowMonthStart.setUTCDate(1);
-  nowMonthStart.setUTCHours(0, 0, 0, 0);
-  const mtdIso = nowMonthStart.toISOString();
-
-  // I tile rispettano lo scope store corrente: se l'utente ha selezionato
-  // un PdV singolo la KPI bar si restringe, altrimenti conta global.
-  const openTiles = supabase
-    .from('orders')
-    .select('id', { count: 'exact', head: true })
-    .in('status', ['confirmed', 'paid', 'shipped']);
-  const draftTiles = supabase
-    .from('orders')
-    .select('id', { count: 'exact', head: true })
-    .eq('status', 'draft');
-  const mtdTiles = supabase
-    .from('orders')
-    .select('total, currency')
-    .in('status', REVENUE_STATUSES)
-    .gte('created_at', mtdIso);
-  const todayTiles = supabase
-    .from('orders')
-    .select('id', { count: 'exact', head: true })
-    .eq('status', 'completed')
-    .gte('completed_at', new Date(new Date().setUTCHours(0, 0, 0, 0)).toISOString());
-
-  if (storeId) {
-    openTiles.eq('store_id', storeId);
-    draftTiles.eq('store_id', storeId);
-    mtdTiles.eq('store_id', storeId);
-    todayTiles.eq('store_id', storeId);
-  }
-
-  const [openCountRes, draftCountRes, mtdRes, todayRes] = await Promise.all([
-    openTiles,
-    draftTiles,
-    mtdTiles,
-    todayTiles,
-  ]);
-
-  const openCount = openCountRes.count ?? 0;
-  const draftCount = draftCountRes.count ?? 0;
-  const completedToday = todayRes.count ?? 0;
-  const mtdTotal = (mtdRes.data ?? []).reduce((sum, o) => sum + Number(o.total ?? 0), 0);
-
-  // Filtri stores per select (visibili all'utente via RLS) + customers
-  // per il form di creazione ordine nella modal.
   const [storesRes, customersRes] = await Promise.all([
     supabase.from('stores').select('id, code, name').eq('is_active', true).order('code'),
     supabase.from('customers').select('id, code, name').order('name').limit(500),
@@ -139,26 +76,45 @@ export default async function OrdersPage({
   const stores = storesRes.data;
   const customers = customersRes.data ?? [];
 
-  // Query principale
+  // Count per tab
+  const countOrders = (statusFilter?: string | string[]) => {
+    let q = supabase.from('orders').select('id', { count: 'exact', head: true });
+    if (Array.isArray(statusFilter)) q = q.in('status', statusFilter);
+    else if (statusFilter) q = q.eq('status', statusFilter);
+    if (storeId) q = q.eq('store_id', storeId);
+    return q;
+  };
+
+  const [totalRes, draftRes, confirmedRes, completedRes, cancelledRes] = await Promise.all([
+    countOrders(),
+    countOrders('draft'),
+    countOrders(['confirmed', 'paid', 'shipped']),
+    countOrders('completed'),
+    countOrders('cancelled'),
+  ]);
+
+  const tabCounts: Record<string, number> = {
+    '': totalRes.count ?? 0,
+    draft: draftRes.count ?? 0,
+    confirmed: confirmedRes.count ?? 0,
+    completed: completedRes.count ?? 0,
+    cancelled: cancelledRes.count ?? 0,
+  };
+
   let query = supabase
     .from('orders')
     .select(
-      'id, order_number, status, total, currency, created_at, customer:customers(code, name), store:stores(code)',
+      'id, order_number, status, total, subtotal, currency, created_at, customer:customers(code, name), store:stores(code)',
       { count: 'exact' },
     )
     .order('created_at', { ascending: false });
 
   if (q) query = query.ilike('order_number', `%${q}%`);
-  if (status) query = query.eq('status', status);
-  if (storeId) query = query.eq('store_id', storeId);
-  if (customerId) query = query.eq('customer_id', customerId);
-  if (from) query = query.gte('created_at', from);
-  if (to) {
-    // to inclusivo: aggiungiamo 1 giorno
-    const toDate = new Date(to);
-    toDate.setUTCDate(toDate.getUTCDate() + 1);
-    query = query.lt('created_at', toDate.toISOString().slice(0, 10));
+  if (status) {
+    if (status === 'confirmed') query = query.in('status', ['confirmed', 'paid', 'shipped']);
+    else query = query.eq('status', status);
   }
+  if (storeId) query = query.eq('store_id', storeId);
 
   const fromIdx = (page - 1) * PAGE_SIZE;
   const toIdx = fromIdx + PAGE_SIZE - 1;
@@ -171,23 +127,12 @@ export default async function OrdersPage({
   const rows = orders ?? [];
   const total = count ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const activeFilters =
-    (q ? 1 : 0) +
-    (status ? 1 : 0) +
-    (storeId ? 1 : 0) +
-    (customerId ? 1 : 0) +
-    (from ? 1 : 0) +
-    (to ? 1 : 0);
 
   return (
     <div>
       <PageHeader
         title="Ordini"
-        subtitle={
-          total > 0
-            ? `${formatInt(total)} ordini · pagina ${page}/${totalPages}`
-            : 'Nessun ordine ancora — crea la prima bozza'
-        }
+        subtitle={`${formatInt(tabCounts[''])} ordini totali`}
         right={
           <OrderCreateButton
             customers={customers}
@@ -197,173 +142,93 @@ export default async function OrdersPage({
         }
       />
 
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div className="grid-kpi-4">
-          <Stat
-            label="Ordini aperti"
-            value={formatInt(openCount)}
-            hint="confermati · pagati · spediti"
-          />
-          <Stat
-            label="Da confermare"
-            value={formatInt(draftCount)}
-            hint="bozze prenotate"
-          />
-          <Stat
-            label="Fatturato MTD"
-            value={currency(mtdTotal, 'EUR')}
-            hint="dal 1° del mese"
-          />
-          <Stat
-            label="Completati oggi"
-            value={formatInt(completedToday)}
-            hint="consegne chiuse"
-          />
+      {/* Tab bar + search */}
+      <div
+        style={{
+          padding: '0 24px',
+          borderBottom: '1px solid var(--stoku-border)',
+          display: 'flex',
+          gap: 0,
+          alignItems: 'center',
+        }}
+      >
+        <div className="row" style={{ gap: 0, flex: 1 }}>
+          {TABS.map((t) => {
+            const active = status === t.value;
+            const count = tabCounts[t.value] ?? 0;
+            const href = `/orders${buildQuery(params, { status: t.value, page: undefined })}`;
+            return (
+              <Link
+                key={t.value}
+                href={href}
+                style={{
+                  padding: '10px 14px',
+                  fontSize: 13,
+                  color: active ? 'var(--ink-1)' : 'var(--ink-3)',
+                  fontWeight: active ? 600 : 400,
+                  borderBottom: active ? '2px solid var(--stoku-accent)' : '2px solid transparent',
+                  marginBottom: -1,
+                  textDecoration: 'none',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {t.label}
+                {count > 0 && (
+                  <span className="mono" style={{ fontSize: 11, marginLeft: 5, color: active ? 'var(--ink-3)' : 'var(--ink-4)' }}>
+                    {formatInt(count)}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
         </div>
+        <form method="get" style={{ display: 'flex', alignItems: 'center' }}>
+          {status && <input type="hidden" name="status" value={status} />}
+          <div className="stoku-input" style={{ width: 260, height: 28 }}>
+            <Icon name="search" size={13} />
+            <input
+              type="search"
+              name="q"
+              defaultValue={q}
+              placeholder="Numero ordine o cliente…"
+              autoComplete="off"
+            />
+          </div>
+        </form>
+      </div>
 
-        <Panel padded>
-          <form
-            method="get"
-            className="row"
-            style={{ gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}
-          >
-            <label className="col" style={{ gap: 4, flex: '1 1 200px' }}>
-              <span className="meta" style={{ fontSize: 11 }}>
-                NUMERO
-              </span>
-              <div className="stoku-input" style={{ height: 32 }}>
-                <Icon name="search" size={13} />
-                <input
-                  type="search"
-                  name="q"
-                  defaultValue={q}
-                  placeholder="O-000001"
-                  autoComplete="off"
-                />
-              </div>
-            </label>
-
-            <label className="col" style={{ gap: 4, width: 150 }}>
-              <span className="meta" style={{ fontSize: 11 }}>
-                STATUS
-              </span>
-              <select
-                name="status"
-                defaultValue={status}
-                className="stoku-input"
-                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
-              >
-                <option value="">Tutti</option>
-                {Object.entries(STATUS_LABEL).map(([k, label]) => (
-                  <option key={k} value={k}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="col" style={{ gap: 4, width: 180 }}>
-              <span className="meta" style={{ fontSize: 11 }}>
-                STORE
-              </span>
-              <select
-                name="store"
-                defaultValue={storeId ? String(storeId) : ''}
-                className="stoku-input"
-                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
-              >
-                <option value="">Tutti</option>
-                {(stores ?? []).map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.code} · {s.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="col" style={{ gap: 4, width: 130 }}>
-              <span className="meta" style={{ fontSize: 11 }}>
-                DA
-              </span>
-              <input
-                type="date"
-                name="from"
-                defaultValue={from ?? ''}
-                className="stoku-input"
-                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
-              />
-            </label>
-
-            <label className="col" style={{ gap: 4, width: 130 }}>
-              <span className="meta" style={{ fontSize: 11 }}>
-                A
-              </span>
-              <input
-                type="date"
-                name="to"
-                defaultValue={to ?? ''}
-                className="stoku-input"
-                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
-              />
-            </label>
-
-            <div className="row" style={{ gap: 6, marginLeft: 'auto' }}>
-              <StokuButton type="submit" variant="primary" size="sm" icon="filter">
-                Filtra
-              </StokuButton>
-              {activeFilters > 0 && (
-                <Link href="/orders" className="btn ghost sm">
-                  Reset
-                </Link>
-              )}
-            </div>
-          </form>
-        </Panel>
-
+      <div style={{ padding: 24 }}>
         <Panel padded={false}>
           {rows.length === 0 ? (
             <Empty
               icon="cart"
-              title={activeFilters > 0 ? 'Nessun ordine trovato' : 'Nessun ordine'}
+              title={q || status ? 'Nessun ordine trovato' : 'Nessun ordine'}
               subtitle={
-                activeFilters > 0
-                  ? 'Prova a modificare o resettare i filtri.'
-                  : 'Crea una bozza per iniziare a prenotare stock.'
-              }
-              action={
-                activeFilters > 0 ? undefined : (
-                  <Link href="/orders?new=1" className="btn primary">
-                    <Icon name="plus" size={12} />
-                    Nuovo ordine
-                  </Link>
-                )
+                q || status
+                  ? 'Prova a cambiare i filtri.'
+                  : 'Crea una bozza per iniziare.'
               }
             />
           ) : (
             <table className="tbl">
               <thead>
                 <tr>
-                  <th style={{ width: 120 }}>Data</th>
-                  <th style={{ width: 130 }}>Numero</th>
-                  <th style={{ width: 140 }}>Status</th>
+                  <th style={{ width: 140 }}>Numero</th>
                   <th>Cliente</th>
-                  <th style={{ width: 80 }}>Store</th>
-                  <th style={{ width: 120, textAlign: 'right' }}>Totale</th>
+                  <th style={{ width: 80 }}>Punto</th>
+                  <th style={{ width: 120 }}>Status</th>
+                  <th className="r" style={{ width: 110 }}>Subtotale</th>
+                  <th className="r" style={{ width: 110 }}>Totale</th>
+                  <th style={{ width: 120 }}>Creato</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((o) => (
                   <tr key={o.id}>
-                    <td>{formatDate(o.created_at)}</td>
-                    <td className="mono" style={{ fontWeight: 500, fontSize: 11 }}>
-                      <Link href={`/orders/${o.id}`} style={{ color: 'inherit' }}>
-                        {o.order_number}
-                      </Link>
-                    </td>
                     <td>
-                      <StokuBadge variant={STATUS_VARIANT[o.status] ?? 'default'}>
-                        {STATUS_LABEL[o.status] ?? o.status}
-                      </StokuBadge>
+                      <Link href={`/orders/${o.id}`} style={{ color: 'inherit' }}>
+                        <span className="mono" style={{ fontSize: 12, fontWeight: 500 }}>{o.order_number}</span>
+                      </Link>
                     </td>
                     <td className="truncate-1">
                       {o.customer ? (
@@ -375,8 +240,19 @@ export default async function OrdersPage({
                     <td className="mono" style={{ fontSize: 11 }}>
                       {o.store?.code ?? <span className="faint">—</span>}
                     </td>
-                    <td className="mono" style={{ textAlign: 'right' }}>
+                    <td>
+                      <StokuBadge variant={STATUS_VARIANT[o.status] ?? 'default'}>
+                        {STATUS_LABEL[o.status] ?? o.status}
+                      </StokuBadge>
+                    </td>
+                    <td className="mono r">
+                      {currency(Number(o.subtotal), o.currency)}
+                    </td>
+                    <td className="mono r" style={{ fontWeight: 600 }}>
                       {currency(Number(o.total), o.currency)}
+                    </td>
+                    <td className="meta" style={{ fontSize: 12 }}>
+                      {relativeDate(o.created_at)}
                     </td>
                   </tr>
                 ))}
@@ -386,37 +262,22 @@ export default async function OrdersPage({
         </Panel>
 
         {totalPages > 1 && (
-          <div
-            className="row"
-            style={{ justifyContent: 'space-between', alignItems: 'center', gap: 12 }}
-          >
-            <div className="meta" style={{ fontSize: 12 }}>
-              Pagina {page} di {totalPages}
-            </div>
+          <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center', gap: 12, marginTop: 12 }}>
+            <div className="meta" style={{ fontSize: 12 }}>Pagina {page} di {totalPages}</div>
             <div className="row" style={{ gap: 6 }}>
               {page > 1 ? (
-                <Link
-                  href={`/orders${buildQuery(params, { page: String(page - 1) })}`}
-                  className="btn ghost sm"
-                >
+                <Link href={`/orders${buildQuery(params, { page: String(page - 1) })}`} className="btn ghost sm">
                   <Icon name="chevronLeft" size={12} /> Precedente
                 </Link>
               ) : (
-                <span className="btn ghost sm" aria-disabled="true" style={{ opacity: 0.4 }}>
-                  <Icon name="chevronLeft" size={12} /> Precedente
-                </span>
+                <span className="btn ghost sm" style={{ opacity: 0.4 }}><Icon name="chevronLeft" size={12} /> Precedente</span>
               )}
               {page < totalPages ? (
-                <Link
-                  href={`/orders${buildQuery(params, { page: String(page + 1) })}`}
-                  className="btn ghost sm"
-                >
+                <Link href={`/orders${buildQuery(params, { page: String(page + 1) })}`} className="btn ghost sm">
                   Successiva <Icon name="chevronRight" size={12} />
                 </Link>
               ) : (
-                <span className="btn ghost sm" aria-disabled="true" style={{ opacity: 0.4 }}>
-                  Successiva <Icon name="chevronRight" size={12} />
-                </span>
+                <span className="btn ghost sm" style={{ opacity: 0.4 }}>Successiva <Icon name="chevronRight" size={12} /></span>
               )}
             </div>
           </div>
@@ -426,38 +287,13 @@ export default async function OrdersPage({
   );
 }
 
-function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
-  return (
-    <div
-      style={{
-        padding: '14px 16px',
-        background: 'var(--panel)',
-        border: '1px solid var(--stoku-border)',
-        borderRadius: 'var(--r-lg)',
-      }}
-    >
-      <div
-        className="meta"
-        style={{
-          fontSize: 11,
-          fontWeight: 500,
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em',
-        }}
-      >
-        {label}
-      </div>
-      <div
-        className="mono"
-        style={{ marginTop: 6, fontSize: 22, fontWeight: 600, letterSpacing: '-0.02em' }}
-      >
-        {value}
-      </div>
-      {hint && (
-        <div className="meta" style={{ fontSize: 11, marginTop: 2 }}>
-          {hint}
-        </div>
-      )}
-    </div>
-  );
+function relativeDate(iso: string | null): string {
+  if (!iso) return '—';
+  const diff = Date.now() - new Date(iso).getTime();
+  const days = Math.floor(diff / 86400000);
+  if (days === 0) return 'oggi';
+  if (days === 1) return 'ieri';
+  if (days < 30) return `${days}g fa`;
+  if (days < 365) return `${Math.floor(days / 30)}m fa`;
+  return `${Math.floor(days / 365)}a fa`;
 }

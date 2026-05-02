@@ -3,8 +3,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Panel } from '@/components/ui/panel';
 import { StokuButton } from '@/components/ui/stoku-button';
 import { upsertCompanySettings, type CompanyInput } from './actions';
@@ -55,7 +53,9 @@ export function CompanyForm({ initial }: { initial: CompanyFormValues }) {
       <Panel title="Të dhënat ligjore">
         <div className="col" style={{ gap: 12 }}>
           <Field label="Emri ligjor *">
-            <Input
+            <input
+              className="stoku-input"
+              style={{ width: '100%' }}
               value={values.legal_name}
               onChange={(e) => set('legal_name', e.target.value)}
               placeholder="Alfa S.R.L."
@@ -64,14 +64,18 @@ export function CompanyForm({ initial }: { initial: CompanyFormValues }) {
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="NIPT / P.IVA">
-              <Input
+              <input
+                className="stoku-input"
+                style={{ width: '100%' }}
                 value={values.vat_number}
                 onChange={(e) => set('vat_number', e.target.value)}
                 placeholder="L12345678A"
               />
             </Field>
             <Field label="Kodi fiskal">
-              <Input
+              <input
+                className="stoku-input"
+                style={{ width: '100%' }}
                 value={values.tax_code}
                 onChange={(e) => set('tax_code', e.target.value)}
               />
@@ -83,23 +87,34 @@ export function CompanyForm({ initial }: { initial: CompanyFormValues }) {
       <Panel title="Selia">
         <div className="col" style={{ gap: 12 }}>
           <Field label="Adresa">
-            <Input
+            <input
+              className="stoku-input"
+              style={{ width: '100%' }}
               value={values.address_line1}
               onChange={(e) => set('address_line1', e.target.value)}
             />
           </Field>
           <div className="grid grid-cols-3 gap-3">
             <Field label="Kodi postar">
-              <Input
+              <input
+                className="stoku-input"
+                style={{ width: '100%' }}
                 value={values.postal_code}
                 onChange={(e) => set('postal_code', e.target.value)}
               />
             </Field>
             <Field label="Qyteti">
-              <Input value={values.city} onChange={(e) => set('city', e.target.value)} />
+              <input
+                className="stoku-input"
+                style={{ width: '100%' }}
+                value={values.city}
+                onChange={(e) => set('city', e.target.value)}
+              />
             </Field>
             <Field label="Shteti (ISO 2)">
-              <Input
+              <input
+                className="stoku-input"
+                style={{ width: '100%' }}
                 value={values.country}
                 onChange={(e) => set('country', e.target.value.toUpperCase())}
                 maxLength={2}
@@ -109,10 +124,17 @@ export function CompanyForm({ initial }: { initial: CompanyFormValues }) {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Telefoni">
-              <Input value={values.phone} onChange={(e) => set('phone', e.target.value)} />
+              <input
+                className="stoku-input"
+                style={{ width: '100%' }}
+                value={values.phone}
+                onChange={(e) => set('phone', e.target.value)}
+              />
             </Field>
             <Field label="Email">
-              <Input
+              <input
+                className="stoku-input"
+                style={{ width: '100%' }}
                 type="email"
                 value={values.email}
                 onChange={(e) => set('email', e.target.value)}
@@ -126,10 +148,17 @@ export function CompanyForm({ initial }: { initial: CompanyFormValues }) {
         <div className="col" style={{ gap: 12 }}>
           <div className="grid grid-cols-2 gap-3">
             <Field label="IBAN">
-              <Input value={values.iban} onChange={(e) => set('iban', e.target.value)} />
+              <input
+                className="stoku-input"
+                style={{ width: '100%' }}
+                value={values.iban}
+                onChange={(e) => set('iban', e.target.value)}
+              />
             </Field>
             <Field label="Banka">
-              <Input
+              <input
+                className="stoku-input"
+                style={{ width: '100%' }}
                 value={values.bank_name}
                 onChange={(e) => set('bank_name', e.target.value)}
               />
@@ -142,7 +171,9 @@ export function CompanyForm({ initial }: { initial: CompanyFormValues }) {
         <div className="col" style={{ gap: 12 }}>
           <div className="grid grid-cols-2 gap-3">
             <Field label="TVSH e parazgjedhur (%)">
-              <Input
+              <input
+                className="stoku-input"
+                style={{ width: '100%' }}
                 inputMode="decimal"
                 value={values.default_tax_rate}
                 onChange={(e) => set('default_tax_rate', e.target.value)}
@@ -150,7 +181,9 @@ export function CompanyForm({ initial }: { initial: CompanyFormValues }) {
               />
             </Field>
             <Field label="URL logo">
-              <Input
+              <input
+                className="stoku-input"
+                style={{ width: '100%' }}
                 value={values.logo_url}
                 onChange={(e) => set('logo_url', e.target.value)}
                 placeholder="https://…/logo.png"
@@ -182,7 +215,7 @@ export function CompanyForm({ initial }: { initial: CompanyFormValues }) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="col" style={{ gap: 4 }}>
-      <Label>{label}</Label>
+      <label style={{ fontSize: 10, fontWeight: 500, color: 'var(--ink-3)' }}>{label}</label>
       {children}
     </div>
   );

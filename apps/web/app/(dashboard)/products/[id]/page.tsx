@@ -182,7 +182,7 @@ export default async function ProductDetailPage({
         <div className="col" style={{ gap: 16 }}>
           <Panel padded={false}>
             <div style={{ padding: 16 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 80px', gap: 10 }}>
+              <div className="product-detail-gallery" style={{ display: 'grid', gridTemplateColumns: '1fr 80px', gap: 10 }}>
                 <div
                   style={{
                     aspectRatio: '4/3',
@@ -506,7 +506,7 @@ export default async function ProductDetailPage({
                         {(m.change ?? 0) > 0 ? '+' : ''}
                         {m.change ?? 0}
                       </span>
-                      <span className="meta" style={{ fontSize: 10, width: 90, textAlign: 'right' }}>
+                      <span className="meta product-detail-movements-time" style={{ fontSize: 10, width: 90, textAlign: 'right', flexShrink: 0 }}>
                         {relativeTime(m.created_at)}
                       </span>
                     </div>

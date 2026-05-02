@@ -705,6 +705,10 @@
     .product-detail-desc-grid {
       grid-template-columns: repeat(2, 1fr) !important;
     }
+    .product-detail-gallery {
+      grid-template-columns: 1fr !important;
+    }
+    .product-detail-gallery > *:last-child { display: none !important; }
     .product-detail-movements-time { width: 60px !important; }
     /* Topbar: search button icon-only su mobile */
     .topbar-search-btn {

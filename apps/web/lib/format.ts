@@ -12,19 +12,19 @@ const CURRENCY_SYMBOL: Record<string, string> = {
   ALL: 'L',
 };
 
-const MONTHS_SHORT_IT = [
-  'gen', 'feb', 'mar', 'apr', 'mag', 'giu',
-  'lug', 'ago', 'set', 'ott', 'nov', 'dic',
+const MONTHS_SHORT_SQ = [
+  'jan', 'shk', 'mar', 'pri', 'maj', 'qer',
+  'kor', 'gus', 'sht', 'tet', 'nën', 'dhj',
 ];
 
-const MONTHS_LONG_IT = [
-  'gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno',
-  'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre',
+const MONTHS_LONG_SQ = [
+  'janar', 'shkurt', 'mars', 'prill', 'maj', 'qershor',
+  'korrik', 'gusht', 'shtator', 'tetor', 'nëntor', 'dhjetor',
 ];
 
 // Sunday=0
-const WEEKDAYS_LONG_IT = [
-  'domenica', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato',
+const WEEKDAYS_LONG_SQ = [
+  'e diel', 'e hënë', 'e martë', 'e mërkurë', 'e enjte', 'e premte', 'e shtunë',
 ];
 
 function thousands(input: string): string {
@@ -95,7 +95,7 @@ export function formatDateLong(
 ): string {
   const d = toDate(input);
   if (!d) return PLACEHOLDER;
-  return `${d.getDate()} ${MONTHS_SHORT_IT[d.getMonth()]} ${d.getFullYear()}`;
+  return `${d.getDate()} ${MONTHS_SHORT_SQ[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 // "1 mag 2026, 14:30" — used in order/transfer detail headers.
@@ -105,7 +105,7 @@ export function formatDateTimeLong(
   const d = toDate(input);
   if (!d) return PLACEHOLDER;
   const day = d.getDate();
-  const month = MONTHS_SHORT_IT[d.getMonth()];
+  const month = MONTHS_SHORT_SQ[d.getMonth()];
   const year = d.getFullYear();
   const hh = String(d.getHours()).padStart(2, '0');
   const min = String(d.getMinutes()).padStart(2, '0');
@@ -118,7 +118,7 @@ export function formatDayMonthShort(
 ): string {
   const d = toDate(input);
   if (!d) return PLACEHOLDER;
-  return `${d.getDate()} ${MONTHS_SHORT_IT[d.getMonth()]}`;
+  return `${d.getDate()} ${MONTHS_SHORT_SQ[d.getMonth()]}`;
 }
 
 // "venerdì 1 maggio" — dashboard greeting label.
@@ -127,7 +127,7 @@ export function formatWeekdayDayMonth(
 ): string {
   const d = toDate(input);
   if (!d) return PLACEHOLDER;
-  const weekday = WEEKDAYS_LONG_IT[d.getDay()];
-  const month = MONTHS_LONG_IT[d.getMonth()];
+  const weekday = WEEKDAYS_LONG_SQ[d.getDay()];
+  const month = MONTHS_LONG_SQ[d.getMonth()];
   return `${weekday} ${d.getDate()} ${month}`;
 }

@@ -195,7 +195,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
                   received != null && received < it.quantity ? it.quantity - received : 0;
                 return (
                   <tr key={it.id}>
-                    <td className="mono" style={{ fontSize: 11, fontWeight: 500 }}>
+                    <td className="mono" style={{ fontSize: 10, fontWeight: 500 }}>
                       {it.sku}
                     </td>
                     <td className="truncate-1">{it.name}</td>
@@ -273,7 +273,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
                 }}
               >
                 {filtered.length === 0 ? (
-                  <div style={{ padding: 12, color: 'var(--ink-3)', fontSize: 12 }}>
+                  <div style={{ padding: 12, color: 'var(--ink-3)', fontSize: 11 }}>
                     Nessun prodotto
                   </div>
                 ) : (
@@ -293,12 +293,12 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
                                 : 'transparent',
                             border: 'none',
                             cursor: 'pointer',
-                            fontSize: 12,
+                            fontSize: 11,
                             display: 'flex',
                             gap: 10,
                           }}
                         >
-                          <span className="mono" style={{ fontSize: 11, minWidth: 80 }}>
+                          <span className="mono" style={{ fontSize: 10, minWidth: 80 }}>
                             {p.sku}
                           </span>
                           <span style={{ flex: 1 }}>{p.name}</span>
@@ -312,7 +312,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
 
             <div className="row" style={{ gap: 10, alignItems: 'flex-end' }}>
               <div className="col" style={{ gap: 4, width: 100 }}>
-                <span className="meta" style={{ fontSize: 11 }}>
+                <span className="meta" style={{ fontSize: 10 }}>
                   QTA
                 </span>
                 <Input
@@ -358,7 +358,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
             })}
           </div>
           {isDraft && items.length === 0 && (
-            <div className="meta" style={{ fontSize: 12, marginTop: 6 }}>
+            <div className="meta" style={{ fontSize: 11, marginTop: 6 }}>
               Aggiungi almeno una riga per poter spedire.
             </div>
           )}

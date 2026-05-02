@@ -230,7 +230,7 @@ export default async function ShelfDetailPage({
                           </div>
                         )}
                       </td>
-                      <td className="mono" style={{ fontSize: 11 }}>
+                      <td className="mono" style={{ fontSize: 10 }}>
                         <Link
                           href={`/products?q=${encodeURIComponent(row.product?.sku ?? '')}`}
                           style={{ color: 'inherit' }}
@@ -241,7 +241,7 @@ export default async function ShelfDetailPage({
                       <td className="truncate-1">
                         {row.product?.name ?? <span className="faint">—</span>}
                         {row.product?.legacy_nr && (
-                          <span className="faint mono" style={{ marginLeft: 8, fontSize: 11 }}>
+                          <span className="faint mono" style={{ marginLeft: 8, fontSize: 10 }}>
                             #{row.product.legacy_nr}
                           </span>
                         )}
@@ -288,7 +288,7 @@ function Stat({ label, value }: { label: string; value: string }) {
       <div
         className="meta"
         style={{
-          fontSize: 11,
+          fontSize: 10,
           textTransform: 'uppercase',
           letterSpacing: '0.04em',
         }}

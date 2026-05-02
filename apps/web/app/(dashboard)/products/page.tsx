@@ -298,7 +298,7 @@ export default async function ProductsPage({
             className="row"
             style={{ justifyContent: 'space-between', alignItems: 'center', gap: 12 }}
           >
-            <div className="meta" style={{ fontSize: 12 }}>
+            <div className="meta" style={{ fontSize: 11 }}>
               Pagina {page} di {totalPages}
             </div>
             <div className="row" style={{ gap: 6 }}>

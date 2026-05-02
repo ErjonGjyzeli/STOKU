@@ -104,7 +104,7 @@ function StoreDots({ perStore }: { perStore: PerStore[] | null }) {
           />
           <span
             className="mono"
-            style={{ fontSize: 10.5, color: 'var(--ink-3)' }}
+            style={{ fontSize: 10, color: 'var(--ink-3)' }}
           >
             {s.storeCode}
           </span>
@@ -184,14 +184,14 @@ export function ProductsRows({
                   <div className="col" style={{ gap: 1, minWidth: 0 }}>
                     <span
                       className="truncate-1"
-                      style={{ fontSize: 12, fontWeight: 500 }}
+                      style={{ fontSize: 11, fontWeight: 500 }}
                     >
                       {p.name}
                     </span>
                     {p.description && (
                       <span
                         className="meta truncate-1"
-                        style={{ fontSize: 11 }}
+                        style={{ fontSize: 10 }}
                       >
                         {p.description}
                       </span>
@@ -203,9 +203,9 @@ export function ProductsRows({
               {/* SKU / OEM */}
               <td>
                 <div className="col" style={{ gap: 0 }}>
-                  <span className="mono" style={{ fontSize: 12 }}>{p.sku}</span>
+                  <span className="mono" style={{ fontSize: 11 }}>{p.sku}</span>
                   {p.oem_code && (
-                    <span className="mono meta" style={{ fontSize: 10.5 }}>{p.oem_code}</span>
+                    <span className="mono meta" style={{ fontSize: 10 }}>{p.oem_code}</span>
                   )}
                 </div>
               </td>
@@ -214,11 +214,11 @@ export function ProductsRows({
               <td>
                 {p.vehicle_make ? (
                   <div className="col" style={{ gap: 0 }}>
-                    <span style={{ fontSize: 12 }}>
+                    <span style={{ fontSize: 11 }}>
                       {p.vehicle_make} {p.vehicle_model}
                     </span>
                     {(p.vehicle_year_from || p.vehicle_year_to) && (
-                      <span className="meta" style={{ fontSize: 10.5 }}>
+                      <span className="meta" style={{ fontSize: 10 }}>
                         {p.vehicle_year_from ?? '?'}–{p.vehicle_year_to ?? '?'}
                       </span>
                     )}

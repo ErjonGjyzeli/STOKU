@@ -151,7 +151,7 @@ export function UsersClient({ staff, stores }: { staff: StaffRow[]; stores: Stor
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: 10.5,
+                            fontSize: 10,
                             fontWeight: 600,
                           }}
                         >
@@ -162,7 +162,7 @@ export function UsersClient({ staff, stores }: { staff: StaffRow[]; stores: Stor
                         </span>
                       </div>
                     </td>
-                    <td className="mono" style={{ fontSize: 11 }}>
+                    <td className="mono" style={{ fontSize: 10 }}>
                       {u.email ?? <span className="faint">—</span>}
                     </td>
                     <td>

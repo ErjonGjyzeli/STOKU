@@ -130,7 +130,7 @@ export function ProductPhotoDialog({
               <Icon name="image" size={14} />
               {uploading ? 'Caricamento…' : 'Carica foto'}
             </Button>
-            <span className="meta" style={{ fontSize: 12 }}>
+            <span className="meta" style={{ fontSize: 11 }}>
               {images.length === 0
                 ? 'Nessuna foto ancora'
                 : `${images.length} foto · prima foto = principale`}

@@ -137,7 +137,7 @@ export default async function InventoryListPage() {
                         </Link>
                       </td>
                       {isAllScope && (
-                        <td className="mono" style={{ fontSize: 11 }}>
+                        <td className="mono" style={{ fontSize: 10 }}>
                           {s.store?.code ?? '—'}
                         </td>
                       )}

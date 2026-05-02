@@ -150,11 +150,11 @@ export default async function StockPage({
             autoComplete="off"
           />
         </div>
-        <label className="row" style={{ gap: 6, fontSize: 12, padding: '5px 10px', border: '1px solid var(--stoku-border)', borderRadius: 'var(--r-md)', cursor: 'pointer', background: lowOnly ? 'var(--stoku-accent-bg)' : 'transparent', color: lowOnly ? 'var(--stoku-accent)' : 'inherit' }}>
+        <label className="row" style={{ gap: 6, fontSize: 11, padding: '5px 10px', border: '1px solid var(--stoku-border)', borderRadius: 'var(--r-md)', cursor: 'pointer', background: lowOnly ? 'var(--stoku-accent-bg)' : 'transparent', color: lowOnly ? 'var(--stoku-accent)' : 'inherit' }}>
           <input type="checkbox" name="low" value="1" defaultChecked={lowOnly} />
           Solo stock basso
         </label>
-        <span className="meta" style={{ fontSize: 11, marginLeft: 'auto' }}>
+        <span className="meta" style={{ fontSize: 10, marginLeft: 'auto' }}>
           {formatInt(total)} righe
         </span>
         <button type="submit" className="btn ghost sm">
@@ -224,10 +224,10 @@ export default async function StockPage({
                           <Icon name="shelves" size={13} />
                         </div>
                         <div className="col stretch" style={{ gap: 0, minWidth: 0 }}>
-                          <div style={{ fontSize: 12, fontWeight: 600 }} className="mono">
+                          <div style={{ fontSize: 11, fontWeight: 600 }} className="mono">
                             {s.code}
                           </div>
-                          <div className="meta" style={{ fontSize: 10.5 }}>
+                          <div className="meta" style={{ fontSize: 10 }}>
                             {KIND_LABEL[s.kind] ?? s.kind}
                             {s.capacity != null && ` · cap. ${s.capacity}`}
                             {!storeFilter && s.store?.code && (
@@ -239,7 +239,7 @@ export default async function StockPage({
                           <span
                             className="mono"
                             style={{
-                              fontSize: 11,
+                              fontSize: 10,
                               color: 'var(--ink-3)',
                               whiteSpace: 'nowrap',
                             }}
@@ -288,10 +288,10 @@ export default async function StockPage({
                       const underLow = available <= (r.min_stock ?? 0);
                       return (
                         <tr key={`${r.product_id}-${r.store_id}`}>
-                          <td className="mono" style={{ fontSize: 11, fontWeight: 500 }}>
+                          <td className="mono" style={{ fontSize: 10, fontWeight: 500 }}>
                             {r.store?.code ?? <span className="faint">—</span>}
                           </td>
-                          <td className="mono" style={{ fontSize: 11 }}>
+                          <td className="mono" style={{ fontSize: 10 }}>
                             <Link
                               href={`/products?q=${encodeURIComponent(r.product?.sku ?? '')}`}
                               style={{ color: 'inherit' }}
@@ -302,7 +302,7 @@ export default async function StockPage({
                           <td className="truncate-1">
                             {r.product?.name ?? <span className="faint">—</span>}
                             {r.product?.legacy_nr && (
-                              <span className="faint mono" style={{ marginLeft: 8, fontSize: 11 }}>
+                              <span className="faint mono" style={{ marginLeft: 8, fontSize: 10 }}>
                                 #{r.product.legacy_nr}
                               </span>
                             )}
@@ -331,7 +331,7 @@ export default async function StockPage({
                           <td className="mono" style={{ textAlign: 'right' }}>
                             {r.min_stock ?? <span className="faint">0</span>}
                           </td>
-                          <td className="mono" style={{ fontSize: 11 }}>
+                          <td className="mono" style={{ fontSize: 10 }}>
                             {r.location_code ?? <span className="faint">—</span>}
                           </td>
                         </tr>
@@ -347,7 +347,7 @@ export default async function StockPage({
                 className="row"
                 style={{ justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px' }}
               >
-                <div className="meta" style={{ fontSize: 12 }}>
+                <div className="meta" style={{ fontSize: 11 }}>
                   Pagina {page} di {totalPages}
                 </div>
                 <div className="row" style={{ gap: 6 }}>

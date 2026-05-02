@@ -15,7 +15,7 @@ export function Field({ label, hint, error, htmlFor, children, className }: Prop
       {label && (
         <span
           style={{
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: 500,
             color: 'var(--ink-3)',
             textTransform: 'uppercase',
@@ -27,11 +27,11 @@ export function Field({ label, hint, error, htmlFor, children, className }: Prop
       )}
       {children}
       {hint && (
-        <span className="meta" style={{ fontSize: 11 }}>
+        <span className="meta" style={{ fontSize: 10 }}>
           {hint}
         </span>
       )}
-      {error && <span style={{ color: 'var(--danger)', fontSize: 11 }}>{error}</span>}
+      {error && <span style={{ color: 'var(--danger)', fontSize: 10 }}>{error}</span>}
     </label>
   );
 }

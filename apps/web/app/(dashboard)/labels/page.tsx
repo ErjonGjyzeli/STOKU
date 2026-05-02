@@ -103,7 +103,7 @@ export default async function LabelsPage({
               >
                 <legend
                   className="meta"
-                  style={{ fontSize: 11, marginBottom: 6 }}
+                  style={{ fontSize: 10, marginBottom: 6 }}
                 >
                   TIPO
                 </legend>
@@ -141,7 +141,7 @@ export default async function LabelsPage({
               >
                 <legend
                   className="meta"
-                  style={{ fontSize: 11, marginBottom: 6 }}
+                  style={{ fontSize: 10, marginBottom: 6 }}
                 >
                   FORMATO
                 </legend>
@@ -168,7 +168,7 @@ export default async function LabelsPage({
 
             <div className="row" style={{ gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
               <label className="col" style={{ gap: 4, width: 220 }}>
-                <span className="meta" style={{ fontSize: 11 }}>
+                <span className="meta" style={{ fontSize: 10 }}>
                   PUNTO VENDITA
                 </span>
                 <select
@@ -191,7 +191,7 @@ export default async function LabelsPage({
               </label>
 
               <label className="col" style={{ gap: 4, width: 160 }}>
-                <span className="meta" style={{ fontSize: 11 }}>
+                <span className="meta" style={{ fontSize: 10 }}>
                   CREATI ULTIMI N GG
                 </span>
                 <input
@@ -211,7 +211,7 @@ export default async function LabelsPage({
 
               <label
                 className="row"
-                style={{ gap: 6, alignItems: 'center', height: 32, fontSize: 12 }}
+                style={{ gap: 6, alignItems: 'center', height: 32, fontSize: 11 }}
               >
                 <input
                   type="checkbox"
@@ -234,13 +234,13 @@ export default async function LabelsPage({
         <Panel padded>
           <div className="row" style={{ gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
             <div className="col" style={{ gap: 4 }}>
-              <span className="meta" style={{ fontSize: 11, textTransform: 'uppercase' }}>
+              <span className="meta" style={{ fontSize: 10, textTransform: 'uppercase' }}>
                 Anteprima
               </span>
               <div style={{ fontSize: 22, fontWeight: 600 }}>
                 {formatInt(count)} etichett{count === 1 ? 'a' : 'e'}
               </div>
-              <div className="meta" style={{ fontSize: 12 }}>
+              <div className="meta" style={{ fontSize: 11 }}>
                 {kind === 'products' ? 'Prodotti' : kind === 'tires' ? 'Pneumatici' : 'Scaffali'} ·{' '}
                 {format === 'a4' ? 'A4 24-up' : 'Termico singolo'}
               </div>

@@ -217,7 +217,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
             <tbody>
               {items.map((it) => (
                 <tr key={it.id}>
-                  <td className="mono" style={{ fontWeight: 500, fontSize: 11 }}>
+                  <td className="mono" style={{ fontWeight: 500, fontSize: 10 }}>
                     {it.product_sku_snapshot}
                   </td>
                   <td className="truncate-1">{it.product_name_snapshot}</td>
@@ -282,7 +282,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
                 }}
               >
                 {filteredProducts.length === 0 ? (
-                  <div style={{ padding: 12, color: 'var(--ink-3)', fontSize: 12 }}>
+                  <div style={{ padding: 12, color: 'var(--ink-3)', fontSize: 11 }}>
                     Nessun prodotto corrispondente
                   </div>
                 ) : (
@@ -304,7 +304,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
                             border: 'none',
                             cursor: p.available <= 0 ? 'not-allowed' : 'pointer',
                             opacity: p.available <= 0 ? 0.5 : 1,
-                            fontSize: 12,
+                            fontSize: 11,
                             display: 'flex',
                             gap: 10,
                             alignItems: 'center',
@@ -315,14 +315,14 @@ export function OrderDetailClient({ order, items, products }: Props) {
                               : `Disponibili: ${p.available}`
                           }
                         >
-                          <span className="mono" style={{ fontSize: 11, minWidth: 80 }}>
+                          <span className="mono" style={{ fontSize: 10, minWidth: 80 }}>
                             {p.sku}
                           </span>
                           <span style={{ flex: 1 }}>{p.name}</span>
                           <span
                             className="mono"
                             style={{
-                              fontSize: 11,
+                              fontSize: 10,
                               color: p.available > 0 ? 'var(--ok)' : 'var(--danger)',
                               minWidth: 60,
                               textAlign: 'right',
@@ -330,7 +330,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
                           >
                             {p.available > 0 ? `Disp: ${p.available}` : 'Esaurito'}
                           </span>
-                          <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)' }}>
+                          <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)' }}>
                             {currency(p.price_sell, p.currency)}
                           </span>
                         </button>
@@ -346,7 +346,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
               style={{ gap: 10, alignItems: 'flex-end', flexWrap: 'wrap' }}
             >
               <div className="col" style={{ gap: 4, flex: '1 1 100px', minWidth: 90 }}>
-                <span className="meta" style={{ fontSize: 11 }}>
+                <span className="meta" style={{ fontSize: 10 }}>
                   QTA
                 </span>
                 <Input
@@ -357,7 +357,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
                 />
               </div>
               <div className="col" style={{ gap: 4, flex: '1 1 160px', minWidth: 140 }}>
-                <span className="meta" style={{ fontSize: 11 }}>
+                <span className="meta" style={{ fontSize: 10 }}>
                   PREZZO UNIT.
                 </span>
                 <Input
@@ -377,7 +377,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
               </Button>
             </div>
             {selectedProductId && (
-              <div className="meta" style={{ fontSize: 11 }}>
+              <div className="meta" style={{ fontSize: 10 }}>
                 Prodotto selezionato:{' '}
                 <span className="mono">
                   {products.find((p) => p.id === selectedProductId)?.sku}
@@ -389,7 +389,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
       )}
 
       <Panel title="Totali">
-        <dl className="col" style={{ gap: 6, margin: 0, fontSize: 12 }}>
+        <dl className="col" style={{ gap: 6, margin: 0, fontSize: 11 }}>
           <Row label="Subtotale" value={currency(order.subtotal, order.currency)} />
           <Row
             label={`IVA ${order.tax_rate ?? 0}%`}
@@ -460,7 +460,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
 function Row({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
   return (
     <div className="row" style={{ justifyContent: 'space-between' }}>
-      <dt className="meta" style={{ fontSize: 12 }}>
+      <dt className="meta" style={{ fontSize: 11 }}>
         {label}
       </dt>
       <dd

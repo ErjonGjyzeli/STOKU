@@ -209,7 +209,7 @@ export function ShelfFormDialog({
             control={control}
             name="is_active"
             render={({ field }) => (
-              <label className="row" style={{ gap: 8, alignItems: 'center', fontSize: 12 }}>
+              <label className="row" style={{ gap: 8, alignItems: 'center', fontSize: 11 }}>
                 <input
                   type="checkbox"
                   checked={!!field.value}

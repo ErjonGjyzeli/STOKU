@@ -146,7 +146,7 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
           </button>
         ))}
         {(q || typeFilter !== 'all') && (
-          <span className="meta" style={{ fontSize: 11, marginLeft: 4 }}>
+          <span className="meta" style={{ fontSize: 10, marginLeft: 4 }}>
             {formatInt(filtered.length)} risultati
           </span>
         )}
@@ -181,7 +181,7 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
               <tbody>
                 {filtered.map((c) => (
                   <tr key={c.id}>
-                    <td className="mono" style={{ fontWeight: 500, fontSize: 11 }}>
+                    <td className="mono" style={{ fontWeight: 500, fontSize: 10 }}>
                       {c.code ?? <span className="faint">—</span>}
                     </td>
                     <td className="truncate-1">
@@ -194,7 +194,7 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
                       {c.email && (
                         <span
                           className="faint"
-                          style={{ fontSize: 11, marginLeft: 8, fontWeight: 400 }}
+                          style={{ fontSize: 10, marginLeft: 8, fontWeight: 400 }}
                         >
                           {c.email}
                         </span>
@@ -205,7 +205,7 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
                         {c.type === 'business' ? 'Azienda' : 'Privato'}
                       </StokuBadge>
                     </td>
-                    <td className="mono" style={{ fontSize: 11 }}>
+                    <td className="mono" style={{ fontSize: 10 }}>
                       {c.phone ?? <span className="faint">—</span>}
                     </td>
                     <td>
@@ -213,7 +213,7 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
                         <span className="faint">—</span>
                       )}
                     </td>
-                    <td className="mono" style={{ fontSize: 11 }}>
+                    <td className="mono" style={{ fontSize: 10 }}>
                       {c.vat_number ?? <span className="faint">—</span>}
                     </td>
                     <td>

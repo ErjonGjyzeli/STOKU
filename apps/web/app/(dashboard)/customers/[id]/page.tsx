@@ -117,7 +117,7 @@ export default async function CustomerDetailPage({
                   >
                     {label}
                   </dt>
-                  <dd style={{ margin: 0, fontSize: 12 }}>
+                  <dd style={{ margin: 0, fontSize: 11 }}>
                     {value ?? <span className="faint">—</span>}
                   </dd>
                 </div>
@@ -127,7 +127,7 @@ export default async function CustomerDetailPage({
 
           {customer.notes && (
             <Panel title="Note">
-              <p style={{ fontSize: 12, whiteSpace: 'pre-wrap', margin: 0 }}>{customer.notes}</p>
+              <p style={{ fontSize: 11, whiteSpace: 'pre-wrap', margin: 0 }}>{customer.notes}</p>
             </Panel>
           )}
         </div>
@@ -170,7 +170,7 @@ export default async function CustomerDetailPage({
                   {allOrders.map((o) => (
                     <tr key={o.id}>
                       <td>{formatDate(o.created_at)}</td>
-                      <td className="mono" style={{ fontSize: 11, fontWeight: 500 }}>
+                      <td className="mono" style={{ fontSize: 10, fontWeight: 500 }}>
                         {o.order_number}
                       </td>
                       <td>
@@ -214,7 +214,7 @@ function Stat({
       <div
         className="meta"
         style={{
-          fontSize: 11,
+          fontSize: 10,
           fontWeight: 500,
           textTransform: 'uppercase',
           letterSpacing: '0.05em',
@@ -229,7 +229,7 @@ function Stat({
         {value}
       </div>
       {hint && (
-        <div className="meta" style={{ fontSize: 11, marginTop: 2 }}>
+        <div className="meta" style={{ fontSize: 10, marginTop: 2 }}>
           <Icon name="info" size={10} /> {hint}
         </div>
       )}

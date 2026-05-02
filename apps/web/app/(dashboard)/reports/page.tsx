@@ -139,7 +139,7 @@ export default async function ReportsPage({
                   <Icon name="clock" size={11} />
                   <input type="date" name="from" defaultValue={from ?? ''} />
                 </div>
-                <span className="meta" style={{ fontSize: 12 }}>→</span>
+                <span className="meta" style={{ fontSize: 11 }}>→</span>
                 <div className="stoku-input" style={{ height: 28, width: 130 }}>
                   <Icon name="clock" size={11} />
                   <input type="date" name="to" defaultValue={to ?? ''} />
@@ -191,7 +191,7 @@ export default async function ReportsPage({
                   {salesRows.map((r) => (
                     <tr key={r.id}>
                       <td>{formatDate(r.created_at)}</td>
-                      <td className="mono" style={{ fontSize: 11 }}>
+                      <td className="mono" style={{ fontSize: 10 }}>
                         <Link href={`/orders/${r.id}`} style={{ color: 'inherit' }}>
                           {r.order_number}
                         </Link>
@@ -199,7 +199,7 @@ export default async function ReportsPage({
                       <td className="truncate-1">
                         {r.customer_name ?? <span className="faint">Vendita banco</span>}
                       </td>
-                      <td className="mono" style={{ fontSize: 11 }}>
+                      <td className="mono" style={{ fontSize: 10 }}>
                         {r.store_code ?? <span className="faint">—</span>}
                       </td>
                       <td>
@@ -244,10 +244,10 @@ export default async function ReportsPage({
                 <tbody>
                   {inventoryRows.map((r) => (
                     <tr key={`${r.product_id}-${r.store_id}`}>
-                      <td className="mono" style={{ fontSize: 11 }}>
+                      <td className="mono" style={{ fontSize: 10 }}>
                         {r.store_code ?? '—'}
                       </td>
-                      <td className="mono" style={{ fontSize: 11 }}>
+                      <td className="mono" style={{ fontSize: 10 }}>
                         {r.sku}
                       </td>
                       <td className="truncate-1">{r.name}</td>
@@ -299,7 +299,7 @@ export default async function ReportsPage({
                 <tbody>
                   {movementRows.map((r) => (
                     <tr key={r.id}>
-                      <td style={{ fontSize: 11 }}>{formatDateTime(r.created_at)}</td>
+                      <td style={{ fontSize: 10 }}>{formatDateTime(r.created_at)}</td>
                       <td>
                         <StokuBadge
                           variant={r.change < 0 ? 'danger' : r.change > 0 ? 'ok' : 'default'}
@@ -307,11 +307,11 @@ export default async function ReportsPage({
                           {REASON_LABEL[r.reason] ?? r.reason}
                         </StokuBadge>
                       </td>
-                      <td className="mono" style={{ fontSize: 11 }}>
+                      <td className="mono" style={{ fontSize: 10 }}>
                         {r.sku ?? '—'}
                       </td>
                       <td className="truncate-1">{r.product_name ?? '—'}</td>
-                      <td className="mono" style={{ fontSize: 11 }}>
+                      <td className="mono" style={{ fontSize: 10 }}>
                         {r.store_code ?? '—'}
                       </td>
                       <td
@@ -329,7 +329,7 @@ export default async function ReportsPage({
                       >
                         {r.change > 0 ? `+${r.change}` : r.change}
                       </td>
-                      <td className="mono" style={{ fontSize: 11 }}>
+                      <td className="mono" style={{ fontSize: 10 }}>
                         {r.reference_order_number ?? r.transfer_number ?? (
                           <span className="faint">—</span>
                         )}
@@ -368,7 +368,7 @@ function TabLink({
       style={{
         gap: 6,
         padding: '10px 14px',
-        fontSize: 12,
+        fontSize: 11,
         color: active ? 'var(--ink-1)' : 'var(--ink-3)',
         fontWeight: active ? 600 : 400,
         borderBottom: active ? '2px solid var(--stoku-accent)' : '2px solid transparent',

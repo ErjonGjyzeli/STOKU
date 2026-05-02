@@ -37,7 +37,7 @@ export function Empty({ icon = 'box', title, subtitle, action }: Props) {
       </div>
       <div style={{ color: 'var(--ink-2)', fontWeight: 500 }}>{title}</div>
       {subtitle && (
-        <div className="meta" style={{ maxWidth: 360, fontSize: 12 }}>
+        <div className="meta" style={{ maxWidth: 360, fontSize: 11 }}>
           {subtitle}
         </div>
       )}

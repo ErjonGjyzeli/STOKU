@@ -95,7 +95,7 @@ export function TiresFilterBar({
           ))}
         </select>
       </div>
-      <span className="meta" style={{ fontSize: 12 }}>/</span>
+      <span className="meta" style={{ fontSize: 11 }}>/</span>
       <div className="stoku-input" style={{ width: 70, height: 28 }}>
         <select value={values.aspect} onChange={(e) => update('aspect', e.target.value)}>
           <option value="">Prof.</option>
@@ -104,7 +104,7 @@ export function TiresFilterBar({
           ))}
         </select>
       </div>
-      <span className="meta" style={{ fontSize: 12 }}>R</span>
+      <span className="meta" style={{ fontSize: 11 }}>R</span>
       <div className="stoku-input" style={{ width: 70, height: 28 }}>
         <select value={values.diameter} onChange={(e) => update('diameter', e.target.value)}>
           <option value="">Diam.</option>
@@ -135,7 +135,7 @@ export function TiresFilterBar({
       <div style={{ flex: 1 }} />
 
       {/* Tread min */}
-      <label className="row meta" style={{ gap: 4, fontSize: 11 }}>
+      <label className="row meta" style={{ gap: 4, fontSize: 10 }}>
         Battist. ≥
         <input
           type="number"
@@ -144,7 +144,7 @@ export function TiresFilterBar({
           style={{
             width: 40,
             fontFamily: 'var(--f-mono)',
-            fontSize: 11,
+            fontSize: 10,
             border: '1px solid var(--stoku-border)',
             borderRadius: 3,
             padding: '2px 4px',
@@ -155,7 +155,7 @@ export function TiresFilterBar({
       </label>
 
       {/* DOT max */}
-      <label className="row meta" style={{ gap: 4, fontSize: 11 }}>
+      <label className="row meta" style={{ gap: 4, fontSize: 10 }}>
         DOT ≤
         <input
           type="number"
@@ -164,7 +164,7 @@ export function TiresFilterBar({
           style={{
             width: 52,
             fontFamily: 'var(--f-mono)',
-            fontSize: 11,
+            fontSize: 10,
             border: '1px solid var(--stoku-border)',
             borderRadius: 3,
             padding: '2px 4px',
@@ -174,7 +174,7 @@ export function TiresFilterBar({
       </label>
 
       {/* Set 4 */}
-      <label className="row" style={{ gap: 4, fontSize: 11 }}>
+      <label className="row" style={{ gap: 4, fontSize: 10 }}>
         <input
           type="checkbox"
           checked={values.set4}

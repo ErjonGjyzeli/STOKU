@@ -102,10 +102,10 @@
   --top-h: 48px;
 
   /* type scale */
-  --fs-xs: 11px;
-  --fs-sm: 12px;
-  --fs-base: 12px;
-  --fs-md: 13px;
+  --fs-xs: 10px;
+  --fs-sm: 11px;
+  --fs-base: 11px;
+  --fs-md: 12px;
   --fs-lg: 16px;
   --fs-xl: 20px;
   --fs-2xl: 26px;
@@ -281,9 +281,9 @@
   .btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    height: 28px;
-    padding: 0 10px;
+    gap: 5px;
+    height: 26px;
+    padding: 0 9px;
     border-radius: var(--r-md);
     border: 1px solid var(--border-strong);
     background: var(--panel);
@@ -324,13 +324,13 @@
     border-color: var(--border-strong);
   }
   .btn.sm {
-    height: 24px;
-    padding: 0 8px;
+    height: 22px;
+    padding: 0 7px;
     font-size: var(--fs-xs);
   }
   .btn.lg {
-    height: 36px;
-    padding: 0 14px;
+    height: 32px;
+    padding: 0 12px;
     font-size: var(--fs-md);
   }
 
@@ -607,7 +607,7 @@
       grid-template-columns: 1fr;
     }
     .stoku-content {
-      font-size: 13px;
+      font-size: 11px;
     }
   }
 

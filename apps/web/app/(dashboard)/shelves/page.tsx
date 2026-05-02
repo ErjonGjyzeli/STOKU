@@ -169,7 +169,7 @@ export default async function ShelvesPage({
             style={{ gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}
           >
             <label className="col" style={{ gap: 4, flex: '1 1 260px' }}>
-              <span className="meta" style={{ fontSize: 11 }}>
+              <span className="meta" style={{ fontSize: 10 }}>
                 CERCA
               </span>
               <div className="stoku-input" style={{ height: 32 }}>
@@ -185,7 +185,7 @@ export default async function ShelvesPage({
             </label>
 
             <label className="col" style={{ gap: 4, width: 160 }}>
-              <span className="meta" style={{ fontSize: 11 }}>
+              <span className="meta" style={{ fontSize: 10 }}>
                 TIPO
               </span>
               <select
@@ -205,7 +205,7 @@ export default async function ShelvesPage({
 
             <label
               className="row"
-              style={{ gap: 6, alignItems: 'center', height: 32, fontSize: 12 }}
+              style={{ gap: 6, alignItems: 'center', height: 32, fontSize: 11 }}
             >
               <input type="checkbox" name="inactive" value="1" defaultChecked={showInactive} />
               Mostra disattivati
@@ -235,7 +235,7 @@ export default async function ShelvesPage({
 
         {totalPages > 1 && (
           <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-            <div className="meta" style={{ fontSize: 12 }}>
+            <div className="meta" style={{ fontSize: 11 }}>
               Pagina {page} di {totalPages}
             </div>
             <div className="row" style={{ gap: 6 }}>

@@ -197,7 +197,7 @@ export default async function ProductDetailPage({
                 >
                   <div className="col" style={{ alignItems: 'center', gap: 4 }}>
                     <Icon name="image" size={28} />
-                    <span className="meta" style={{ fontSize: 11 }}>
+                    <span className="meta" style={{ fontSize: 10 }}>
                       {images.length} foto
                     </span>
                   </div>
@@ -222,7 +222,7 @@ export default async function ProductDetailPage({
 
           <Panel title="Descrizione">
             {p.description ? (
-              <div style={{ fontSize: 12, lineHeight: 1.55, color: 'var(--ink-2)' }}>
+              <div style={{ fontSize: 11, lineHeight: 1.55, color: 'var(--ink-2)' }}>
                 {p.description}
               </div>
             ) : (
@@ -240,29 +240,29 @@ export default async function ProductDetailPage({
               }}
             >
               <div>
-                <div className="meta" style={{ fontSize: 11 }}>
+                <div className="meta" style={{ fontSize: 10 }}>
                   Categoria
                 </div>
                 <div>{category?.name ?? '—'}</div>
               </div>
               <div>
-                <div className="meta" style={{ fontSize: 11 }}>
+                <div className="meta" style={{ fontSize: 10 }}>
                   Nr. vecchio
                 </div>
-                <div className="mono" style={{ fontSize: 12 }}>
+                <div className="mono" style={{ fontSize: 11 }}>
                   {p.legacy_nr ?? '—'}
                 </div>
               </div>
               <div>
-                <div className="meta" style={{ fontSize: 11 }}>
+                <div className="meta" style={{ fontSize: 10 }}>
                   OEM
                 </div>
-                <div className="mono" style={{ fontSize: 12 }}>
+                <div className="mono" style={{ fontSize: 11 }}>
                   {p.oem_code ?? '—'}
                 </div>
               </div>
               <div>
-                <div className="meta" style={{ fontSize: 11 }}>
+                <div className="meta" style={{ fontSize: 10 }}>
                   Stato
                 </div>
                 <div>
@@ -282,7 +282,7 @@ export default async function ProductDetailPage({
             <Panel title="Compatibilità veicolo">
               <div className="row" style={{ gap: 12 }}>
                 <Icon name="car" size={14} />
-                <div className="row" style={{ gap: 8, fontSize: 12 }}>
+                <div className="row" style={{ gap: 8, fontSize: 11 }}>
                   <span style={{ fontWeight: 500 }}>
                     {p.vehicle_make} {p.vehicle_model}
                   </span>
@@ -302,7 +302,7 @@ export default async function ProductDetailPage({
           <Panel title="Prezzo">
             <div className="row" style={{ gap: 16, alignItems: 'baseline' }}>
               <div className="col" style={{ gap: 2 }}>
-                <div className="meta" style={{ fontSize: 11 }}>
+                <div className="meta" style={{ fontSize: 10 }}>
                   Vendita
                 </div>
                 <div
@@ -318,21 +318,21 @@ export default async function ProductDetailPage({
                 <>
                   <div style={{ width: 1, height: 32, background: 'var(--border)' }} />
                   <div className="col" style={{ gap: 2 }}>
-                    <div className="meta" style={{ fontSize: 11 }}>
+                    <div className="meta" style={{ fontSize: 10 }}>
                       Costo
                     </div>
-                    <div className="mono" style={{ fontSize: 15, color: 'var(--ink-2)' }}>
+                    <div className="mono" style={{ fontSize: 12, color: 'var(--ink-2)' }}>
                       {formatCurrency(p.price_cost, p.currency)}
                     </div>
                   </div>
                   {margin != null && (
                     <div className="col" style={{ gap: 2 }}>
-                      <div className="meta" style={{ fontSize: 11 }}>
+                      <div className="meta" style={{ fontSize: 10 }}>
                         Margine
                       </div>
                       <div
                         className="mono"
-                        style={{ fontSize: 15, color: 'var(--ok)' }}
+                        style={{ fontSize: 12, color: 'var(--ok)' }}
                       >
                         {margin}%
                       </div>
@@ -377,7 +377,7 @@ export default async function ProductDetailPage({
                               {(store as { code: string } | null)?.code ?? String(s.store_id)}
                             </span>
                             {(store as { name?: string } | null)?.name && (
-                              <span className="meta" style={{ fontSize: 11 }}>
+                              <span className="meta" style={{ fontSize: 10 }}>
                                 {(store as { name: string }).name}
                               </span>
                             )}
@@ -486,11 +486,11 @@ export default async function ProductDetailPage({
                       <Icon name={iconName as 'box'} size={13} />
                       <div className="col" style={{ gap: 0, flex: 1, minWidth: 0 }}>
                         <div className="row" style={{ gap: 6 }}>
-                          <span style={{ fontSize: 12, fontWeight: 500 }}>
+                          <span style={{ fontSize: 11, fontWeight: 500 }}>
                             {MOVEMENT_LABEL[m.reason] ?? m.reason}
                           </span>
                           {(store as { code: string } | null)?.code && (
-                            <span className="mono meta" style={{ fontSize: 11 }}>
+                            <span className="mono meta" style={{ fontSize: 10 }}>
                               {(store as { code: string }).code}
                             </span>
                           )}
@@ -499,7 +499,7 @@ export default async function ProductDetailPage({
                       <span
                         className="mono"
                         style={{
-                          fontSize: 12,
+                          fontSize: 11,
                           fontWeight: 600,
                           color: (m.change ?? 0) > 0 ? 'var(--ok)' : 'var(--danger)',
                         }}
@@ -507,7 +507,7 @@ export default async function ProductDetailPage({
                         {(m.change ?? 0) > 0 ? '+' : ''}
                         {m.change ?? 0}
                       </span>
-                      <span className="meta" style={{ fontSize: 11, width: 90, textAlign: 'right' }}>
+                      <span className="meta" style={{ fontSize: 10, width: 90, textAlign: 'right' }}>
                         {relativeTime(m.created_at)}
                       </span>
                     </div>

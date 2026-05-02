@@ -103,7 +103,7 @@ export function Sidebar({ role, email, fullName, counts }: Props) {
         display: 'flex',
         flexDirection: 'column',
         color: 'var(--sbar-ink)',
-        fontSize: 13,
+        fontSize: 12,
         height: '100vh',
         overflow: 'hidden',
       }}
@@ -132,7 +132,7 @@ export function Sidebar({ role, email, fullName, counts }: Props) {
             color: 'var(--stoku-accent-fg)',
             fontFamily: 'var(--font-jetbrains-mono, monospace)',
             fontWeight: 700,
-            fontSize: 13,
+            fontSize: 12,
             letterSpacing: '-0.04em',
             flexShrink: 0,
           }}
@@ -290,7 +290,7 @@ function SidebarLink({
     borderRadius: 'var(--r-sm)',
     background: active ? 'var(--sbar-2)' : 'transparent',
     color: active ? '#fff' : 'var(--sbar-ink)',
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: active ? 500 : 400,
     textDecoration: 'none',
     position: 'relative',

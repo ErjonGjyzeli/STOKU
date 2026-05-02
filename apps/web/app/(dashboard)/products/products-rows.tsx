@@ -184,7 +184,7 @@ export function ProductsRows({
                   <div className="col" style={{ gap: 1, minWidth: 0 }}>
                     <span
                       className="truncate-1"
-                      style={{ fontSize: 13, fontWeight: 500 }}
+                      style={{ fontSize: 12, fontWeight: 500 }}
                     >
                       {p.name}
                     </span>

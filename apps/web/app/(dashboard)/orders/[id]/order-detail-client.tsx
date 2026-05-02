@@ -261,7 +261,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
                 <Icon name="search" size={13} />
                 <input
                   type="search"
-                  placeholder="Cerca per SKU o nome…"
+                  placeholder="Cerca…"
                   value={productQuery}
                   onChange={(e) => {
                     setProductQuery(e.target.value);
@@ -282,7 +282,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
                 }}
               >
                 {filteredProducts.length === 0 ? (
-                  <div style={{ padding: 12, color: 'var(--ink-3)', fontSize: 13 }}>
+                  <div style={{ padding: 12, color: 'var(--ink-3)', fontSize: 12 }}>
                     Nessun prodotto corrispondente
                   </div>
                 ) : (
@@ -304,7 +304,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
                             border: 'none',
                             cursor: p.available <= 0 ? 'not-allowed' : 'pointer',
                             opacity: p.available <= 0 ? 0.5 : 1,
-                            fontSize: 13,
+                            fontSize: 12,
                             display: 'flex',
                             gap: 10,
                             alignItems: 'center',
@@ -389,7 +389,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
       )}
 
       <Panel title="Totali">
-        <dl className="col" style={{ gap: 6, margin: 0, fontSize: 13 }}>
+        <dl className="col" style={{ gap: 6, margin: 0, fontSize: 12 }}>
           <Row label="Subtotale" value={currency(order.subtotal, order.currency)} />
           <Row
             label={`IVA ${order.tax_rate ?? 0}%`}

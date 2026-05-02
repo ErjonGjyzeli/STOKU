@@ -146,7 +146,7 @@ export default async function StockPage({
             type="search"
             name="q"
             defaultValue={q}
-            placeholder="Cerca prodotto o SKU…"
+            placeholder="Cerca…"
             autoComplete="off"
           />
         </div>

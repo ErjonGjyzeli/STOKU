@@ -211,7 +211,7 @@ export default async function LabelsPage({
 
               <label
                 className="row"
-                style={{ gap: 6, alignItems: 'center', height: 32, fontSize: 13 }}
+                style={{ gap: 6, alignItems: 'center', height: 32, fontSize: 12 }}
               >
                 <input
                   type="checkbox"

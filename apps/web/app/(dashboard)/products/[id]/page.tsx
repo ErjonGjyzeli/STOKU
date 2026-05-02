@@ -221,7 +221,7 @@ export default async function ProductDetailPage({
 
           <Panel title="Descrizione">
             {p.description ? (
-              <div style={{ fontSize: 13, lineHeight: 1.55, color: 'var(--ink-2)' }}>
+              <div style={{ fontSize: 12, lineHeight: 1.55, color: 'var(--ink-2)' }}>
                 {p.description}
               </div>
             ) : (
@@ -280,7 +280,7 @@ export default async function ProductDetailPage({
             <Panel title="Compatibilità veicolo">
               <div className="row" style={{ gap: 12 }}>
                 <Icon name="car" size={14} />
-                <div className="row" style={{ gap: 8, fontSize: 13 }}>
+                <div className="row" style={{ gap: 8, fontSize: 12 }}>
                   <span style={{ fontWeight: 500 }}>
                     {p.vehicle_make} {p.vehicle_model}
                   </span>
@@ -497,7 +497,7 @@ export default async function ProductDetailPage({
                       <span
                         className="mono"
                         style={{
-                          fontSize: 13,
+                          fontSize: 12,
                           fontWeight: 600,
                           color: (m.change ?? 0) > 0 ? 'var(--ok)' : 'var(--danger)',
                         }}

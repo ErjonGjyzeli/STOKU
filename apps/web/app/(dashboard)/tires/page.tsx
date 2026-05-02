@@ -336,7 +336,7 @@ export default async function TiresPage({
                       </td>
                       <td>
                         <div className="col" style={{ gap: 0 }}>
-                          <span className="mono" style={{ fontWeight: 600, fontSize: 13 }}>
+                          <span className="mono" style={{ fontWeight: 600, fontSize: 12 }}>
                             {size ?? <span className="faint">—</span>}
                           </span>
                           {sizeIndex && (

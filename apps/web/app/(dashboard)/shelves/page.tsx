@@ -205,7 +205,7 @@ export default async function ShelvesPage({
 
             <label
               className="row"
-              style={{ gap: 6, alignItems: 'center', height: 32, fontSize: 13 }}
+              style={{ gap: 6, alignItems: 'center', height: 32, fontSize: 12 }}
             >
               <input type="checkbox" name="inactive" value="1" defaultChecked={showInactive} />
               Mostra disattivati

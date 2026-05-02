@@ -416,12 +416,12 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                         {cameraError}
                       </div>
                     ) : cameraState === 'requesting' ? (
-                      <div style={{ fontSize: 13, fontWeight: 500 }}>
+                      <div style={{ fontSize: 12, fontWeight: 500 }}>
                         Avvio fotocamera…
                       </div>
                     ) : (
                       <>
-                        <div style={{ fontSize: 13, fontWeight: 500 }}>
+                        <div style={{ fontSize: 12, fontWeight: 500 }}>
                           Punta il barcode / QR
                         </div>
                         <div style={{ fontSize: 11, opacity: 0.6 }}>
@@ -441,7 +441,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                 style={{ alignItems: 'center', gap: 8, zIndex: 1, width: '70%' }}
               >
                 <Icon name="keyboard" size={42} />
-                <div style={{ fontSize: 13, fontWeight: 500 }}>
+                <div style={{ fontSize: 12, fontWeight: 500 }}>
                   Scanner USB connesso
                 </div>
                 <div style={{ fontSize: 11, opacity: 0.6 }}>
@@ -460,7 +460,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                     borderRadius: 'var(--r-md)',
                     color: '#fff',
                     fontFamily: 'var(--f-mono)',
-                    fontSize: 13,
+                    fontSize: 12,
                     padding: '0 12px',
                     marginTop: 8,
                   }}
@@ -492,7 +492,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                     borderRadius: 'var(--r-md)',
                     color: '#fff',
                     fontFamily: 'var(--f-mono)',
-                    fontSize: 13,
+                    fontSize: 12,
                     padding: '0 12px',
                   }}
                 />
@@ -678,7 +678,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                     }}
                   />
                   <div className="col" style={{ gap: 0 }}>
-                    <span style={{ fontSize: 13, fontWeight: 500 }}>{o.label}</span>
+                    <span style={{ fontSize: 12, fontWeight: 500 }}>{o.label}</span>
                     <span className="meta" style={{ fontSize: 11 }}>
                       {o.sub}
                     </span>
@@ -747,7 +747,7 @@ function StatRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div
       className="row"
-      style={{ justifyContent: 'space-between', fontSize: 13 }}
+      style={{ justifyContent: 'space-between', fontSize: 12 }}
     >
       <span className="meta">{label}</span>
       <span>{value}</span>

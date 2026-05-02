@@ -190,7 +190,7 @@ export default async function ProductsPage({
             type="search"
             name="q"
             defaultValue={q}
-            placeholder='Cerca SKU, OEM, nome, NR…'
+            placeholder='Cerca…'
             autoComplete="off"
           />
         </div>

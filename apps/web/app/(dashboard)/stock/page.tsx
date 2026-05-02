@@ -129,50 +129,43 @@ export default async function StockPage({
           ) : undefined
         }
       />
+      {/* Inline filter bar */}
+      <form
+        method="get"
+        style={{
+          padding: '12px 24px',
+          borderBottom: '1px solid var(--stoku-border)',
+          display: 'flex',
+          gap: 8,
+          alignItems: 'center',
+        }}
+      >
+        <div className="stoku-input" style={{ width: 280, height: 28 }}>
+          <Icon name="search" size={13} />
+          <input
+            type="search"
+            name="q"
+            defaultValue={q}
+            placeholder="Cerca prodotto o SKU…"
+            autoComplete="off"
+          />
+        </div>
+        <label className="row" style={{ gap: 6, fontSize: 12, padding: '5px 10px', border: '1px solid var(--stoku-border)', borderRadius: 'var(--r-md)', cursor: 'pointer', background: lowOnly ? 'var(--stoku-accent-bg)' : 'transparent', color: lowOnly ? 'var(--stoku-accent)' : 'inherit' }}>
+          <input type="checkbox" name="low" value="1" defaultChecked={lowOnly} />
+          Solo stock basso
+        </label>
+        <span className="meta" style={{ fontSize: 11, marginLeft: 'auto' }}>
+          {formatInt(total)} righe
+        </span>
+        <button type="submit" className="btn ghost sm">
+          <Icon name="filter" size={12} />
+        </button>
+        {activeFilters > 0 && (
+          <Link href="/stock" className="btn ghost sm">Reset</Link>
+        )}
+      </form>
+
       <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-        {/* Filtri */}
-        <Panel padded>
-          <form
-            method="get"
-            className="row"
-            style={{ gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}
-          >
-            <label className="col" style={{ gap: 4, flex: '1 1 260px' }}>
-              <span className="meta" style={{ fontSize: 11 }}>
-                CERCA PRODOTTO
-              </span>
-              <div className="stoku-input" style={{ height: 32 }}>
-                <Icon name="search" size={13} />
-                <input
-                  type="search"
-                  name="q"
-                  defaultValue={q}
-                  placeholder="Nome, SKU, OEM, #ex-Excel"
-                  autoComplete="off"
-                />
-              </div>
-            </label>
-
-            <label
-              className="row"
-              style={{ gap: 6, alignItems: 'center', height: 32, fontSize: 13 }}
-            >
-              <input type="checkbox" name="low" value="1" defaultChecked={lowOnly} />
-              Solo sotto soglia
-            </label>
-
-            <div className="row" style={{ gap: 6, marginLeft: 'auto' }}>
-              <StokuButton type="submit" variant="primary" size="sm" icon="filter">
-                Filtra
-              </StokuButton>
-              {activeFilters > 0 && (
-                <Link href="/stock" className="btn ghost sm">
-                  Reset
-                </Link>
-              )}
-            </div>
-          </form>
-        </Panel>
 
         {/* Scaffali + Stock */}
         <div className="grid-side">

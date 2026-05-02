@@ -1,7 +1,7 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { Icon } from '@/components/ui/icon';
 import { StoreSwitcher } from '@/components/layout/store-switcher';
@@ -13,63 +13,95 @@ type Props = {
   stores: StoreLite[];
 };
 
+const PAGE_TITLES: Record<string, string> = {
+  '/': 'Dashboard',
+  '/scanner': 'Scanner',
+  '/products': 'Prodotti',
+  '/tires': 'Pneumatici',
+  '/stock': 'Magazzino',
+  '/shelves': 'Scaffali',
+  '/orders': 'Ordini',
+  '/orders/new': 'Nuovo ordine',
+  '/customers': 'Clienti',
+  '/transfers': 'Trasferimenti',
+  '/transfers/new': 'Nuovo trasferimento',
+  '/reports': 'Report',
+  '/labels': 'Etichette',
+  '/settings/stores': 'Punti vendita',
+  '/settings/users': 'Utenti',
+  '/settings/company': 'Azienda',
+  '/import': 'Import Excel',
+};
+
+function getPageTitle(pathname: string): string {
+  const exact = PAGE_TITLES[pathname];
+  if (exact) return exact;
+  if (pathname.startsWith('/products/')) return 'Prodotti';
+  if (pathname.startsWith('/orders/')) return 'Ordini';
+  if (pathname.startsWith('/customers/')) return 'Clienti';
+  if (pathname.startsWith('/transfers/')) return 'Trasferimenti';
+  if (pathname.startsWith('/shelves/')) return 'Scaffali';
+  if (pathname.startsWith('/settings/')) return 'Impostazioni';
+  return '';
+}
+
 export function Topbar({ stores }: Props) {
-  const router = useRouter();
+  const pathname = usePathname();
   const { toggle, mode } = useSidebar();
-  const [q, setQ] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
+  const pageTitle = getPageTitle(pathname);
 
-  function submitSearch(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const trimmed = q.trim();
-    router.push(trimmed ? `/products?q=${encodeURIComponent(trimmed)}` : '/products');
-  }
-
-  function openModal() {
-    setModalOpen(true);
-  }
-
-  function closeModal() {
-    setModalOpen(false);
-    setQ('');
-  }
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setModalOpen(true);
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   return (
     <>
-    <header
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
-        padding: '0 12px',
-        borderBottom: '1px solid var(--stoku-border)',
-        background: 'var(--panel)',
-        minWidth: 0,
-        height: 'var(--top-h)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 10,
-      }}
-    >
-      <button
-        type="button"
-        onClick={toggle}
-        className="btn ghost"
-        style={{ padding: 6, width: 28, flexShrink: 0 }}
-        title={mode === 'collapsed' ? 'Apri menu' : 'Collassa menu'}
-        aria-label="Toggle sidebar"
+      <header
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          padding: '0 16px',
+          borderBottom: '1px solid var(--border)',
+          background: 'var(--panel)',
+          minWidth: 0,
+          height: 'var(--top-h)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+        }}
       >
-        <Icon name="menu" size={14} />
-      </button>
+        <button
+          type="button"
+          onClick={toggle}
+          className="btn ghost"
+          style={{ padding: 6, width: 28, flexShrink: 0 }}
+          title={mode === 'collapsed' ? 'Apri menu' : 'Collassa menu'}
+          aria-label="Toggle sidebar"
+        >
+          <Icon name="menu" size={14} />
+        </button>
 
-      <StoreSwitcher stores={stores} />
-      <div
-        className="vdivider topbar-divider-store"
-        style={{ height: 20, alignSelf: 'center' }}
-      />
+        <StoreSwitcher stores={stores} />
+        <div className="vdivider" style={{ height: 20, alignSelf: 'center' }} />
 
-      <form onSubmit={submitSearch} className="topbar-search" style={{ width: 220 }}>
-        <label
+        {pageTitle && (
+          <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>{pageTitle}</span>
+        )}
+
+        <div style={{ flex: 1 }} />
+
+        <button
+          type="button"
+          onClick={() => setModalOpen(true)}
           className="row"
           style={{
             height: 28,
@@ -78,34 +110,23 @@ export function Topbar({ stores }: Props) {
             background: 'var(--panel-2)',
             border: '1px solid var(--border-strong)',
             borderRadius: 'var(--r-md)',
-            cursor: 'text',
+            cursor: 'pointer',
+            width: 220,
+            flexShrink: 0,
+            fontFamily: 'inherit',
+            color: 'inherit',
           }}
         >
           <Icon name="search" size={13} />
-          <input
-            type="search"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            onFocus={openModal}
-            placeholder="Cerca"
-            className="topbar-search-input"
-            style={{
-              flex: 1,
-              background: 'transparent',
-              border: 'none',
-              outline: 'none',
-              color: 'inherit',
-              minWidth: 0,
-            }}
-            autoComplete="off"
-            readOnly
-          />
-        </label>
-      </form>
+          <span className="dim" style={{ fontSize: 12, flex: 1, textAlign: 'left' }}>
+            Cerca…
+          </span>
+          <span className="kbd">⌘</span>
+          <span className="kbd">K</span>
+        </button>
+      </header>
 
-    </header>
-
-    {modalOpen && <SearchModal initialQ={q} onClose={closeModal} />}
+      {modalOpen && <SearchModal initialQ="" onClose={() => setModalOpen(false)} />}
     </>
   );
 }

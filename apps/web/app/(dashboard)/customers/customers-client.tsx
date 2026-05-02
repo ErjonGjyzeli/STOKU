@@ -51,6 +51,23 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<CustomerRow | null>(null);
   const [pending, startTransition] = useTransition();
+  const [q, setQ] = useState('');
+  const [typeFilter, setTypeFilter] = useState<'all' | 'business' | 'private'>('all');
+
+  const filtered = customers.filter((c) => {
+    if (typeFilter !== 'all' && c.type !== typeFilter) return false;
+    if (q) {
+      const ql = q.toLowerCase();
+      if (
+        !c.name.toLowerCase().includes(ql) &&
+        !(c.phone ?? '').toLowerCase().includes(ql) &&
+        !(c.vat_number ?? '').toLowerCase().includes(ql) &&
+        !(c.code ?? '').toLowerCase().includes(ql)
+      )
+        return false;
+    }
+    return true;
+  });
 
   async function handleCreate(values: CustomerInput) {
     const res = await createCustomer(values);
@@ -91,11 +108,7 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
     <div>
       <PageHeader
         title="Clienti"
-        subtitle={
-          total > 0
-            ? `${formatInt(total)} clienti`
-            : 'Nessun cliente ancora — crea il primo'
-        }
+        subtitle={`${formatInt(total)} clienti totali`}
         right={
           <StokuButton icon="plus" variant="primary" onClick={() => setCreating(true)}>
             Nuovo cliente
@@ -103,9 +116,45 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
         }
       />
 
+      {/* Filter bar */}
+      <div
+        style={{
+          padding: '12px 24px',
+          borderBottom: '1px solid var(--stoku-border)',
+          display: 'flex',
+          gap: 8,
+          alignItems: 'center',
+        }}
+      >
+        <div className="stoku-input" style={{ width: 300, height: 28 }}>
+          <Icon name="search" size={13} />
+          <input
+            type="search"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Nome, telefono, NIPT…"
+          />
+        </div>
+        {(['all', 'business', 'private'] as const).map((v) => (
+          <button
+            key={v}
+            type="button"
+            onClick={() => setTypeFilter(v)}
+            className={typeFilter === v ? 'btn primary sm' : 'btn ghost sm'}
+          >
+            {v === 'all' ? 'Tutti' : v === 'business' ? 'Azienda' : 'Privato'}
+          </button>
+        ))}
+        {(q || typeFilter !== 'all') && (
+          <span className="meta" style={{ fontSize: 11, marginLeft: 4 }}>
+            {formatInt(filtered.length)} risultati
+          </span>
+        )}
+      </div>
+
       <div style={{ padding: 24 }}>
         <Panel padded={false}>
-          {customers.length === 0 ? (
+          {filtered.length === 0 ? (
             <Empty
               icon="users"
               title="Nessun cliente"
@@ -120,7 +169,7 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
             <table className="tbl">
               <thead>
                 <tr>
-                  <th style={{ width: 110 }}>Code</th>
+                  <th style={{ width: 110 }}>Codice</th>
                   <th>Nome</th>
                   <th style={{ width: 100 }}>Tipo</th>
                   <th style={{ width: 160 }}>Telefono</th>
@@ -130,7 +179,7 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
                 </tr>
               </thead>
               <tbody>
-                {customers.map((c) => (
+                {filtered.map((c) => (
                   <tr key={c.id}>
                     <td className="mono" style={{ fontWeight: 500, fontSize: 11 }}>
                       {c.code ?? <span className="faint">—</span>}

@@ -1,6 +1,8 @@
 import Link from 'next/link';
 
 import { Empty } from '@/components/ui/empty';
+
+export const metadata = { title: 'Dashboard — STOKU' };
 import { Icon } from '@/components/ui/icon';
 import { PageHeader } from '@/components/ui/page-header';
 import { Panel } from '@/components/ui/panel';

@@ -611,6 +611,17 @@
     }
   }
 
+  /* Product detail: collapse 2-col to 1-col at medium screens */
+  @media (max-width: 1100px) {
+    .product-detail-grid {
+      grid-template-columns: 1fr !important;
+      padding: 16px !important;
+    }
+    .product-detail-desc-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+  }
+
   /* Tab bar + search — tabs scroll, search pinned right on desktop */
   .tab-search-bar {
     padding: 0 24px;
@@ -686,7 +697,7 @@
     .tab-search-bar__tabs { order: 1; }
     .tab-search-bar__search { order: 2; width: 100% !important; flex-shrink: 1 !important; border-top: 1px solid var(--stoku-border); padding: 6px 0; }
     .tab-search-bar__search .stoku-input { width: 100% !important; }
-    /* Product detail: single column layout su mobile */
+    /* Product detail: single column on mobile */
     .product-detail-grid {
       grid-template-columns: 1fr !important;
       padding: 12px !important;
@@ -694,6 +705,7 @@
     .product-detail-desc-grid {
       grid-template-columns: repeat(2, 1fr) !important;
     }
+    .product-detail-movements-time { width: 60px !important; }
     /* Topbar: search button icon-only su mobile */
     .topbar-search-btn {
       width: 32px !important;

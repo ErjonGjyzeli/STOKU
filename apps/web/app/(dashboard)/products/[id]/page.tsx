@@ -134,7 +134,7 @@ export default async function ProductDetailPage({
           { label: p.sku },
         ]}
         subtitle={
-          <span className="row" style={{ gap: 8 }}>
+          <span className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
             <span className="mono">{p.sku}</span>
             {p.oem_code && (
               <>
@@ -299,7 +299,7 @@ export default async function ProductDetailPage({
         {/* RIGHT: price + stock + history */}
         <div className="col" style={{ gap: 16 }}>
           <Panel title="Çmimi">
-            <div className="row" style={{ gap: 16, alignItems: 'baseline' }}>
+            <div className="row" style={{ gap: 16, alignItems: 'baseline', flexWrap: 'wrap' }}>
               <div className="col" style={{ gap: 2 }}>
                 <div className="meta" style={{ fontSize: 10 }}>
                   Shitje

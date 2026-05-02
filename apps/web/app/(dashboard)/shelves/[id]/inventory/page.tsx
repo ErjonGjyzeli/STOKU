@@ -120,7 +120,7 @@ export default async function ShelfInventoryPage({
         }
       />
 
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="page-body" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
         {rows.length === 0 ? (
           <Panel padded={false}>
             <Empty

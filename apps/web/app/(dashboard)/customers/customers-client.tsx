@@ -152,7 +152,7 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
         )}
       </div>
 
-      <div style={{ padding: 24 }}>
+      <div className="page-body" style={{ padding: 24 }}>
         <Panel padded={false}>
           {filtered.length === 0 ? (
             <Empty

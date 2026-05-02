@@ -157,7 +157,7 @@ export default async function TransfersPage({
         })}
       </div>
 
-      <div style={{ padding: 24 }}>
+      <div className="page-body" style={{ padding: 24 }}>
         <Panel padded={false}>
           {rows.length === 0 ? (
             <Empty

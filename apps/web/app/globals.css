@@ -642,6 +642,30 @@
     .stoku-content {
       padding: 0;
     }
+    /* PageHeader: padding ridotto su mobile */
+    .page-header {
+      padding: 12px 16px !important;
+      gap: 10px !important;
+    }
+    /* Page body: padding ridotto su mobile */
+    .page-body {
+      padding: 12px !important;
+      gap: 12px !important;
+    }
+    /* Scanner: layout a colonna singola su mobile */
+    .scanner-layout {
+      grid-template-columns: 1fr !important;
+      padding: 12px !important;
+    }
+    /* Topbar: search button icon-only su mobile */
+    .topbar-search-btn {
+      width: 32px !important;
+      padding: 0 !important;
+      justify-content: center !important;
+    }
+    .topbar-search-label {
+      display: none !important;
+    }
   }
 
   /* Mobile: sidebar diventa drawer fuori schermo, si apre con toggle */

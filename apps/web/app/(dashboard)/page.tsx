@@ -236,7 +236,7 @@ export default async function HomePage() {
         }
       />
 
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="page-body" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div className="grid-kpi-4">
           <Stat
             label="Vendite oggi"

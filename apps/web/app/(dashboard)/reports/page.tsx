@@ -164,7 +164,7 @@ export default async function ReportsPage({
         </div>
       </div>
 
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="page-body" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
 
         {tab === 'sales' && (
           <Panel

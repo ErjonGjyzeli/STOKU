@@ -102,7 +102,7 @@ export function Topbar({ stores }: Props) {
         <button
           type="button"
           onClick={() => setModalOpen(true)}
-          className="row"
+          className="row topbar-search-btn"
           style={{
             height: 28,
             padding: '0 10px',
@@ -116,13 +116,12 @@ export function Topbar({ stores }: Props) {
             fontFamily: 'inherit',
             color: 'inherit',
           }}
+          aria-label="Cerca"
         >
           <Icon name="search" size={13} />
-          <span className="dim" style={{ fontSize: 12, flex: 1, textAlign: 'left' }}>
+          <span className="dim topbar-search-label" style={{ fontSize: 12, flex: 1, textAlign: 'left' }}>
             Cerca…
           </span>
-          <span className="kbd">⌘</span>
-          <span className="kbd">K</span>
         </button>
       </header>
 

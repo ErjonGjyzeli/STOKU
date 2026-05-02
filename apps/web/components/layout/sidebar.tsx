@@ -144,18 +144,6 @@ export function Sidebar({ role, email, fullName, counts }: Props) {
             <div style={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.01em', color: '#fff' }}>
               Stoku
             </div>
-            <div style={{ flex: 1 }} />
-            <span
-              className="kbd"
-              style={{
-                background: 'var(--sbar-2)',
-                borderColor: 'var(--sbar-border)',
-                color: 'var(--sbar-ink-dim)',
-                boxShadow: 'none',
-              }}
-            >
-              v0.1
-            </span>
           </>
         )}
       </div>

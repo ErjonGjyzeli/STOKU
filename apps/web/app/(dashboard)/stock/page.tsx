@@ -165,7 +165,7 @@ export default async function StockPage({
         )}
       </form>
 
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="page-body" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
 
         {/* Scaffali + Stock */}
         <div className="grid-side">

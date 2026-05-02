@@ -14,6 +14,7 @@ type Props = {
 export function PageHeader({ title, subtitle, right, breadcrumb }: Props) {
   return (
     <div
+      className="page-header"
       style={{
         display: 'flex',
         alignItems: 'flex-end',

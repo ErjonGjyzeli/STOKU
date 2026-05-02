@@ -322,7 +322,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
         }
       />
 
-      <div
+      <div className="scanner-layout"
         style={{
           padding: 20,
           display: 'grid',

@@ -153,7 +153,7 @@ export default async function ShelfDetailPage({
         }
       />
 
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="page-body" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div
           className="row"
           style={{ gap: 12, flexWrap: 'wrap', alignItems: 'stretch' }}

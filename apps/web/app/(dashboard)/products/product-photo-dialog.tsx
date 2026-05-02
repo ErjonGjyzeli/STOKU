@@ -194,24 +194,45 @@ export function ProductPhotoDialog({
                     >
                       <Icon name="star" size={12} />
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(img)}
-                      disabled={pending}
-                      className="btn danger sm"
-                      title="Fshi"
-                      aria-label="Fshi foton"
-                      style={{
-                        background: 'rgba(0,0,0,0.55)',
-                        color: '#fff',
-                        border: 'none',
-                        padding: 6,
-                        width: 28,
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <Icon name="trash" size={12} />
-                    </button>
+                    <div className="row" style={{ gap: 4 }}>
+                      <a
+                        href={publicUrl(img.storage_path)}
+                        download={`${productSku}-${img.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn sm"
+                        title="Shkarko foton"
+                        aria-label="Shkarko foton"
+                        style={{
+                          background: 'rgba(0,0,0,0.55)',
+                          color: '#fff',
+                          border: 'none',
+                          padding: 6,
+                          width: 28,
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Icon name="download" size={12} />
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(img)}
+                        disabled={pending}
+                        className="btn danger sm"
+                        title="Fshi"
+                        aria-label="Fshi foton"
+                        style={{
+                          background: 'rgba(0,0,0,0.55)',
+                          color: '#fff',
+                          border: 'none',
+                          padding: 6,
+                          width: 28,
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Icon name="trash" size={12} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

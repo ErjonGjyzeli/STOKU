@@ -10,6 +10,8 @@ import { formatCurrency, formatInt } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 import { TiresCreateButton } from './tires-create-button';
 import { TiresFilterBar, type TiresFilters } from './tires-filter-bar';
+import { TiresPhotoBtn } from './tires-photo-btn';
+import type { ProductImage } from '../products/product-photo-dialog';
 
 export const metadata = { title: 'Gomat — STOKU' };
 
@@ -168,7 +170,7 @@ export default async function TiresPage({
 
   const productIds = products.map((p) => p.id);
   const stockMap = new Map<string, { available: number; total: number }>();
-  const imagesMap = new Map<string, string>(); // product_id → primary storage_path
+  const imagesMap = new Map<string, ProductImage[]>(); // product_id → all images
   if (productIds.length > 0) {
     const [stockRes, imagesRes] = await Promise.all([
       supabase
@@ -177,7 +179,7 @@ export default async function TiresPage({
         .in('product_id', productIds),
       supabase
         .from('product_images')
-        .select('product_id, storage_path, is_primary, sort_order')
+        .select('id, product_id, storage_path, is_primary, sort_order')
         .in('product_id', productIds)
         .order('is_primary', { ascending: false })
         .order('sort_order'),
@@ -191,10 +193,10 @@ export default async function TiresPage({
       }
     }
     for (const img of imagesRes.data ?? []) {
-      if (!img.product_id) continue;
-      if (!imagesMap.has(img.product_id)) {
-        imagesMap.set(img.product_id, img.storage_path);
-      }
+      if (!img.product_id || !img.id) continue;
+      const list = imagesMap.get(img.product_id) ?? [];
+      list.push({ id: img.id, storage_path: img.storage_path, is_primary: img.is_primary ?? false });
+      imagesMap.set(img.product_id, list);
     }
   }
 
@@ -275,6 +277,7 @@ export default async function TiresPage({
                   <th style={{ width: 60 }}>Tag</th>
                   <th style={{ width: 100, textAlign: 'right' }}>Çmimi</th>
                   <th style={{ width: 80, textAlign: 'right' }}>Disp.</th>
+                  <th style={{ width: 36 }} />
                 </tr>
               </thead>
               <tbody>
@@ -286,7 +289,8 @@ export default async function TiresPage({
                       : null;
                   const price = formatPrice(p.price_sell, p.currency);
                   const stock = stockMap.get(p.id);
-                  const thumb = imagesMap.get(p.id);
+                  const imgs = imagesMap.get(p.id) ?? [];
+                  const thumb = imgs.find((i) => i.is_primary)?.storage_path ?? imgs[0]?.storage_path;
                   const categoryObj = Array.isArray(p.category) ? p.category[0] : p.category;
                   const slug = categoryObj?.slug ?? '';
                   const seasonKey =
@@ -420,6 +424,9 @@ export default async function TiresPage({
                         ) : (
                           <span className="faint">0</span>
                         )}
+                      </td>
+                      <td>
+                        <TiresPhotoBtn productId={p.id} productSku={p.sku} images={imgs} />
                       </td>
                     </tr>
                   );

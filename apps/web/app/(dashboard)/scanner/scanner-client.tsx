@@ -290,6 +290,7 @@ export function ScannerClient() {
             position: 'relative',
             width: '100%',
             maxWidth: 480,
+            margin: '0 auto',
             aspectRatio: '4 / 3',
             background: 'var(--panel-2)',
             borderRadius: 'var(--r-md)',

@@ -25,36 +25,36 @@ export type NavCounts = {
 };
 
 const MAIN_NAV: NavItem[] = [
-  { href: '/', label: 'Dashboard', icon: 'dashboard' },
-  { href: '/scanner', label: 'Scanner', icon: 'scanner' },
-  { href: '/products', label: 'Prodotti', icon: 'box', countKey: 'products' },
-  { href: '/tires', label: 'Pneumatici', icon: 'disc' },
-  { href: '/orders', label: 'Ordini', icon: 'cart', countKey: 'orders' },
-  { href: '/customers', label: 'Clienti', icon: 'users', countKey: 'customers' },
+  { href: '/', label: 'Paneli', icon: 'dashboard' },
+  { href: '/scanner', label: 'Skaneri', icon: 'scanner' },
+  { href: '/products', label: 'Produktet', icon: 'box', countKey: 'products' },
+  { href: '/tires', label: 'Gomat', icon: 'disc' },
+  { href: '/orders', label: 'Porositë', icon: 'cart', countKey: 'orders' },
+  { href: '/customers', label: 'Klientët', icon: 'users', countKey: 'customers' },
   {
     href: '/transfers',
-    label: 'Trasferimenti',
+    label: 'Transferimet',
     icon: 'transfer',
     roles: ['admin', 'warehouse'],
     countKey: 'transfers',
   },
-  { href: '/reports', label: 'Report', icon: 'history' },
+  { href: '/reports', label: 'Raporte', icon: 'history' },
 ];
 
 const SETTINGS_NAV: NavItem[] = [
-  { href: '/settings/stores', label: 'Punti vendita', icon: 'store', roles: ['admin'] },
-  { href: '/stock', label: 'Magazzino', icon: 'building', roles: ['admin', 'warehouse'] },
-  { href: '/shelves', label: 'Scaffali', icon: 'shelves', roles: ['admin', 'warehouse'] },
-  { href: '/labels', label: 'Etichette', icon: 'tag', roles: ['admin', 'warehouse'] },
-  { href: '/settings/users', label: 'Utenti', icon: 'users', roles: ['admin'] },
-  { href: '/settings/company', label: 'Azienda', icon: 'building', roles: ['admin'] },
+  { href: '/settings/stores', label: 'Pikat e shitjes', icon: 'store', roles: ['admin'] },
+  { href: '/stock', label: 'Magazina', icon: 'building', roles: ['admin', 'warehouse'] },
+  { href: '/shelves', label: 'Raftet', icon: 'shelves', roles: ['admin', 'warehouse'] },
+  { href: '/labels', label: 'Etiketat', icon: 'tag', roles: ['admin', 'warehouse'] },
+  { href: '/settings/users', label: 'Përdoruesit', icon: 'users', roles: ['admin'] },
+  { href: '/settings/company', label: 'Kompania', icon: 'building', roles: ['admin'] },
 ];
 
 const ROLE_LABEL: Record<Role, string> = {
   admin: 'Admin',
-  sales: 'Vendite',
-  warehouse: 'Magazzino',
-  viewer: 'Visualizzatore',
+  sales: 'Shitje',
+  warehouse: 'Magazina',
+  viewer: 'Vëzhgues',
 };
 
 type Props = {
@@ -159,7 +159,7 @@ export function Sidebar({ role, email, fullName, counts }: Props) {
           minHeight: 0,
         }}
       >
-        {!collapsed && <SectionLabel>Lavoro</SectionLabel>}
+        {!collapsed && <SectionLabel>Puna</SectionLabel>}
         {mainItems.map((item) => (
           <SidebarLink
             key={item.href}
@@ -174,7 +174,7 @@ export function Sidebar({ role, email, fullName, counts }: Props) {
         {settingsItems.length > 0 && (
           <>
             <div style={{ height: 12 }} />
-            {!collapsed && <SectionLabel>Impostazioni</SectionLabel>}
+            {!collapsed && <SectionLabel>Cilësimet</SectionLabel>}
             {settingsItems.map((item) => (
               <SidebarLink
                 key={item.href}
@@ -224,8 +224,8 @@ export function Sidebar({ role, email, fullName, counts }: Props) {
           <form action="/auth/signout" method="post">
             <button
               type="submit"
-              title="Esci"
-              aria-label="Esci"
+              title="Dil"
+              aria-label="Dil"
               style={{
                 width: 22,
                 height: 22,
@@ -303,9 +303,9 @@ function SidebarLink({
           aria-hidden
           style={{
             position: 'absolute',
-            left: -12,
-            top: 6,
-            bottom: 6,
+            left: 0,
+            top: 4,
+            bottom: 4,
             width: 2,
             background: 'var(--stoku-accent)',
             borderRadius: 2,

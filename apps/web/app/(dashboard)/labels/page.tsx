@@ -7,7 +7,7 @@ import { formatInt } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 import { countLabelTargets, type LabelFilters, type LabelKind } from './filters';
 
-export const metadata = { title: 'Etichette — STOKU' };
+export const metadata = { title: 'Etiketat — STOKU' };
 
 type SearchParams = {
   kind?: string;
@@ -86,8 +86,8 @@ export default async function LabelsPage({
   return (
     <div>
       <PageHeader
-        title="Stampa etichette"
-        subtitle="Genera PDF per stampante A4 (24-up) o termica singola (Brother QL)"
+        title="Printo etiketat"
+        subtitle="Gjenero PDF për printer A4 (24-up) ose termik single (Brother QL)"
       />
 
       <div className="page-body" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -114,7 +114,7 @@ export default async function LabelsPage({
                     value="products"
                     defaultChecked={kind === 'products'}
                   />
-                  Prodotti
+                  Produktet
                 </label>
                 <label className="row" style={{ gap: 6, alignItems: 'center' }}>
                   <input
@@ -123,7 +123,7 @@ export default async function LabelsPage({
                     value="tires"
                     defaultChecked={kind === 'tires'}
                   />
-                  Pneumatici
+                  Gomat
                 </label>
                 <label className="row" style={{ gap: 6, alignItems: 'center' }}>
                   <input
@@ -132,7 +132,7 @@ export default async function LabelsPage({
                     value="shelves"
                     defaultChecked={kind === 'shelves'}
                   />
-                  Scaffali
+                  Raftet
                 </label>
               </fieldset>
 
@@ -161,7 +161,7 @@ export default async function LabelsPage({
                     value="thermal"
                     defaultChecked={format === 'thermal'}
                   />
-                  Termico singolo
+                  Termik single
                 </label>
               </fieldset>
             </div>
@@ -169,7 +169,7 @@ export default async function LabelsPage({
             <div className="row" style={{ gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
               <label className="col" style={{ gap: 4, width: 220 }}>
                 <span className="meta" style={{ fontSize: 10 }}>
-                  PUNTO VENDITA
+                  PIKA E SHITJES
                 </span>
                 <select
                   name="store_id"
@@ -181,7 +181,7 @@ export default async function LabelsPage({
                   className="stoku-input"
                   style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
                 >
-                  <option value="">Tutti</option>
+                  <option value="">Të gjitha</option>
                   {stores.map((s) => (
                     <option key={s.id} value={s.id}>
                       {s.code} · {s.name}
@@ -192,7 +192,7 @@ export default async function LabelsPage({
 
               <label className="col" style={{ gap: 4, width: 160 }}>
                 <span className="meta" style={{ fontSize: 10 }}>
-                  CREATI ULTIMI N GG
+                  KRIJUAR DITËT E FUNDIT N
                 </span>
                 <input
                   type="number"
@@ -219,12 +219,12 @@ export default async function LabelsPage({
                   value="1"
                   defaultChecked={effectiveFilters.only_unprinted}
                 />
-                Solo non stampate
+                Vetëm të pashtypura
               </label>
 
               <div className="row" style={{ gap: 6, marginLeft: 'auto' }}>
                 <StokuButton type="submit" variant="primary" size="sm" icon="filter">
-                  Aggiorna anteprima
+                  Përditëso pamjen
                 </StokuButton>
               </div>
             </div>
@@ -235,14 +235,14 @@ export default async function LabelsPage({
           <div className="row" style={{ gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
             <div className="col" style={{ gap: 4 }}>
               <span className="meta" style={{ fontSize: 10, textTransform: 'uppercase' }}>
-                Anteprima
+                Pamja paraprake
               </span>
               <div style={{ fontSize: 22, fontWeight: 600 }}>
-                {formatInt(count)} etichett{count === 1 ? 'a' : 'e'}
+                {formatInt(count)} etiket{count === 1 ? 'ë' : 'a'}
               </div>
               <div className="meta" style={{ fontSize: 11 }}>
-                {kind === 'products' ? 'Prodotti' : kind === 'tires' ? 'Pneumatici' : 'Scaffali'} ·{' '}
-                {format === 'a4' ? 'A4 24-up' : 'Termico singolo'}
+                {kind === 'products' ? 'Produktet' : kind === 'tires' ? 'Gomat' : 'Raftet'} ·{' '}
+                {format === 'a4' ? 'A4 24-up' : 'Termik single'}
               </div>
             </div>
 
@@ -254,7 +254,7 @@ export default async function LabelsPage({
                   rel="noreferrer"
                   className="btn primary"
                 >
-                  <Icon name="print" size={13} /> Genera PDF
+                  <Icon name="print" size={13} /> Gjenero PDF
                 </a>
               ) : (
                 <span
@@ -262,7 +262,7 @@ export default async function LabelsPage({
                   aria-disabled="true"
                   style={{ opacity: 0.5 }}
                 >
-                  <Icon name="print" size={13} /> Nessun elemento
+                  <Icon name="print" size={13} /> Asnjë element
                 </span>
               )}
             </div>

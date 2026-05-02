@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { Empty } from '@/components/ui/empty';
 
-export const metadata = { title: 'Dashboard — STOKU' };
+export const metadata = { title: 'Paneli — STOKU' };
 import { Icon } from '@/components/ui/icon';
 import { PageHeader } from '@/components/ui/page-header';
 import { Panel } from '@/components/ui/panel';
@@ -20,12 +20,12 @@ import { createClient } from '@/lib/supabase/server';
 type BadgeVariant = 'default' | 'ok' | 'warn' | 'danger' | 'info' | 'draft' | 'accent';
 
 const STATUS_LABEL: Record<string, string> = {
-  draft: 'Bozza',
-  confirmed: 'Confermato',
-  paid: 'Pagato',
-  shipped: 'Spedito',
-  completed: 'Completato',
-  cancelled: 'Annullato',
+  draft: 'Draft',
+  confirmed: 'Konfirmuar',
+  paid: 'Paguar',
+  shipped: 'Dërguar',
+  completed: 'Kompletuar',
+  cancelled: 'Anuluar',
 };
 
 const STATUS_VARIANT: Record<string, BadgeVariant> = {
@@ -43,26 +43,26 @@ function relativeTime(iso: string | null) {
   if (!iso) return '—';
   const diffMs = Date.now() - new Date(iso).getTime();
   const minutes = Math.floor(diffMs / 60_000);
-  if (minutes < 1) return 'adesso';
-  if (minutes < 60) return `${minutes} min fa`;
+  if (minutes < 1) return 'tani';
+  if (minutes < 60) return `${minutes} min më parë`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} ${hours === 1 ? 'ora' : 'ore'} fa`;
+  if (hours < 24) return `${hours} ${hours === 1 ? 'orë' : 'orë'} më parë`;
   const days = Math.floor(hours / 24);
-  if (days === 1) return 'ieri';
-  if (days < 7) return `${days} giorni fa`;
+  if (days === 1) return 'dje';
+  if (days < 7) return `${days} ditë më parë`;
   return formatDayMonthShort(iso);
 }
 
 const REASON_LABEL: Record<string, string> = {
-  sale: 'ha venduto',
-  return: 'ha registrato un reso di',
-  adjustment: 'ha rettificato',
-  intake: 'ha caricato',
-  damage: 'ha registrato perdita di',
-  transfer_out: 'ha spedito in transito',
-  transfer_in: 'ha ricevuto',
-  reservation: 'ha prenotato',
-  unreservation: 'ha rilasciato prenotazione di',
+  sale: 'shiti',
+  return: 'regjistroi kthim prej',
+  adjustment: 'rregulloi',
+  intake: 'ngarkoi',
+  damage: 'regjistroi humbje prej',
+  transfer_out: 'dërgoi në tranzit',
+  transfer_in: 'mori',
+  reservation: 'rezervoi',
+  unreservation: 'liroi rezervimin prej',
 };
 
 const REASON_ICON: Record<string, string> = {
@@ -80,7 +80,7 @@ const REASON_ICON: Record<string, string> = {
 export default async function HomePage() {
   const session = await requireSession();
   const firstName = session.profile.full_name?.split(' ')[0] ?? '';
-  const greet = firstName ? `Benvenuto, ${firstName}` : 'Benvenuto';
+  const greet = firstName ? `Mirë se vini, ${firstName}` : 'Mirë se vini';
   const todayLabel = formatWeekdayDayMonth(new Date());
 
   const supabase = await createClient();
@@ -231,7 +231,7 @@ export default async function HomePage() {
           <>
             <Link href="/orders/new">
               <StokuButton icon="plus" variant="primary">
-                Nuovo ordine
+                Porosi e re
               </StokuButton>
             </Link>
           </>
@@ -241,58 +241,58 @@ export default async function HomePage() {
       <div className="page-body" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div className="grid-kpi-4">
           <Stat
-            label="Vendite oggi"
+            label="Shitjet sot"
             value={formatCurrency(revenueToday, 'EUR')}
-            hint={`${formatInt(ordersToday)} ordini`}
+            hint={`${formatInt(ordersToday)} porosi`}
             link="/orders"
           />
           <Stat
-            label="Ordini bozza"
+            label="Porosi draft"
             value={formatInt(draftCount)}
-            hint="Prenotano stock"
+            hint="Rezervojnë stok"
             warn={draftCount > 4}
             link="/orders"
           />
           <Stat
-            label="Stock basso"
+            label="Stok i ulët"
             value={formatInt(lowStockCount)}
             warn={lowStockCount > 0}
             link="/stock?low=1"
           />
           <Stat
-            label="Prodotti attivi"
+            label="Produkte aktive"
             value={formatInt(productsActive)}
-            hint={`${formatInt(totalUnits)} pezzi totali`}
+            hint={`${formatInt(totalUnits)} copë gjithsej`}
             link="/products"
           />
         </div>
 
         <div className="grid-main-aside">
           <Panel
-            title={`Ordini recenti (${recentOrders.length})`}
+            title={`Porosi të fundit (${recentOrders.length})`}
             padded={false}
             right={
               <Link href="/orders" className="btn ghost sm">
-                Tutti
+                Të gjitha
               </Link>
             }
           >
             {recentOrders.length === 0 ? (
               <Empty
                 icon="cart"
-                title="Nessun ordine ancora"
-                subtitle="Crea la prima bozza da /orders/new."
+                title="Asnjë porosi ende"
+                subtitle="Krijo draftin e parë nga /orders/new."
               />
             ) : (
               <table className="tbl">
                 <thead>
                   <tr>
-                    <th style={{ width: 120 }}>Numero</th>
-                    <th>Cliente</th>
-                    <th style={{ width: 70 }}>Store</th>
+                    <th style={{ width: 120 }}>Nr.</th>
+                    <th>Klienti</th>
+                    <th style={{ width: 70 }}>PV</th>
                     <th style={{ width: 120 }}>Status</th>
-                    <th style={{ width: 110, textAlign: 'right' }}>Totale</th>
-                    <th style={{ width: 110, textAlign: 'right' }}>Quando</th>
+                    <th style={{ width: 110, textAlign: 'right' }}>Totali</th>
+                    <th style={{ width: 110, textAlign: 'right' }}>Kur</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -307,7 +307,7 @@ export default async function HomePage() {
                         {o.customer ? (
                           o.customer.name
                         ) : (
-                          <span className="faint">Vendita banco</span>
+                          <span className="faint">Shitje banaku</span>
                         )}
                       </td>
                       <td className="mono" style={{ fontSize: 10, color: 'var(--ink-3)' }}>
@@ -336,12 +336,12 @@ export default async function HomePage() {
 
           <div className="col" style={{ gap: 16 }}>
             <Panel
-              title={`Stock basso${lowStockCount > 0 ? ` (${lowStockCount})` : ''}`}
+              title={`Stok i ulët${lowStockCount > 0 ? ` (${lowStockCount})` : ''}`}
               padded={false}
               right={
                 lowStockCount > 0 ? (
                   <Link href="/stock?low=1" className="btn ghost sm">
-                    <Icon name="alert" size={11} /> Tutti
+                    <Icon name="alert" size={11} /> Të gjitha
                   </Link>
                 ) : undefined
               }
@@ -349,8 +349,8 @@ export default async function HomePage() {
               {lowStockTop.length === 0 ? (
                 <Empty
                   icon="box"
-                  title="Tutto sopra soglia"
-                  subtitle="Le righe con disp. ≤ soglia appaiono qui."
+                  title="Gjithçka mbi kuotë"
+                  subtitle="Rreshtat me disp. ≤ kuotën shfaqen këtu."
                 />
               ) : (
                 <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
@@ -408,12 +408,12 @@ export default async function HomePage() {
             </Panel>
 
             <Panel
-              title={`Trasferimenti aperti${openTransfers.length > 0 ? ` (${openTransfers.length})` : ''}`}
+              title={`Transferime aktive${openTransfers.length > 0 ? ` (${openTransfers.length})` : ''}`}
               padded={false}
               right={
                 openTransfers.length > 0 ? (
                   <Link href="/transfers" className="btn ghost sm">
-                    Tutti
+                    Të gjitha
                   </Link>
                 ) : undefined
               }
@@ -421,8 +421,8 @@ export default async function HomePage() {
               {openTransfers.length === 0 ? (
                 <Empty
                   icon="transfer"
-                  title="Nessun trasferimento in corso"
-                  subtitle="Crea da /transfers/new."
+                  title="Asnjë transferim aktiv"
+                  subtitle="Krijo nga /transfers/new."
                 />
               ) : (
                 <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
@@ -459,7 +459,7 @@ export default async function HomePage() {
         </div>
 
         {(activityRows ?? []).length > 0 && (
-          <Panel title="Attività recente" padded={false}>
+          <Panel title="Aktivitet i fundit" padded={false}>
             <div className="col" style={{ gap: 0 }}>
               {(activityRows ?? []).map((a, i) => {
                 const who = a.staff?.full_name ?? 'Sistema';
@@ -523,10 +523,10 @@ export default async function HomePage() {
 }
 
 const STATUS_LABEL_TRANSFER: Record<string, string> = {
-  draft: 'Bozza',
-  in_transit: 'In transito',
-  completed: 'Completato',
-  cancelled: 'Annullato',
+  draft: 'Draft',
+  in_transit: 'Në tranzit',
+  completed: 'Kompletuar',
+  cancelled: 'Anuluar',
 };
 
 function Stat({

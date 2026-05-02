@@ -112,9 +112,18 @@ export async function updateStaffUser(id: string, input: UpdateUserInput): Promi
 
 export async function resetStaffPassword(id: string, password: string): Promise<ActionResult> {
   await requireAdmin();
-  if (password.length < 8) return { ok: false, error: 'Password minimo 8 caratteri' };
+  if (password.length < 8) return { ok: false, error: 'Fjalëkalimi minimumi 8 karaktere' };
   const service = createServiceClient();
   const { error } = await service.auth.admin.updateUserById(id, { password });
   if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+export async function deleteStaffUser(id: string): Promise<ActionResult> {
+  await requireAdmin();
+  const service = createServiceClient();
+  const { error } = await service.auth.admin.deleteUser(id);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath('/settings/users');
   return { ok: true };
 }

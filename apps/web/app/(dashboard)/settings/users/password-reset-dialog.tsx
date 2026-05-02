@@ -41,12 +41,12 @@ export function PasswordResetDialog({ user, open, onOpenChange, onSubmit }: Prop
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle>Reimposta password</DialogTitle>
+          <DialogTitle>Rivendos fjalëkalimin</DialogTitle>
           <DialogDescription>{user.email}</DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <Label>Nuova password</Label>
+            <Label>Fjalëkalimi i ri</Label>
             <Input
               type="text"
               autoComplete="off"
@@ -55,14 +55,14 @@ export function PasswordResetDialog({ user, open, onOpenChange, onSubmit }: Prop
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <p className="text-muted-foreground text-xs">Minimo 8 caratteri.</p>
+            <p className="text-muted-foreground text-xs">Minimum 8 karaktere.</p>
           </div>
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              Annulla
+              Anulo
             </Button>
             <Button type="submit" disabled={submitting || password.length < 8}>
-              Aggiorna
+              Përditëso
             </Button>
           </DialogFooter>
         </form>

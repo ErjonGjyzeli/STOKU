@@ -11,7 +11,7 @@ import { createClient } from '@/lib/supabase/server';
 import { OrderCreateButton } from './order-create-button';
 import { STATUS_LABEL } from './status';
 
-export const metadata = { title: 'Ordini — STOKU' };
+export const metadata = { title: 'Porositë — STOKU' };
 
 const PAGE_SIZE = 50;
 
@@ -47,11 +47,11 @@ function buildQuery(base: SearchParams, patch: Partial<SearchParams>) {
 }
 
 const TABS = [
-  { value: '', label: 'Tutti' },
-  { value: 'draft', label: 'Bozza' },
-  { value: 'confirmed', label: 'Confermati' },
-  { value: 'completed', label: 'Completati' },
-  { value: 'cancelled', label: 'Annullati' },
+  { value: '', label: 'Të gjitha' },
+  { value: 'draft', label: 'Draft' },
+  { value: 'confirmed', label: 'Konfirmuar' },
+  { value: 'completed', label: 'Kompletuar' },
+  { value: 'cancelled', label: 'Anuluar' },
 ];
 
 export default async function OrdersPage({
@@ -121,7 +121,7 @@ export default async function OrdersPage({
   const { data: orders, count, error } = await query.range(fromIdx, toIdx);
 
   if (error) {
-    return <p style={{ padding: 24, color: 'var(--danger)' }}>Errore: {error.message}</p>;
+    return <p style={{ padding: 24, color: 'var(--danger)' }}>Gabim: {error.message}</p>;
   }
 
   const rows = orders ?? [];
@@ -131,8 +131,8 @@ export default async function OrdersPage({
   return (
     <div>
       <PageHeader
-        title="Ordini"
-        subtitle={`${formatInt(tabCounts[''])} ordini totali`}
+        title="Porositë"
+        subtitle={`${formatInt(tabCounts[''])} porosi gjithsej`}
         right={
           <OrderCreateButton
             customers={customers}
@@ -143,16 +143,8 @@ export default async function OrdersPage({
       />
 
       {/* Tab bar + search */}
-      <div
-        style={{
-          padding: '0 24px',
-          borderBottom: '1px solid var(--stoku-border)',
-          display: 'flex',
-          gap: 0,
-          alignItems: 'center',
-        }}
-      >
-        <div className="row" style={{ gap: 0, flex: 1 }}>
+      <div className="tab-search-bar">
+        <div className="tab-search-bar__tabs">
           {TABS.map((t) => {
             const active = status === t.value;
             const count = tabCounts[t.value] ?? 0;
@@ -182,15 +174,15 @@ export default async function OrdersPage({
             );
           })}
         </div>
-        <form method="get" style={{ display: 'flex', alignItems: 'center' }}>
+        <form method="get" className="tab-search-bar__search">
           {status && <input type="hidden" name="status" value={status} />}
-          <div className="stoku-input" style={{ width: 260, height: 28 }}>
+          <div className="stoku-input" style={{ height: 28 }}>
             <Icon name="search" size={13} />
             <input
               type="search"
               name="q"
               defaultValue={q}
-              placeholder="Cerca…"
+              placeholder="Kërko…"
               autoComplete="off"
             />
           </div>
@@ -202,24 +194,24 @@ export default async function OrdersPage({
           {rows.length === 0 ? (
             <Empty
               icon="cart"
-              title={q || status ? 'Nessun ordine trovato' : 'Nessun ordine'}
+              title={q || status ? 'Asnjë porosi gjetur' : 'Asnjë porosi'}
               subtitle={
                 q || status
-                  ? 'Prova a cambiare i filtri.'
-                  : 'Crea una bozza per iniziare.'
+                  ? 'Provo të ndryshosh filtrat.'
+                  : 'Krijo një draft për të filluar.'
               }
             />
           ) : (
             <table className="tbl">
               <thead>
                 <tr>
-                  <th style={{ width: 140 }}>Numero</th>
-                  <th>Cliente</th>
-                  <th style={{ width: 80 }}>Punto</th>
+                  <th style={{ width: 140 }}>Nr.</th>
+                  <th>Klienti</th>
+                  <th style={{ width: 80 }}>Pika</th>
                   <th style={{ width: 120 }}>Status</th>
-                  <th className="r" style={{ width: 110 }}>Subtotale</th>
-                  <th className="r" style={{ width: 110 }}>Totale</th>
-                  <th style={{ width: 120 }}>Creato</th>
+                  <th className="r" style={{ width: 110 }}>Nëntotali</th>
+                  <th className="r" style={{ width: 110 }}>Totali</th>
+                  <th style={{ width: 120 }}>Krijuar</th>
                 </tr>
               </thead>
               <tbody>
@@ -234,7 +226,7 @@ export default async function OrdersPage({
                       {o.customer ? (
                         `${o.customer.code ? `${o.customer.code} · ` : ''}${o.customer.name}`
                       ) : (
-                        <span className="faint">Vendita banco</span>
+                        <span className="faint">Shitje banaku</span>
                       )}
                     </td>
                     <td className="mono" style={{ fontSize: 10 }}>
@@ -263,21 +255,21 @@ export default async function OrdersPage({
 
         {totalPages > 1 && (
           <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center', gap: 12, marginTop: 12 }}>
-            <div className="meta" style={{ fontSize: 11 }}>Pagina {page} di {totalPages}</div>
+            <div className="meta" style={{ fontSize: 11 }}>Faqja {page} nga {totalPages}</div>
             <div className="row" style={{ gap: 6 }}>
               {page > 1 ? (
                 <Link href={`/orders${buildQuery(params, { page: String(page - 1) })}`} className="btn ghost sm">
-                  <Icon name="chevronLeft" size={12} /> Precedente
+                  <Icon name="chevronLeft" size={12} /> Para
                 </Link>
               ) : (
-                <span className="btn ghost sm" style={{ opacity: 0.4 }}><Icon name="chevronLeft" size={12} /> Precedente</span>
+                <span className="btn ghost sm" style={{ opacity: 0.4 }}><Icon name="chevronLeft" size={12} /> Para</span>
               )}
               {page < totalPages ? (
                 <Link href={`/orders${buildQuery(params, { page: String(page + 1) })}`} className="btn ghost sm">
-                  Successiva <Icon name="chevronRight" size={12} />
+                  Pas <Icon name="chevronRight" size={12} />
                 </Link>
               ) : (
-                <span className="btn ghost sm" style={{ opacity: 0.4 }}>Successiva <Icon name="chevronRight" size={12} /></span>
+                <span className="btn ghost sm" style={{ opacity: 0.4 }}>Pas <Icon name="chevronRight" size={12} /></span>
               )}
             </div>
           </div>
@@ -291,9 +283,9 @@ function relativeDate(iso: string | null): string {
   if (!iso) return '—';
   const diff = Date.now() - new Date(iso).getTime();
   const days = Math.floor(diff / 86400000);
-  if (days === 0) return 'oggi';
-  if (days === 1) return 'ieri';
-  if (days < 30) return `${days}g fa`;
-  if (days < 365) return `${Math.floor(days / 30)}m fa`;
-  return `${Math.floor(days / 365)}a fa`;
+  if (days === 0) return 'sot';
+  if (days === 1) return 'dje';
+  if (days < 30) return `${days}d më parë`;
+  if (days < 365) return `${Math.floor(days / 30)}m më parë`;
+  return `${Math.floor(days / 365)}v më parë`;
 }

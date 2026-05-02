@@ -13,12 +13,12 @@ import { createClient } from '@/lib/supabase/server';
 type BadgeVariant = 'default' | 'ok' | 'warn' | 'danger' | 'info' | 'draft' | 'accent';
 
 const STATUS_LABEL: Record<string, string> = {
-  draft: 'Bozza',
-  confirmed: 'Confermato',
-  paid: 'Pagato',
-  shipped: 'Spedito',
-  completed: 'Completato',
-  cancelled: 'Annullato',
+  draft: 'Draft',
+  confirmed: 'Konfirmuar',
+  paid: 'Paguar',
+  shipped: 'Dërguar',
+  completed: 'Kompletuar',
+  cancelled: 'Anuluar',
 };
 
 const STATUS_VARIANT: Record<string, BadgeVariant> = {
@@ -78,19 +78,19 @@ export default async function CustomerDetailPage({
   const lastOrder = allOrders[0] ?? null;
 
   const infoEntries: Array<[string, string | null]> = [
-    ['Code', customer.code],
-    ['Tipo', customer.type === 'business' ? 'Azienda' : 'Privato'],
+    ['Kodi', customer.code],
+    ['Lloji', customer.type === 'business' ? 'Biznes' : 'Privat'],
     ['NIPT / P.IVA', customer.vat_number],
-    ['Codice fiscale', customer.tax_code],
+    ['Kodi fiskal', customer.tax_code],
     ['Email', customer.email],
-    ['Telefono', customer.phone],
+    ['Telefoni', customer.phone],
     [
-      'Indirizzo',
+      'Adresa',
       [customer.address_line1, customer.postal_code, customer.city, customer.country]
         .filter(Boolean)
         .join(', ') || null,
     ],
-    ['Creato', formatDate(customer.created_at)],
+    ['Krijuar', formatDate(customer.created_at)],
   ];
 
   return (
@@ -98,16 +98,16 @@ export default async function CustomerDetailPage({
       <PageHeader
         title={customer.name}
         subtitle={customer.code ? `${customer.code} · ${infoEntries[1][1]}` : infoEntries[1][1]!}
-        breadcrumb={[{ label: 'Clienti' }, { label: customer.name }]}
+        breadcrumb={[{ label: 'Klientët' }, { label: customer.name }]}
         right={
           <Link href="/customers" className="btn ghost sm">
-            Torna alla lista
+            Kthehu te lista
           </Link>
         }
       />
       <div className="grid-side" style={{ padding: 24 }}>
         <div className="col" style={{ gap: 16 }}>
-          <Panel title="Anagrafica">
+          <Panel title="Të dhëna">
             <dl className="col" style={{ gap: 8, margin: 0 }}>
               {infoEntries.map(([label, value]) => (
                 <div key={label} className="col" style={{ gap: 2 }}>
@@ -126,7 +126,7 @@ export default async function CustomerDetailPage({
           </Panel>
 
           {customer.notes && (
-            <Panel title="Note">
+            <Panel title="Shënime">
               <p style={{ fontSize: 11, whiteSpace: 'pre-wrap', margin: 0 }}>{customer.notes}</p>
             </Panel>
           )}
@@ -134,36 +134,36 @@ export default async function CustomerDetailPage({
 
         <div className="col" style={{ gap: 16 }}>
           <div className="grid-triple">
-            <Stat label="Ordini totali" value={countOrders.toString()} />
+            <Stat label="Porosi gjithsej" value={countOrders.toString()} />
             <Stat
-              label="Totale speso"
+              label="Totali i shpenzuar"
               value={
                 countOrders === 0 ? '—' : (currency(totalSpent, lastOrder?.currency ?? 'EUR') ?? '—')
               }
-              hint="Escluso bozze/annullati"
+              hint="Pa draft/anuluar"
             />
             <Stat
-              label="Ultimo ordine"
+              label="Porosia e fundit"
               value={lastOrder ? (formatDate(lastOrder.created_at) ?? '—') : '—'}
               hint={lastOrder ? `Status: ${STATUS_LABEL[lastOrder.status] ?? lastOrder.status}` : undefined}
             />
           </div>
 
-          <Panel title={`Cronologia ordini (${countOrders})`} padded={false}>
+          <Panel title={`Historiku i porosive (${countOrders})`} padded={false}>
             {allOrders.length === 0 ? (
               <Empty
                 icon="cart"
-                title="Nessun ordine ancora"
-                subtitle="Gli ordini appariranno qui dalla Fase 5 in poi."
+                title="Asnjë porosi ende"
+                subtitle="Porositë do të shfaqen këtu."
               />
             ) : (
               <table className="tbl">
                 <thead>
                   <tr>
                     <th style={{ width: 120 }}>Data</th>
-                    <th style={{ width: 160 }}>Numero</th>
+                    <th style={{ width: 160 }}>Nr.</th>
                     <th style={{ width: 140 }}>Status</th>
-                    <th style={{ textAlign: 'right' }}>Totale</th>
+                    <th style={{ textAlign: 'right' }}>Totali</th>
                   </tr>
                 </thead>
                 <tbody>

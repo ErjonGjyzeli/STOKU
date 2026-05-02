@@ -58,7 +58,7 @@ export function ProductPhotoDialog({
       fd.append('file', file);
       const res = await uploadProductImage(fd);
       if (!res.ok) {
-        toast.error('Upload fallito', { description: `${file.name}: ${res.error}` });
+        toast.error('Ngarkimi dështoi', { description: `${file.name}: ${res.error}` });
         continue;
       }
       uploaded.push({
@@ -68,7 +68,7 @@ export function ProductPhotoDialog({
       });
     }
     if (uploaded.length > 0) {
-      toast.success(`${uploaded.length} foto caricate`);
+      toast.success(`${uploaded.length} foto u ngarkuan`);
       setImages((prev) => [...prev, ...uploaded]);
     }
     setUploading(false);
@@ -79,23 +79,23 @@ export function ProductPhotoDialog({
     startTransition(async () => {
       const res = await setPrimaryImage(productId, img.id);
       if (!res.ok) {
-        toast.error('Errore', { description: res.error });
+        toast.error('Gabim', { description: res.error });
         return;
       }
-      toast.success('Foto principale aggiornata');
+      toast.success('Foto kryesore u përditësua');
       setImages((prev) => prev.map((i) => ({ ...i, is_primary: i.id === img.id })));
     });
   }
 
   function handleDelete(img: ProductImage) {
-    if (!confirm('Eliminare questa foto?')) return;
+    if (!confirm('Të fshihet kjo foto?')) return;
     startTransition(async () => {
       const res = await deleteProductImage(img.id);
       if (!res.ok) {
-        toast.error('Errore', { description: res.error });
+        toast.error('Gabim', { description: res.error });
         return;
       }
-      toast.success('Foto eliminata');
+      toast.success('Foto u fshi');
       setImages((prev) => prev.filter((i) => i.id !== img.id));
     });
   }
@@ -106,7 +106,7 @@ export function ProductPhotoDialog({
         <DialogHeader>
           <DialogTitle>Foto {productSku}</DialogTitle>
           <DialogDescription>
-            Massimo 5 MB per foto · JPEG, PNG, WebP · La stella segna la foto principale.
+            Maksimum 5 MB për foto · JPEG, PNG, WebP · Ylli shënon foton kryesore.
           </DialogDescription>
         </DialogHeader>
 
@@ -128,12 +128,12 @@ export function ProductPhotoDialog({
               variant="default"
             >
               <Icon name="image" size={14} />
-              {uploading ? 'Caricamento…' : 'Carica foto'}
+              {uploading ? 'Duke ngarkuar…' : 'Ngarko foto'}
             </Button>
             <span className="meta" style={{ fontSize: 11 }}>
               {images.length === 0
-                ? 'Nessuna foto ancora'
-                : `${images.length} foto · prima foto = principale`}
+                ? 'Asnjë foto ende'
+                : `${images.length} foto · foto e parë = kryesore`}
             </span>
           </div>
 
@@ -181,8 +181,8 @@ export function ProductPhotoDialog({
                       onClick={() => handleSetPrimary(img)}
                       disabled={pending || img.is_primary}
                       className="btn sm"
-                      title={img.is_primary ? 'Principale' : 'Imposta come principale'}
-                      aria-label="Imposta come principale"
+                      title={img.is_primary ? 'Kryesore' : 'Cakto si kryesore'}
+                      aria-label="Cakto si kryesore"
                       style={{
                         background: img.is_primary ? 'var(--stoku-accent)' : 'rgba(0,0,0,0.55)',
                         color: img.is_primary ? 'var(--stoku-accent-fg)' : '#fff',
@@ -199,8 +199,8 @@ export function ProductPhotoDialog({
                       onClick={() => handleDelete(img)}
                       disabled={pending}
                       className="btn danger sm"
-                      title="Elimina"
-                      aria-label="Elimina foto"
+                      title="Fshi"
+                      aria-label="Fshi foton"
                       style={{
                         background: 'rgba(0,0,0,0.55)',
                         color: '#fff',
@@ -221,7 +221,7 @@ export function ProductPhotoDialog({
 
         <DialogFooter>
           <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-            Chiudi
+            Mbyll
           </Button>
         </DialogFooter>
       </DialogContent>

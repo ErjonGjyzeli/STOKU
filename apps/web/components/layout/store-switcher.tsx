@@ -26,7 +26,7 @@ export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
   if (stores.length === 0) {
     return (
       <span className="meta" style={{ fontSize: 11 }}>
-        Nessun punto vendita
+        Asnjë pikë shitjeje
       </span>
     );
   }
@@ -44,7 +44,7 @@ export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
     startTransition(async () => {
       const res = await setActiveStore(id);
       if (!res.ok) {
-        toast.error('Errore cambio punto vendita', { description: res.error });
+        toast.error('Gabim ndryshim pike shitjeje', { description: res.error });
         setActiveStoreId(prev);
         return;
       }
@@ -73,7 +73,7 @@ export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
           </>
         ) : (
           <span className="topbar-store-code" style={{ fontWeight: 500 }}>
-            Tutti i magazzini
+            Të gjitha magazinat
           </span>
         )}
         <Icon name="chevronDown" size={11} />
@@ -94,7 +94,7 @@ export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
               padding: '6px 10px 4px',
             }}
           >
-            Cambia scope
+            Ndrysho pikën
           </div>
 
           <button
@@ -105,9 +105,9 @@ export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
           >
             <Icon name="grid" size={13} />
             <div className="col stretch" style={{ gap: 0 }}>
-              <div style={{ fontSize: 11, fontWeight: 500 }}>Tutti i magazzini</div>
+              <div style={{ fontSize: 11, fontWeight: 500 }}>Të gjitha magazinat</div>
               <div className="meta" style={{ fontSize: 10 }}>
-                Nessuno scope — liste non filtrate
+                Pa filtra — të gjitha listat
               </div>
             </div>
             {activeStoreId == null && <Icon name="check" size={13} />}

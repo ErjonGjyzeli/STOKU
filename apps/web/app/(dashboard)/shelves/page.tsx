@@ -10,7 +10,7 @@ import { createClient } from '@/lib/supabase/server';
 import { ShelfCreateButton } from './shelf-create-button';
 import { ShelvesClient, type ShelfRow } from './shelves-client';
 
-export const metadata = { title: 'Scaffali — STOKU' };
+export const metadata = { title: 'Raftet — STOKU' };
 
 const PAGE_SIZE = 50;
 
@@ -22,10 +22,10 @@ type SearchParams = {
 };
 
 const KIND_OPTIONS: Array<{ value: ShelfRow['kind']; label: string }> = [
-  { value: 'open', label: 'Aperto' },
-  { value: 'cabinet', label: 'Armadio' },
-  { value: 'drawer', label: 'Cassettiera' },
-  { value: 'floor', label: 'Pavimento' },
+  { value: 'open', label: 'I hapur' },
+  { value: 'cabinet', label: 'Kabineti' },
+  { value: 'drawer', label: 'Sirtarët' },
+  { value: 'floor', label: 'Dyshemeja' },
 ];
 
 function buildQuery(base: SearchParams, patch: Partial<SearchParams>) {
@@ -55,8 +55,8 @@ export default async function ShelvesPage({
   const isAllScope = session.activeStoreId === null;
   const showStoreColumn = isAllScope;
   const storeLabel = isAllScope
-    ? 'Tutti i PV'
-    : (session.stores.find((s) => s.id === session.activeStoreId)?.name ?? 'PV attivo');
+    ? 'Të gjitha PV'
+    : (session.stores.find((s) => s.id === session.activeStoreId)?.name ?? 'PV aktiv');
 
   const supabase = await createClient();
 
@@ -93,7 +93,7 @@ export default async function ShelvesPage({
   const shelvesRes = await query.range(fromIdx, toIdx);
   if (shelvesRes.error) {
     return (
-      <p style={{ padding: 24, color: 'var(--danger)' }}>Errore: {shelvesRes.error.message}</p>
+      <p style={{ padding: 24, color: 'var(--danger)' }}>Gabim: {shelvesRes.error.message}</p>
     );
   }
   const shelvesRaw = shelvesRes.data ?? [];
@@ -148,11 +148,11 @@ export default async function ShelvesPage({
   return (
     <div>
       <PageHeader
-        title={`Scaffali — ${storeLabel}`}
+        title={`Raftet — ${storeLabel}`}
         subtitle={
           total > 0
-            ? `${formatInt(total)} scaffali · mappa fisica del PV`
-            : 'Nessuno scaffale ancora — crea il primo per iniziare'
+            ? `${formatInt(total)} rafte · harta fizike e PV`
+            : 'Asnjë raft ende — krijo të parin për të filluar'
         }
         right={
           canWrite ? (
@@ -178,7 +178,7 @@ export default async function ShelvesPage({
                   type="search"
                   name="q"
                   defaultValue={q}
-                  placeholder="Codice o descrizione"
+                  placeholder="Kodi ose përshkrimi"
                   autoComplete="off"
                 />
               </div>
@@ -194,7 +194,7 @@ export default async function ShelvesPage({
                 className="stoku-input"
                 style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
               >
-                <option value="">Tutti</option>
+                <option value="">Të gjitha</option>
                 {KIND_OPTIONS.map((k) => (
                   <option key={k.value} value={k.value}>
                     {k.label}
@@ -208,12 +208,12 @@ export default async function ShelvesPage({
               style={{ gap: 6, alignItems: 'center', height: 32, fontSize: 11 }}
             >
               <input type="checkbox" name="inactive" value="1" defaultChecked={showInactive} />
-              Mostra disattivati
+              Shfaq joaktivët
             </label>
 
             <div className="row" style={{ gap: 6, marginLeft: 'auto' }}>
               <StokuButton type="submit" variant="primary" size="sm" icon="filter">
-                Filtra
+                Filtro
               </StokuButton>
               {activeFilters > 0 && (
                 <Link href="/shelves" className="btn ghost sm">
@@ -236,7 +236,7 @@ export default async function ShelvesPage({
         {totalPages > 1 && (
           <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
             <div className="meta" style={{ fontSize: 11 }}>
-              Pagina {page} di {totalPages}
+              Faqja {page} nga {totalPages}
             </div>
             <div className="row" style={{ gap: 6 }}>
               {page > 1 ? (
@@ -244,11 +244,11 @@ export default async function ShelvesPage({
                   href={`/shelves${buildQuery(params, { page: String(page - 1) })}`}
                   className="btn ghost sm"
                 >
-                  <Icon name="chevronLeft" size={12} /> Precedente
+                  <Icon name="chevronLeft" size={12} /> Para
                 </Link>
               ) : (
                 <span className="btn ghost sm" aria-disabled="true" style={{ opacity: 0.4 }}>
-                  <Icon name="chevronLeft" size={12} /> Precedente
+                  <Icon name="chevronLeft" size={12} /> Para
                 </span>
               )}
               {page < totalPages ? (
@@ -256,11 +256,11 @@ export default async function ShelvesPage({
                   href={`/shelves${buildQuery(params, { page: String(page + 1) })}`}
                   className="btn ghost sm"
                 >
-                  Successiva <Icon name="chevronRight" size={12} />
+                  Pas <Icon name="chevronRight" size={12} />
                 </Link>
               ) : (
                 <span className="btn ghost sm" aria-disabled="true" style={{ opacity: 0.4 }}>
-                  Successiva <Icon name="chevronRight" size={12} />
+                  Pas <Icon name="chevronRight" size={12} />
                 </span>
               )}
             </div>

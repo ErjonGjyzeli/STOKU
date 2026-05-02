@@ -29,10 +29,10 @@ export type ShelfRow = {
 type StoreOption = { id: number; code: string; name: string };
 
 const KIND_LABEL: Record<ShelfRow['kind'], string> = {
-  open: 'Aperto',
-  cabinet: 'Armadio',
-  drawer: 'Cassettiera',
-  floor: 'Pavimento',
+  open: 'I hapur',
+  cabinet: 'Kabineti',
+  drawer: 'Sirtarët',
+  floor: 'Dyshemeja',
 };
 
 function fillPercent(used: number, capacity: number | null) {
@@ -71,18 +71,18 @@ export function ShelvesClient({
   function handleToggle(shelf: ShelfRow) {
     startTransition(async () => {
       const res = await toggleShelfActive(shelf.id, !shelf.is_active);
-      if (!res.ok) toast.error('Errore', { description: res.error });
-      else toast.success(shelf.is_active ? 'Disattivato' : 'Attivato');
+      if (!res.ok) toast.error('Gabim', { description: res.error });
+      else toast.success(shelf.is_active ? 'Çaktivizuar' : 'Aktivizuar');
     });
   }
 
   async function handleSubmit(values: ShelfInput, id?: string) {
     const res = id ? await updateShelf(id, values) : await createShelf(values);
     if (!res.ok) {
-      toast.error('Errore', { description: res.error });
+      toast.error('Gabim', { description: res.error });
       return false;
     }
-    toast.success(id ? 'Scaffale aggiornato' : 'Scaffale creato');
+    toast.success(id ? 'Rafti u përditësua' : 'Rafti u krijua');
     return true;
   }
 
@@ -92,16 +92,16 @@ export function ShelvesClient({
         {shelves.length === 0 ? (
           <Empty
             icon="shelves"
-            title={hasFilters ? 'Nessuno scaffale trovato' : 'Nessuno scaffale'}
+            title={hasFilters ? 'Asnjë raft i gjetur' : 'Asnjë raft'}
             subtitle={
               hasFilters
-                ? 'Prova a resettare i filtri.'
-                : 'Crea il primo scaffale per mappare la collocazione fisica dei prodotti.'
+                ? 'Provo të rivendosësh filtrat.'
+                : 'Krijo raftin e parë për të hartuar vendndodhjen fizike të produkteve.'
             }
             action={
               !hasFilters && canWrite && stores.length > 0 ? (
                 <StokuButton icon="plus" variant="primary" onClick={() => setCreating(true)}>
-                  Crea scaffale
+                  Krijo raft
                 </StokuButton>
               ) : undefined
             }
@@ -111,14 +111,14 @@ export function ShelvesClient({
             <thead>
               <tr>
                 {showStoreColumn && <th style={{ width: 90 }}>PV</th>}
-                <th style={{ width: 160 }}>Codice</th>
-                <th>Descrizione</th>
-                <th style={{ width: 120 }}>Tipo</th>
-                <th style={{ width: 90, textAlign: 'right' }}>Prodotti</th>
-                <th style={{ width: 90, textAlign: 'right' }}>Pezzi</th>
+                <th style={{ width: 160 }}>Kodi</th>
+                <th>Përshkrimi</th>
+                <th style={{ width: 120 }}>Tipi</th>
+                <th style={{ width: 90, textAlign: 'right' }}>Produkte</th>
+                <th style={{ width: 90, textAlign: 'right' }}>Copë</th>
                 <th style={{ width: 90, textAlign: 'right' }}>Cap.</th>
-                <th style={{ width: 110 }}>Riempimento</th>
-                <th style={{ width: 100 }}>Stato</th>
+                <th style={{ width: 110 }}>Mbushja</th>
+                <th style={{ width: 100 }}>Statusi</th>
                 <th style={{ width: 80 }} />
               </tr>
             </thead>
@@ -170,10 +170,10 @@ export function ShelvesClient({
                     <td>
                       {s.is_active ? (
                         <StokuBadge variant="ok" dot>
-                          Attivo
+                          Aktiv
                         </StokuBadge>
                       ) : (
-                        <StokuBadge variant="draft">Disattivato</StokuBadge>
+                        <StokuBadge variant="draft">Çaktivizuar</StokuBadge>
                       )}
                     </td>
                     <td>
@@ -185,8 +185,8 @@ export function ShelvesClient({
                               className="btn ghost sm"
                               style={{ width: 24, padding: 0, justifyContent: 'center' }}
                               onClick={() => setEditing(s)}
-                              title="Modifica"
-                              aria-label="Modifica"
+                              title="Modifiko"
+                              aria-label="Modifiko"
                             >
                               <Icon name="edit" size={12} />
                             </button>
@@ -196,8 +196,8 @@ export function ShelvesClient({
                               style={{ width: 24, padding: 0, justifyContent: 'center' }}
                               onClick={() => handleToggle(s)}
                               disabled={pending}
-                              title={s.is_active ? 'Disattiva' : 'Attiva'}
-                              aria-label={s.is_active ? 'Disattiva' : 'Attiva'}
+                              title={s.is_active ? 'Çaktivizo' : 'Aktivo'}
+                              aria-label={s.is_active ? 'Çaktivizo' : 'Aktivo'}
                             >
                               <Icon name="ring" size={12} />
                             </button>
@@ -218,7 +218,7 @@ export function ShelvesClient({
           open={creating}
           onOpenChange={setCreating}
           onSubmit={(values) => handleSubmit(values)}
-          title="Nuovo scaffale"
+          title="Raft i ri"
           stores={stores}
           defaultStoreId={defaultStoreId}
         />
@@ -228,7 +228,7 @@ export function ShelvesClient({
           open={!!editing}
           onOpenChange={(o) => !o && setEditing(null)}
           onSubmit={(values) => handleSubmit(values, editing.id)}
-          title={`Modifica ${editing.code}`}
+          title={`Modifiko ${editing.code}`}
           stores={stores}
           defaultStoreId={editing.store_id}
           initial={{

@@ -10,13 +10,13 @@ import { StokuBadge } from '@/components/ui/stoku-badge';
 import { requireSession } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 
-export const metadata = { title: 'Scaffale — STOKU' };
+export const metadata = { title: 'Rafti — STOKU' };
 
 const KIND_LABEL: Record<string, string> = {
-  open: 'Aperto',
-  cabinet: 'Armadio',
-  drawer: 'Cassettiera',
-  floor: 'Pavimento',
+  open: 'I hapur',
+  cabinet: 'Kabineti',
+  drawer: 'Sirtarët',
+  floor: 'Dyshemeja',
 };
 
 const idSchema = z.string().uuid();
@@ -47,7 +47,7 @@ export default async function ShelfDetailPage({
     .eq('id', idCheck.data)
     .maybeSingle();
   if (shelfErr) {
-    return <p style={{ padding: 24, color: 'var(--danger)' }}>Errore: {shelfErr.message}</p>;
+    return <p style={{ padding: 24, color: 'var(--danger)' }}>Gabim: {shelfErr.message}</p>;
   }
   if (!shelf) notFound();
 
@@ -85,20 +85,20 @@ export default async function ShelfDetailPage({
       : null;
 
   const kindLabel = KIND_LABEL[shelf.kind] ?? shelf.kind;
-  const futureTooltip = 'Disponibile in PR successiva';
+  const futureTooltip = 'E disponueshme në PR pasues';
 
   return (
     <div>
       <PageHeader
         breadcrumb={[
-          { label: 'Scaffali', href: '/shelves' },
+          { label: 'Raftet', href: '/shelves' },
           { label: shelf.code },
         ]}
         title={
           <span className="row" style={{ gap: 10, alignItems: 'center' }}>
             <span className="mono">{shelf.code}</span>
             <StokuBadge>{kindLabel}</StokuBadge>
-            {!shelf.is_active && <StokuBadge variant="draft">Disattivato</StokuBadge>}
+            {!shelf.is_active && <StokuBadge variant="draft">Çaktivizuar</StokuBadge>}
           </span>
         }
         subtitle={
@@ -117,26 +117,26 @@ export default async function ShelfDetailPage({
               className="btn ghost sm"
               disabled
               title={futureTooltip}
-              aria-label="Sposta prodotto"
+              aria-label="Zhvendos produktin"
             >
-              <Icon name="swap" size={12} /> Sposta
+              <Icon name="swap" size={12} /> Zhvendos
             </button>
             <Link
               href={`/shelves/${shelf.id}/label?format=thermal`}
               target="_blank"
               rel="noreferrer"
               className="btn ghost sm"
-              aria-label="Stampa etichetta termica"
-              title="PDF singolo 80×50mm"
+              aria-label="Shtyp etiketë termike"
+              title="PDF i vetëm 80×50mm"
             >
-              <Icon name="print" size={12} /> Termica
+              <Icon name="print" size={12} /> Termike
             </Link>
             <Link
               href={`/labels/pdf?kind=shelves&ids=${shelf.id}&format=a4`}
               target="_blank"
               rel="noreferrer"
               className="btn ghost sm"
-              aria-label="Stampa etichetta in foglio A4"
+              aria-label="Shtyp etiketë në fletë A4"
               title="PDF A4 24-up"
             >
               <Icon name="tag" size={12} /> A4
@@ -144,10 +144,10 @@ export default async function ShelfDetailPage({
             <Link
               href={`/shelves/${shelf.id}/inventory`}
               className="btn ghost sm"
-              aria-label="Inventario"
-              title="Conta scaffale e applica rettifica"
+              aria-label="Inventar"
+              title="Konto raftin dhe apliko rregullimin"
             >
-              <Icon name="check" size={12} /> Inventario
+              <Icon name="check" size={12} /> Inventar
             </Link>
           </div>
         }
@@ -158,18 +158,18 @@ export default async function ShelfDetailPage({
           className="row"
           style={{ gap: 12, flexWrap: 'wrap', alignItems: 'stretch' }}
         >
-          <Stat label="Prodotti unici" value={uniqueProducts.toString()} />
-          <Stat label="Pezzi totali" value={totalPieces.toString()} />
+          <Stat label="Produkte unike" value={uniqueProducts.toString()} />
+          <Stat label="Copë gjithsej" value={totalPieces.toString()} />
           <Stat
-            label="Riservati"
+            label="Rezervuar"
             value={reservedPieces > 0 ? reservedPieces.toString() : '—'}
           />
           <Stat
-            label="Capacità"
+            label="Kapaciteti"
             value={shelf.capacity ? shelf.capacity.toString() : '—'}
           />
           <Stat
-            label="Riempimento"
+            label="Mbushja"
             value={fillPercent !== null ? `${fillPercent}%` : '—'}
           />
         </div>
@@ -178,8 +178,8 @@ export default async function ShelfDetailPage({
           {items.length === 0 ? (
             <Empty
               icon="box"
-              title="Scaffale vuoto"
-              subtitle="Nessun prodotto attualmente collocato qui."
+              title="Rafti bosh"
+              subtitle="Asnjë produkt aktualisht i vendosur këtu."
             />
           ) : (
             <table className="tbl">
@@ -187,9 +187,9 @@ export default async function ShelfDetailPage({
                 <tr>
                   <th style={{ width: 56 }} />
                   <th style={{ width: 130 }}>SKU</th>
-                  <th>Prodotto</th>
-                  <th style={{ width: 80, textAlign: 'right' }}>Qta</th>
-                  <th style={{ width: 90, textAlign: 'right' }}>Prenot.</th>
+                  <th>Produkti</th>
+                  <th style={{ width: 80, textAlign: 'right' }}>Sasi</th>
+                  <th style={{ width: 90, textAlign: 'right' }}>Rez.</th>
                   <th style={{ width: 80, textAlign: 'right' }}>Disp.</th>
                 </tr>
               </thead>
@@ -247,7 +247,7 @@ export default async function ShelfDetailPage({
                         )}
                         {row.product?.is_active === false && (
                           <StokuBadge variant="draft" style={{ marginLeft: 8 }}>
-                            Disattivato
+                            Çaktivizuar
                           </StokuBadge>
                         )}
                       </td>

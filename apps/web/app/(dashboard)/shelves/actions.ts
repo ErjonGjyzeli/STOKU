@@ -12,11 +12,11 @@ const shelfSchema = z.object({
   code: z
     .string()
     .trim()
-    .min(2, 'Codice minimo 2 caratteri')
-    .max(40, 'Codice massimo 40 caratteri')
-    .regex(CODE_REGEX, 'Solo lettere/cifre, blocchi separati da "-"'),
-  store_id: z.coerce.number().int().positive('Punto vendita richiesto'),
-  description: z.string().trim().max(200, 'Massimo 200 caratteri').optional().or(z.literal('')),
+    .min(2, 'Kodi minimum 2 karaktere')
+    .max(40, 'Kodi maksimum 40 karaktere')
+    .regex(CODE_REGEX, 'Vetëm shkronja/shifra, blloqe të ndara me "-"'),
+  store_id: z.coerce.number().int().positive('Pika e shitjes kërkohet'),
+  description: z.string().trim().max(200, 'Maksimum 200 karaktere').optional().or(z.literal('')),
   kind: z.enum(['open', 'cabinet', 'drawer', 'floor']),
   capacity: z
     .union([z.coerce.number().int().positive('Capacità > 0'), z.literal(''), z.null()])
@@ -59,11 +59,11 @@ async function ensureWriter(storeId: number) {
   const session = await requireSession();
   const role = session.profile.role;
   if (role !== 'admin' && role !== 'warehouse') {
-    return { ok: false as const, error: 'Permessi insufficienti' };
+    return { ok: false as const, error: 'Leje të pamjaftueshme' };
   }
   if (role === 'warehouse') {
     const inScope = session.stores.some((s) => s.id === storeId);
-    if (!inScope) return { ok: false as const, error: 'PV non abilitato per questo utente' };
+    if (!inScope) return { ok: false as const, error: 'PV nuk është i aktivizuar për këtë përdorues' };
   }
   return { ok: true as const };
 }
@@ -71,7 +71,7 @@ async function ensureWriter(storeId: number) {
 export async function createShelf(input: ShelfInput): Promise<ActionResult> {
   const parsed = shelfSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Dati non validi' };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Të dhëna të pavlefshme' };
   }
   const guard = await ensureWriter(parsed.data.store_id);
   if (!guard.ok) return guard;
@@ -85,7 +85,7 @@ export async function createShelf(input: ShelfInput): Promise<ActionResult> {
 export async function updateShelf(id: string, input: ShelfInput): Promise<ActionResult> {
   const parsed = shelfSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Dati non validi' };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Të dhëna të pavlefshme' };
   }
   const guard = await ensureWriter(parsed.data.store_id);
   if (!guard.ok) return guard;
@@ -106,7 +106,7 @@ export async function toggleShelfActive(id: string, active: boolean): Promise<Ac
     .select('store_id')
     .eq('id', id)
     .single();
-  if (readErr || !shelf) return { ok: false, error: readErr?.message ?? 'Scaffale non trovato' };
+  if (readErr || !shelf) return { ok: false, error: readErr?.message ?? 'Rafti nuk u gjet' };
   const guard = await ensureWriter(shelf.store_id);
   if (!guard.ok) return guard;
   const { error } = await supabase.from('shelves').update({ is_active: active }).eq('id', id);

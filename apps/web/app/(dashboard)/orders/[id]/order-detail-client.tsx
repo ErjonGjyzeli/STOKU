@@ -100,18 +100,18 @@ export function OrderDetailClient({ order, items, products }: Props) {
 
   async function handleAdd() {
     if (!selectedProductId) {
-      toast.error('Seleziona un prodotto');
+      toast.error('Zgjidh një produkt');
       return;
     }
     const qtyNum = Number(qty);
     if (!Number.isInteger(qtyNum) || qtyNum <= 0) {
-      toast.error('Quantità deve essere intero > 0');
+      toast.error('Sasia duhet të jetë numër i plotë > 0');
       return;
     }
     const sel = products.find((p) => p.id === selectedProductId);
     if (sel && qtyNum > sel.available) {
-      toast.error('Stock insufficiente', {
-        description: `Disponibili in questo PV: ${sel.available}`,
+      toast.error('Stok i pamjaftueshëm', {
+        description: `Disponibël në këtë PV: ${sel.available}`,
       });
       return;
     }
@@ -124,10 +124,10 @@ export function OrderDetailClient({ order, items, products }: Props) {
     });
     setSubmitting(false);
     if (!res.ok) {
-      toast.error('Aggiunta fallita', { description: res.error });
+      toast.error('Shtimi dështoi', { description: res.error });
       return;
     }
-    toast.success('Riga aggiunta');
+    toast.success('Rreshti u shtua');
     setSelectedProductId('');
     setProductQuery('');
     setQty('1');
@@ -135,29 +135,29 @@ export function OrderDetailClient({ order, items, products }: Props) {
   }
 
   function handleRemove(itemId: string) {
-    if (!confirm('Rimuovere la riga?')) return;
+    if (!confirm('Të hiqet rreshti?')) return;
     startTransition(async () => {
       const res = await removeOrderItem(order.id, itemId);
       if (!res.ok) {
-        toast.error('Errore', { description: res.error });
+        toast.error('Gabim', { description: res.error });
         return;
       }
-      toast.success('Riga rimossa');
+      toast.success('Rreshti u hoq');
     });
   }
 
   function handleTransition(nextStatus: OrderTransitionStatus) {
     const label = STATUS_ACTION_LABEL[nextStatus] ?? nextStatus;
     const destructive = nextStatus === 'cancelled';
-    if (!confirm(destructive ? `Annullare ordine ${order.order_number}?` : `${label}?`)) return;
+    if (!confirm(destructive ? `Të anulohet porosia ${order.order_number}?` : `${label}?`)) return;
 
     let paymentMethod: 'cash' | 'bank' | 'card' | 'other' | null = null;
     if (nextStatus === 'paid') {
-      const pm = prompt('Metodo pagamento: cash / bank / card / other', 'cash');
+      const pm = prompt('Metoda e pagesës: cash / bank / card / other', 'cash');
       if (!pm) return;
       const normalized = pm.toLowerCase().trim();
       if (!['cash', 'bank', 'card', 'other'].includes(normalized)) {
-        toast.error('Metodo pagamento non valido');
+        toast.error('Metodë pagese e pavlefshme');
         return;
       }
       paymentMethod = normalized as 'cash' | 'bank' | 'card' | 'other';
@@ -170,10 +170,10 @@ export function OrderDetailClient({ order, items, products }: Props) {
         payment_method: paymentMethod,
       });
       if (!res.ok) {
-        toast.error('Transizione fallita', { description: res.error });
+        toast.error('Tranzicioni dështoi', { description: res.error });
         return;
       }
-      toast.success(`Ordine → ${STATUS_LABEL[nextStatus] ?? nextStatus}`);
+      toast.success(`Porosi → ${STATUS_LABEL[nextStatus] ?? nextStatus}`);
     });
   }
 
@@ -183,7 +183,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
   return (
     <div className="col" style={{ gap: 16 }}>
       <Panel
-        title={`Righe ordine (${items.length})`}
+        title={`Rreshtat e porosisë (${items.length})`}
         padded={false}
         right={
           <StokuBadge variant={STATUS_VARIANT[order.status] ?? 'default'}>
@@ -194,11 +194,11 @@ export function OrderDetailClient({ order, items, products }: Props) {
         {items.length === 0 ? (
           <Empty
             icon="cart"
-            title="Nessun articolo"
+            title="Asnjë artikull"
             subtitle={
               isDraft
-                ? 'Aggiungi il primo articolo dal modulo qui sotto.'
-                : 'Ordine chiuso senza righe.'
+                ? 'Shto artikullin e parë nga formulari më poshtë.'
+                : 'Porosi e mbyllur pa rreshta.'
             }
           />
         ) : (
@@ -207,10 +207,10 @@ export function OrderDetailClient({ order, items, products }: Props) {
             <thead>
               <tr>
                 <th style={{ width: 130 }}>SKU</th>
-                <th>Nome</th>
-                <th style={{ width: 80, textAlign: 'right' }}>Qta</th>
-                <th style={{ width: 110, textAlign: 'right' }}>Prezzo</th>
-                <th style={{ width: 120, textAlign: 'right' }}>Totale riga</th>
+                <th>Emri</th>
+                <th style={{ width: 80, textAlign: 'right' }}>Sasi</th>
+                <th style={{ width: 110, textAlign: 'right' }}>Çmimi</th>
+                <th style={{ width: 120, textAlign: 'right' }}>Totali rreshtit</th>
                 {isDraft && <th style={{ width: 40 }} />}
               </tr>
             </thead>
@@ -238,8 +238,8 @@ export function OrderDetailClient({ order, items, products }: Props) {
                         style={{ width: 24, padding: 0, justifyContent: 'center' }}
                         onClick={() => handleRemove(it.id)}
                         disabled={pending}
-                        title="Rimuovi"
-                        aria-label="Rimuovi riga"
+                        title="Hiq"
+                        aria-label="Hiq rreshtin"
                       >
                         <Icon name="trash" size={12} />
                       </button>
@@ -254,14 +254,14 @@ export function OrderDetailClient({ order, items, products }: Props) {
       </Panel>
 
       {isDraft && (
-        <Panel title="Aggiungi articolo">
+        <Panel title="Shto artikull">
           <div className="col" style={{ gap: 10 }}>
             <div className="row" style={{ gap: 8, alignItems: 'center' }}>
               <div className="stoku-input" style={{ height: 32, flex: 1 }}>
                 <Icon name="search" size={13} />
                 <input
                   type="search"
-                  placeholder="Cerca…"
+                  placeholder="Kërko…"
                   value={productQuery}
                   onChange={(e) => {
                     setProductQuery(e.target.value);
@@ -283,7 +283,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
               >
                 {filteredProducts.length === 0 ? (
                   <div style={{ padding: 12, color: 'var(--ink-3)', fontSize: 11 }}>
-                    Nessun prodotto corrispondente
+                    Asnjë produkt përputhës
                   </div>
                 ) : (
                   <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
@@ -311,8 +311,8 @@ export function OrderDetailClient({ order, items, products }: Props) {
                           }}
                           title={
                             p.available <= 0
-                              ? 'Nessuna disponibilità in questo punto vendita'
-                              : `Disponibili: ${p.available}`
+                              ? 'Asnjë disponibël në këtë pikë shitjeje'
+                              : `Disponibël: ${p.available}`
                           }
                         >
                           <span className="mono" style={{ fontSize: 10, minWidth: 80 }}>
@@ -328,7 +328,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
                               textAlign: 'right',
                             }}
                           >
-                            {p.available > 0 ? `Disp: ${p.available}` : 'Esaurito'}
+                            {p.available > 0 ? `Disp: ${p.available}` : 'I mbaruar'}
                           </span>
                           <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)' }}>
                             {currency(p.price_sell, p.currency)}
@@ -358,7 +358,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
               </div>
               <div className="col" style={{ gap: 4, flex: '1 1 160px', minWidth: 140 }}>
                 <span className="meta" style={{ fontSize: 10 }}>
-                  PREZZO UNIT.
+                  ÇMIMI UNIT.
                 </span>
                 <Input
                   inputMode="decimal"
@@ -373,12 +373,12 @@ export function OrderDetailClient({ order, items, products }: Props) {
                 disabled={submitting || !selectedProductId}
                 style={{ flex: '1 1 140px' }}
               >
-                {submitting ? 'Aggiungo…' : 'Aggiungi riga'}
+                {submitting ? 'Duke shtuar…' : 'Shto rresht'}
               </Button>
             </div>
             {selectedProductId && (
               <div className="meta" style={{ fontSize: 10 }}>
-                Prodotto selezionato:{' '}
+                Produkti i zgjedhur:{' '}
                 <span className="mono">
                   {products.find((p) => p.id === selectedProductId)?.sku}
                 </span>
@@ -388,22 +388,22 @@ export function OrderDetailClient({ order, items, products }: Props) {
         </Panel>
       )}
 
-      <Panel title="Totali">
+      <Panel title="Totalet">
         <dl className="col" style={{ gap: 6, margin: 0, fontSize: 11 }}>
-          <Row label="Subtotale" value={currency(order.subtotal, order.currency)} />
+          <Row label="Nëntotali" value={currency(order.subtotal, order.currency)} />
           <Row
-            label={`IVA ${order.tax_rate ?? 0}%`}
+            label={`TVSH ${order.tax_rate ?? 0}%`}
             value={currency(order.tax_amount, order.currency)}
           />
           {order.discount_amount != null && order.discount_amount > 0 && (
             <Row
-              label="Sconto"
+              label="Zbritja"
               value={`- ${currency(order.discount_amount, order.currency)}`}
             />
           )}
           <div style={{ borderTop: '1px solid var(--stoku-border)', paddingTop: 6 }}>
             <Row
-              label="Totale"
+              label="Totali"
               value={currency(order.total, order.currency)}
               bold
             />
@@ -412,7 +412,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
       </Panel>
 
       {nextStatuses.length > 0 && (
-        <Panel title="Azioni">
+        <Panel title="Veprimet">
           <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
             {nextStatuses.map((s) => {
               const destructive = s === 'cancelled';
@@ -440,7 +440,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
 
       <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
         <Link href="/orders" className="btn ghost sm">
-          Torna agli ordini
+          Kthehu te porositë
         </Link>
         {canDownloadInvoice && (
           <a
@@ -449,7 +449,7 @@ export function OrderDetailClient({ order, items, products }: Props) {
             rel="noopener noreferrer"
             className="btn ghost sm"
           >
-            <Icon name="download" size={12} /> Scarica fattura PDF
+            <Icon name="download" size={12} /> Shkarko faturën PDF
           </a>
         )}
       </div>

@@ -27,7 +27,7 @@ import type { CreateUserInput, UpdateUserInput } from './actions';
 import type { Role, StoreLite } from './users-client';
 
 const createSchema = z.object({
-  email: z.string().email('Email non valida'),
+  email: z.string().email('Email e pavlefshme'),
   full_name: z.string().min(2),
   role: z.enum(['admin', 'sales', 'warehouse', 'viewer']),
   password: z.string().min(8),
@@ -109,35 +109,35 @@ function CreateForm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Nuovo utente staff</DialogTitle>
+          <DialogTitle>Përdorues i ri</DialogTitle>
           <DialogDescription>
-            L&apos;utente riceverà accesso immediato con la password impostata.
+            Përdoruesi do të marrë qasje menjëherë me fjalëkalimin e caktuar.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(submit)} className="flex flex-col gap-4">
-          <Field label="Nome completo" error={errors.full_name?.message}>
+          <Field label="Emri i plotë" error={errors.full_name?.message}>
             <Input {...register('full_name')} />
           </Field>
           <Field label="Email" error={errors.email?.message}>
             <Input type="email" autoComplete="off" {...register('email')} />
           </Field>
-          <Field label="Password iniziale" error={errors.password?.message}>
+          <Field label="Fjalëkalimi fillestar" error={errors.password?.message}>
             <Input type="text" autoComplete="off" {...register('password')} />
           </Field>
           <Controller
             control={control}
             name="role"
             render={({ field }) => (
-              <Field label="Ruolo" error={errors.role?.message}>
+              <Field label="Roli" error={errors.role?.message}>
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="sales">Vendite</SelectItem>
-                    <SelectItem value="warehouse">Magazzino</SelectItem>
-                    <SelectItem value="viewer">Visualizzatore</SelectItem>
+                    <SelectItem value="sales">Shitje</SelectItem>
+                    <SelectItem value="warehouse">Magazina</SelectItem>
+                    <SelectItem value="viewer">Vëzhgues</SelectItem>
                   </SelectContent>
                 </Select>
               </Field>
@@ -152,10 +152,10 @@ function CreateForm({
           />
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              Annulla
+              Anulo
             </Button>
             <Button type="submit" disabled={submitting}>
-              Crea
+              Krijo
             </Button>
           </DialogFooter>
         </form>
@@ -203,11 +203,11 @@ function EditFormInner({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Modifica utente</DialogTitle>
+          <DialogTitle>Modifiko përdoruesin</DialogTitle>
           <DialogDescription>{initial.email}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(submit)} className="flex flex-col gap-4">
-          <Field label="Nome completo" error={errors.full_name?.message}>
+          <Field label="Emri i plotë" error={errors.full_name?.message}>
             <Input {...register('full_name')} />
           </Field>
           <div className="grid grid-cols-2 gap-3">
@@ -215,16 +215,16 @@ function EditFormInner({
               control={control}
               name="role"
               render={({ field }) => (
-                <Field label="Ruolo" error={errors.role?.message}>
+                <Field label="Roli" error={errors.role?.message}>
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="sales">Vendite</SelectItem>
-                      <SelectItem value="warehouse">Magazzino</SelectItem>
-                      <SelectItem value="viewer">Visualizzatore</SelectItem>
+                      <SelectItem value="sales">Shitje</SelectItem>
+                      <SelectItem value="warehouse">Magazina</SelectItem>
+                      <SelectItem value="viewer">Vëzhgues</SelectItem>
                     </SelectContent>
                   </Select>
                 </Field>
@@ -234,7 +234,7 @@ function EditFormInner({
               control={control}
               name="is_active"
               render={({ field }) => (
-                <Field label="Stato">
+                <Field label="Statusi">
                   <Select
                     value={field.value ? '1' : '0'}
                     onValueChange={(v) => field.onChange(v === '1')}
@@ -243,8 +243,8 @@ function EditFormInner({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">Attivo</SelectItem>
-                      <SelectItem value="0">Disattivato</SelectItem>
+                      <SelectItem value="1">Aktiv</SelectItem>
+                      <SelectItem value="0">Çaktivizuar</SelectItem>
                     </SelectContent>
                   </Select>
                 </Field>
@@ -260,10 +260,10 @@ function EditFormInner({
           />
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              Annulla
+              Anulo
             </Button>
             <Button type="submit" disabled={submitting}>
-              Salva
+              Ruaj
             </Button>
           </DialogFooter>
         </form>
@@ -286,9 +286,9 @@ function StoreCheckList({
   }
   return (
     <div className="flex flex-col gap-2">
-      <Label>Accesso punti vendita</Label>
+      <Label>Qasja në pikat e shitjes</Label>
       <p className="text-muted-foreground text-xs">
-        Admin ha accesso a tutto e non richiede selezione.
+        Admin ka qasje në të gjitha dhe nuk kërkon zgjedhje.
       </p>
       <div className="flex flex-wrap gap-2">
         {stores.map((s) => {

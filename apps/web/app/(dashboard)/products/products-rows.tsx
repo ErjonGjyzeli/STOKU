@@ -14,10 +14,10 @@ import { ProductPhotoDialog, type ProductImage } from './product-photo-dialog';
 type BadgeVariant = 'default' | 'ok' | 'warn' | 'danger' | 'info' | 'draft' | 'accent';
 
 const CONDITION_LABEL: Record<string, string> = {
-  new: 'Nuovo',
-  used: 'Usato',
-  refurbished: 'Rigenerato',
-  damaged: 'Danneggiato',
+  new: 'I ri',
+  used: 'I përdorur',
+  refurbished: 'I rinovuar',
+  damaged: 'I dëmtuar',
 };
 
 const CONDITION_VARIANT: Record<string, BadgeVariant> = {
@@ -130,7 +130,7 @@ export function ProductsRows({
     startTransition(async () => {
       const res = await toggleProductActive(product.id, !product.is_active);
       if (!res.ok) toast.error('Errore', { description: res.error });
-      else toast.success(product.is_active ? 'Disattivato' : 'Attivato');
+      else toast.success(product.is_active ? 'Çaktivizuar' : 'Aktivizuar');
     });
   }
 
@@ -138,10 +138,10 @@ export function ProductsRows({
     if (!editing) return false;
     const res = await updateProduct(editing.id, values);
     if (!res.ok) {
-      toast.error('Aggiornamento fallito', { description: res.error });
+      toast.error('Përditësimi dështoi', { description: res.error });
       return false;
     }
-    toast.success('Prodotto aggiornato');
+    toast.success('Produkti u përditësua');
     return true;
   }
 
@@ -265,8 +265,8 @@ export function ProductsRows({
                     rel="noopener noreferrer"
                     className="btn ghost sm"
                     style={{ width: 24, padding: 0, justifyContent: 'center' }}
-                    title="Stampa etichetta QR"
-                    aria-label="Etichetta QR"
+                    title="Printo etiketë QR"
+                    aria-label="Etiketë QR"
                   >
                     <Icon name="qr" size={12} />
                   </a>
@@ -275,8 +275,8 @@ export function ProductsRows({
                     className="btn ghost sm"
                     style={{ width: 24, padding: 0, justifyContent: 'center' }}
                     onClick={() => setPhotosFor(p)}
-                    title={p.images.length > 0 ? `Foto (${p.images.length})` : 'Gestisci foto'}
-                    aria-label="Gestisci foto"
+                    title={p.images.length > 0 ? `Foto (${p.images.length})` : 'Menaxho fotot'}
+                    aria-label="Menaxho fotot"
                   >
                     <Icon name="image" size={12} />
                   </button>
@@ -285,8 +285,8 @@ export function ProductsRows({
                     className="btn ghost sm"
                     style={{ width: 24, padding: 0, justifyContent: 'center' }}
                     onClick={() => setEditing(p)}
-                    title="Modifica"
-                    aria-label="Modifica"
+                    title="Modifiko"
+                    aria-label="Modifiko"
                   >
                     <Icon name="edit" size={12} />
                   </button>
@@ -296,8 +296,8 @@ export function ProductsRows({
                     style={{ width: 24, padding: 0, justifyContent: 'center' }}
                     onClick={() => handleToggle(p)}
                     disabled={pending}
-                    title={p.is_active ? 'Disattiva' : 'Attiva'}
-                    aria-label={p.is_active ? 'Disattiva' : 'Attiva'}
+                    title={p.is_active ? 'Çaktivizo' : 'Aktivizo'}
+                    aria-label={p.is_active ? 'Çaktivizo' : 'Aktivizo'}
                   >
                     <Icon name="ring" size={12} />
                   </button>
@@ -313,7 +313,7 @@ export function ProductsRows({
           open={!!editing}
           onOpenChange={(o) => !o && setEditing(null)}
           onSubmit={handleEditSubmit}
-          title={`Modifica ${editing.sku}`}
+          title={`Modifiko ${editing.sku}`}
           categories={categories}
           initial={toFormValues(editing)}
         />

@@ -33,7 +33,7 @@ export function OrderCreateButton({ customers, stores, defaultStoreId }: Props) 
   return (
     <>
       <StokuButton icon="plus" variant="primary" onClick={() => setOpen(true)}>
-        <span>Nuovo ordine</span>
+        <span>Porosi e re</span>
       </StokuButton>
       <OrderFormDialog
         open={open}

@@ -9,21 +9,21 @@ export type ActionResult<T = unknown> = { ok: true; data: T } | { ok: false; err
 
 const draftSchema = z.object({
   customer_id: z.string().uuid().nullable().optional(),
-  store_id: z.coerce.number().int().positive('Seleziona un punto vendita'),
+  store_id: z.coerce.number().int().positive('Zgjidh një pikë shitjeje'),
   notes: z.string().trim().max(2000).optional().or(z.literal('')),
 });
 
 const itemSchema = z.object({
   order_id: z.string().uuid(),
   product_id: z.string().uuid(),
-  quantity: z.coerce.number().int().positive('Quantità > 0'),
+  quantity: z.coerce.number().int().positive('Sasia > 0'),
   unit_price: z
     .union([z.string(), z.number()])
     .transform((v) => {
       const n = typeof v === 'number' ? v : Number(String(v).replace(',', '.'));
       return Number.isFinite(n) && n >= 0 ? n : NaN;
     })
-    .refine((v) => Number.isFinite(v), { message: 'Prezzo non valido' }),
+    .refine((v) => Number.isFinite(v), { message: 'Çmimi i pavlefshëm' }),
 });
 
 async function generateOrderNumber() {
@@ -40,7 +40,7 @@ export async function createDraftOrder(
   const session = await requireSession();
   const parsed = draftSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Dati non validi' };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Të dhëna të pavlefshme' };
   }
   const orderNumber = await generateOrderNumber();
   const supabase = await createClient();
@@ -67,7 +67,7 @@ export async function addOrderItem(
   await requireSession();
   const parsed = itemSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Dati non validi' };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Të dhëna të pavlefshme' };
   }
 
   const supabase = await createClient();
@@ -78,10 +78,10 @@ export async function addOrderItem(
     .eq('id', parsed.data.product_id)
     .single();
   if (pErr || !product) {
-    return { ok: false, error: pErr?.message ?? 'Prodotto non trovato' };
+    return { ok: false, error: pErr?.message ?? 'Produkti nuk u gjet' };
   }
   if (!product.is_active) {
-    return { ok: false, error: 'Prodotto disattivato — non vendibile' };
+    return { ok: false, error: 'Produkti çaktivizuar — nuk është i shitshëm' };
   }
 
   const { error } = await supabase.from('order_items').insert({
@@ -130,7 +130,7 @@ export async function transitionOrderStatus(
   await requireSession();
   const parsed = transitionSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Dati non validi' };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Të dhëna të pavlefshme' };
   }
   const supabase = await createClient();
   const { data: order, error: readErr } = await supabase
@@ -139,13 +139,13 @@ export async function transitionOrderStatus(
     .eq('id', parsed.data.order_id)
     .single();
   if (readErr || !order) {
-    return { ok: false, error: readErr?.message ?? 'Ordine non trovato' };
+    return { ok: false, error: readErr?.message ?? 'Porosia nuk u gjet' };
   }
   const allowed = ALLOWED_TRANSITIONS[order.status] ?? [];
   if (!allowed.includes(parsed.data.new_status)) {
     return {
       ok: false,
-      error: `Transizione ${order.status} → ${parsed.data.new_status} non consentita`,
+      error: `Tranzicion ${order.status} → ${parsed.data.new_status} nuk lejohet`,
     };
   }
 
@@ -175,9 +175,9 @@ export async function deleteDraftOrder(orderId: string): Promise<ActionResult> {
     .select('status')
     .eq('id', orderId)
     .single();
-  if (!order) return { ok: false, error: 'Ordine non trovato' };
+  if (!order) return { ok: false, error: 'Porosia nuk u gjet' };
   if (order.status !== 'draft') {
-    return { ok: false, error: `Ordine in stato ${order.status}: non cancellabile` };
+    return { ok: false, error: `Porosi në gjendje ${order.status}: nuk mund të fshihet` };
   }
   const { error } = await supabase.from('orders').delete().eq('id', orderId);
   if (error) return { ok: false, error: error.message };

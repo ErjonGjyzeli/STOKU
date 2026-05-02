@@ -20,10 +20,10 @@ export function ShelfCreateButton({ stores, defaultStoreId }: Props) {
   async function handleSubmit(values: ShelfInput) {
     const res = await createShelf(values);
     if (!res.ok) {
-      toast.error('Errore', { description: res.error });
+      toast.error('Gabim', { description: res.error });
       return false;
     }
-    toast.success('Scaffale creato');
+    toast.success('Rafti u krijua');
     return true;
   }
 
@@ -34,15 +34,15 @@ export function ShelfCreateButton({ stores, defaultStoreId }: Props) {
         variant="primary"
         onClick={() => setOpen(true)}
         disabled={stores.length === 0}
-        title={stores.length === 0 ? 'Nessun PV accessibile' : undefined}
+        title={stores.length === 0 ? 'Asnjë PV i aksesueshëm' : undefined}
       >
-        Nuovo scaffale
+        Raft i ri
       </StokuButton>
       <ShelfFormDialog
         open={open}
         onOpenChange={setOpen}
         onSubmit={handleSubmit}
-        title="Nuovo scaffale"
+        title="Raft i ri"
         stores={stores}
         defaultStoreId={defaultStoreId}
       />

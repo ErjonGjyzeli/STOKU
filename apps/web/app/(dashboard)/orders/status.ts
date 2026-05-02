@@ -12,20 +12,20 @@ export const ALLOWED_TRANSITIONS: Record<string, string[]> = {
 };
 
 export const STATUS_LABEL: Record<string, string> = {
-  draft: 'Bozza',
-  confirmed: 'Confermato',
-  paid: 'Pagato',
-  shipped: 'Spedito',
-  completed: 'Completato',
-  cancelled: 'Annullato',
+  draft: 'Draft',
+  confirmed: 'Konfirmuar',
+  paid: 'Paguar',
+  shipped: 'Dërguar',
+  completed: 'Kompletuar',
+  cancelled: 'Anuluar',
 };
 
 export const STATUS_ACTION_LABEL: Record<string, string> = {
-  confirmed: 'Conferma (decrementa stock)',
-  paid: 'Segna pagato',
-  shipped: 'Segna spedito',
-  completed: 'Completato',
-  cancelled: 'Annulla ordine',
+  confirmed: 'Konfirmo (dekrement stokun)',
+  paid: 'Shëno si paguar',
+  shipped: 'Shëno si dërguar',
+  completed: 'Kompletuar',
+  cancelled: 'Anulo porosinë',
 };
 
 export type OrderStatus =

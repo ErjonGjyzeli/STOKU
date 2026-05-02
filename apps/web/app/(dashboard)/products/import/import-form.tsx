@@ -20,7 +20,7 @@ export function ImportForm() {
     e.preventDefault();
     const file = inputRef.current?.files?.[0];
     if (!file) {
-      toast.error('Seleziona un file .xlsx o .csv');
+      toast.error('Zgjidh një skedar .xlsx ose .csv');
       return;
     }
     setSubmitting(true);
@@ -31,13 +31,13 @@ export function ImportForm() {
     setSubmitting(false);
     setResult(res);
     if (!res.ok) {
-      toast.error('Import fallito', { description: res.error });
+      toast.error('Importimi dështoi', { description: res.error });
       return;
     }
     if (res.inserted > 0) {
-      toast.success(`${res.inserted} prodotti importati`);
+      toast.success(`${res.inserted} produkte u importuan`);
     } else {
-      toast.warning('Nessuna riga importata');
+      toast.warning('Asnjë rresht u importua');
     }
   }
 
@@ -65,30 +65,30 @@ export function ImportForm() {
                 onClick={() => inputRef.current?.click()}
                 disabled={submitting}
               >
-                Scegli file
+                Zgjidh skedar
               </StokuButton>
               <span className="meta" style={{ fontSize: 11 }}>
-                {fileName ?? 'Nessun file selezionato'}
+                {fileName ?? 'Asnjë skedar i zgjedhur'}
               </span>
             </div>
           </div>
 
           <details style={{ fontSize: 11, color: 'var(--ink-2)' }}>
-            <summary style={{ cursor: 'pointer' }}>Colonne attese (case-insensitive)</summary>
+            <summary style={{ cursor: 'pointer' }}>Kolonat e pritshme (case-insensitive)</summary>
             <div style={{ paddingTop: 8, lineHeight: 1.5 }}>
               <div>
-                <strong>Obbligatorie:</strong> <code>name</code> (o <code>nome</code>)
+                <strong>Të detyrueshme:</strong> <code>name</code> (ose <code>nome</code>)
               </div>
               <div>
-                <strong>Opzionali:</strong> <code>sku</code>, <code>legacy_nr</code> (o{' '}
-                <code>num</code>, <code>id</code>), <code>oem_code</code>, <code>category</code> (o{' '}
-                <code>categoria</code>), <code>condition</code>, <code>price_sell</code> (o{' '}
-                <code>prezzo</code>), <code>price_cost</code> (o <code>costo</code>),{' '}
+                <strong>Opsionale:</strong> <code>sku</code>, <code>legacy_nr</code> (ose{' '}
+                <code>num</code>, <code>id</code>), <code>oem_code</code>, <code>category</code> (ose{' '}
+                <code>categoria</code>), <code>condition</code>, <code>price_sell</code> (ose{' '}
+                <code>prezzo</code>), <code>price_cost</code> (ose <code>costo</code>),{' '}
                 <code>description</code>
               </div>
               <div style={{ marginTop: 6 }} className="faint">
-                SKU vuoto → auto <code>P-000001</code>… Categoria non trovata → null (verrà
-                segnalata a fine import).
+                SKU bosh → auto <code>P-000001</code>… Kategoria e pagjetur → null (do të
+                sinjalizohet në fund të importimit).
               </div>
             </div>
           </details>
@@ -100,28 +100,28 @@ export function ImportForm() {
               icon="plus"
               disabled={submitting || !fileName}
             >
-              {submitting ? 'Importazione…' : 'Importa'}
+              {submitting ? 'Duke importuar…' : 'Importo'}
             </StokuButton>
             <Link href="/products" className="btn ghost sm">
-              Annulla
+              Anulo
             </Link>
           </div>
         </form>
       </Panel>
 
       {result && result.ok && (
-        <Panel title="Risultato import">
+        <Panel title="Rezultati i importimit">
           <div className="col" style={{ gap: 8, fontSize: 11 }}>
             <div className="row" style={{ gap: 16 }}>
-              <Stat label="Inseriti" value={result.inserted} variant="ok" />
-              <Stat label="Saltati" value={result.skipped} variant="warn" />
-              <Stat label="Righe totali" value={result.totalRows} />
+              <Stat label="Futur" value={result.inserted} variant="ok" />
+              <Stat label="Kapërcyer" value={result.skipped} variant="warn" />
+              <Stat label="Rreshta gjithsej" value={result.totalRows} />
             </div>
 
             {result.unknownCategories.length > 0 && (
               <div className="col" style={{ gap: 4 }}>
                 <span className="meta" style={{ fontSize: 10 }}>
-                  CATEGORIE SCONOSCIUTE (NULL ASSEGNATO)
+                  KATEGORI TË PANJOHURA (NULL I CAKTUAR)
                 </span>
                 <div style={{ fontSize: 11 }}>{result.unknownCategories.join(', ')}</div>
               </div>
@@ -130,12 +130,12 @@ export function ImportForm() {
             {result.errors.length > 0 && (
               <div className="col" style={{ gap: 4 }}>
                 <span className="meta" style={{ fontSize: 10 }}>
-                  ERRORI (PRIMI 50)
+                  GABIME (PARA 50)
                 </span>
                 <div style={{ fontSize: 11, lineHeight: 1.5 }}>
                   {result.errors.map((e, i) => (
                     <div key={i}>
-                      Riga {e.row}: {e.message}
+                      Rreshti {e.row}: {e.message}
                     </div>
                   ))}
                 </div>
@@ -145,7 +145,7 @@ export function ImportForm() {
             {result.inserted > 0 && (
               <div className="row" style={{ gap: 8, marginTop: 4 }}>
                 <Link href="/products" className="btn primary sm">
-                  <Icon name="check" size={12} /> Vai ai prodotti
+                  <Icon name="check" size={12} /> Shko te produktet
                 </Link>
               </div>
             )}
@@ -156,7 +156,7 @@ export function ImportForm() {
       {result && !result.ok && (
         <Panel>
           <div className="col" style={{ gap: 6 }}>
-            <div style={{ color: 'var(--danger)', fontWeight: 500 }}>Import fallito</div>
+            <div style={{ color: 'var(--danger)', fontWeight: 500 }}>Importimi dështoi</div>
             <div className="faint" style={{ fontSize: 11 }}>
               {result.error}
             </div>

@@ -27,7 +27,7 @@ import type { ProductInput } from './actions';
 
 const schema = z.object({
   sku: z.string().optional().or(z.literal('')),
-  name: z.string().min(2, 'Nome minimo 2 caratteri'),
+  name: z.string().min(2, 'Emri minimum 2 karaktere'),
   legacy_nr: z.string().optional().or(z.literal('')),
   category_id: z.string().optional().or(z.literal('')),
   condition: z.enum(['new', 'used', 'refurbished', 'damaged']),
@@ -125,7 +125,7 @@ export function ProductFormDialog({
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
-            Dati del ricambio. Lascia vuoto lo SKU per assegnarlo automaticamente (P-000001…).
+            Të dhënat e pjesës. Lër SKU-n bosh për ta caktuar automatikisht (P-000001…).
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(submit)} className="flex flex-col gap-4">
@@ -133,12 +133,12 @@ export function ProductFormDialog({
             <Field label="SKU" error={errors.sku?.message}>
               <Input {...register('sku')} placeholder="Auto" />
             </Field>
-            <Field label="Num. ex-Excel" error={errors.legacy_nr?.message}>
+            <Field label="Nr. Excel" error={errors.legacy_nr?.message}>
               <Input {...register('legacy_nr')} placeholder="5920" />
             </Field>
           </div>
 
-          <Field label="Nome" error={errors.name?.message}>
+          <Field label="Emri" error={errors.name?.message}>
             <Input {...register('name')} placeholder="Centralina ABS Audi A4 B7" />
           </Field>
 
@@ -147,13 +147,13 @@ export function ProductFormDialog({
               control={control}
               name="category_id"
               render={({ field }) => (
-                <Field label="Categoria" error={errors.category_id?.message}>
+                <Field label="Kategoria" error={errors.category_id?.message}>
                   <Select value={field.value || '_none'} onValueChange={field.onChange}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Seleziona" />
+                      <SelectValue placeholder="Zgjidh" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="_none">Nessuna</SelectItem>
+                      <SelectItem value="_none">Asnjë</SelectItem>
                       {categories.map((c) => (
                         <SelectItem key={c.id} value={String(c.id)}>
                           {c.name}
@@ -168,16 +168,16 @@ export function ProductFormDialog({
               control={control}
               name="condition"
               render={({ field }) => (
-                <Field label="Condizione" error={errors.condition?.message}>
+                <Field label="Gjendja" error={errors.condition?.message}>
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="new">Nuovo</SelectItem>
-                      <SelectItem value="used">Usato</SelectItem>
-                      <SelectItem value="refurbished">Rigenerato</SelectItem>
-                      <SelectItem value="damaged">Danneggiato</SelectItem>
+                      <SelectItem value="new">I ri</SelectItem>
+                      <SelectItem value="used">I përdorur</SelectItem>
+                      <SelectItem value="refurbished">I rinovuar</SelectItem>
+                      <SelectItem value="damaged">I dëmtuar</SelectItem>
                     </SelectContent>
                   </Select>
                 </Field>
@@ -186,42 +186,42 @@ export function ProductFormDialog({
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Prezzo vendita (€)" error={errors.price_sell?.message}>
+            <Field label="Çmimi shitje (€)" error={errors.price_sell?.message}>
               <Input {...register('price_sell')} inputMode="decimal" placeholder="120,00" />
             </Field>
-            <Field label="Prezzo costo (€)" error={errors.price_cost?.message}>
+            <Field label="Çmimi kosto (€)" error={errors.price_cost?.message}>
               <Input {...register('price_cost')} inputMode="decimal" placeholder="80,00" />
             </Field>
           </div>
 
-          <Field label="Descrizione" error={errors.description?.message}>
+          <Field label="Përshkrimi" error={errors.description?.message}>
             <textarea
               {...register('description')}
               className="stoku-input"
               style={{ minHeight: 72, padding: 8, width: '100%', resize: 'vertical' }}
               rows={3}
-              placeholder="Anno, modello, note compatibilità…"
+              placeholder="Viti, modeli, shënime përputhshmërie…"
             />
           </Field>
 
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Marca auto" error={errors.vehicle_make?.message}>
+            <Field label="Marka e mjetit" error={errors.vehicle_make?.message}>
               <Input {...register('vehicle_make')} placeholder="Audi" />
             </Field>
-            <Field label="Modello" error={errors.vehicle_model?.message}>
+            <Field label="Modeli" error={errors.vehicle_model?.message}>
               <Input {...register('vehicle_model')} placeholder="A4 B7" />
             </Field>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Anno da" error={errors.vehicle_year_from?.message}>
+            <Field label="Viti nga" error={errors.vehicle_year_from?.message}>
               <Input
                 {...register('vehicle_year_from')}
                 inputMode="numeric"
                 placeholder="2004"
               />
             </Field>
-            <Field label="Anno a" error={errors.vehicle_year_to?.message}>
+            <Field label="Viti deri" error={errors.vehicle_year_to?.message}>
               <Input
                 {...register('vehicle_year_to')}
                 inputMode="numeric"
@@ -230,21 +230,21 @@ export function ProductFormDialog({
             </Field>
           </div>
 
-          <Field label="Codice OEM" error={errors.oem_code?.message}>
+          <Field label="Kodi OEM" error={errors.oem_code?.message}>
             <Input {...register('oem_code')} placeholder="0265 800 1234" />
           </Field>
 
           <label className="row" style={{ gap: 8, fontSize: 11, color: 'var(--ink-2)' }}>
             <input type="checkbox" {...register('is_active')} />
-            Prodotto attivo (visibile in vendita)
+            Produkt aktiv (i dukshëm për shitje)
           </label>
 
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              Annulla
+              Anulo
             </Button>
             <Button type="submit" disabled={submitting}>
-              {submitting ? 'Salvataggio…' : 'Salva'}
+              {submitting ? 'Duke ruajtur…' : 'Ruaj'}
             </Button>
           </DialogFooter>
         </form>

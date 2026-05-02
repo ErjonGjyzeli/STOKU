@@ -58,11 +58,11 @@ export function TransferFormDialog({
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!fromId || !toId) {
-      toast.error('Seleziona origine e destinazione');
+      toast.error('Zgjidh origjinën dhe destinacionin');
       return;
     }
     if (fromId === toId) {
-      toast.error('Origine e destinazione devono essere diversi');
+      toast.error('Origjina dhe destinacioni duhet të jenë të ndryshëm');
       return;
     }
     setSubmitting(true);
@@ -73,10 +73,10 @@ export function TransferFormDialog({
     });
     setSubmitting(false);
     if (!res.ok) {
-      toast.error('Creazione fallita', { description: res.error });
+      toast.error('Krijimi dështoi', { description: res.error });
       return;
     }
-    toast.success('Bozza creata');
+    toast.success('Draft i krijuar');
     onOpenChange(false);
     router.push(`/transfers/${res.data.id}`);
   }
@@ -85,19 +85,19 @@ export function TransferFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Nuovo trasferimento</DialogTitle>
+          <DialogTitle>Transferim i ri</DialogTitle>
           <DialogDescription>
-            Sposta stock tra punti vendita. Origine decrementata alla spedizione, destinazione
-            incrementata alla ricezione.
+            Lëviz stokun midis pikave të shitjes. Origjina dekrementohet me dërgimin, destinacioni
+            inkrementohet me marrjen.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1">
-              <Label>Origine</Label>
+              <Label>Origjina</Label>
               <Select value={fromId} onValueChange={(v) => setFromId(v ?? '')}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleziona" />
+                  <SelectValue placeholder="Zgjidh" />
                 </SelectTrigger>
                 <SelectContent>
                   {stores.map((s) => (
@@ -109,10 +109,10 @@ export function TransferFormDialog({
               </Select>
             </div>
             <div className="flex flex-col gap-1">
-              <Label>Destinazione</Label>
+              <Label>Destinacioni</Label>
               <Select value={toId} onValueChange={(v) => setToId(v ?? '')}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleziona" />
+                  <SelectValue placeholder="Zgjidh" />
                 </SelectTrigger>
                 <SelectContent>
                   {stores
@@ -128,23 +128,23 @@ export function TransferFormDialog({
           </div>
 
           <div className="flex flex-col gap-1">
-            <Label>Note</Label>
+            <Label>Shënime</Label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="stoku-input"
               style={{ minHeight: 72, padding: 8, width: '100%', resize: 'vertical' }}
               rows={3}
-              placeholder="Motivo trasferimento, tempistiche…"
+              placeholder="Arsyeja e transferimit, datat…"
             />
           </div>
 
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              Annulla
+              Anulo
             </Button>
             <Button type="submit" disabled={submitting || !fromId || !toId}>
-              {submitting ? 'Creazione…' : 'Crea bozza'}
+              {submitting ? 'Duke krijuar…' : 'Krijo draft'}
             </Button>
           </DialogFooter>
         </form>

@@ -11,7 +11,7 @@ import { createClient } from '@/lib/supabase/server';
 import { STATUS_LABEL } from './status';
 import { TransferCreateButton } from './transfer-create-button';
 
-export const metadata = { title: 'Trasferimenti — STOKU' };
+export const metadata = { title: 'Transferimet — STOKU' };
 
 type BadgeVariant = 'default' | 'ok' | 'warn' | 'danger' | 'info' | 'draft' | 'accent';
 
@@ -25,11 +25,11 @@ const STATUS_VARIANT: Record<string, BadgeVariant> = {
 type SearchParams = { status?: string };
 
 const TABS = [
-  { value: '', label: 'Tutti' },
-  { value: 'draft', label: 'Bozza' },
-  { value: 'in_transit', label: 'In transit' },
-  { value: 'completed', label: 'Completati' },
-  { value: 'cancelled', label: 'Annullati' },
+  { value: '', label: 'Të gjitha' },
+  { value: 'draft', label: 'Draft' },
+  { value: 'in_transit', label: 'Në tranzit' },
+  { value: 'completed', label: 'Kompletuar' },
+  { value: 'cancelled', label: 'Anuluar' },
 ];
 
 function buildQuery(base: SearchParams, patch: Partial<SearchParams>) {
@@ -46,10 +46,10 @@ function relativeDate(iso: string | null): string {
   if (!iso) return '—';
   const diff = Date.now() - new Date(iso).getTime();
   const days = Math.floor(diff / 86400000);
-  if (days === 0) return 'oggi';
-  if (days === 1) return 'ieri';
-  if (days < 30) return `${days}g fa`;
-  return `${Math.floor(days / 30)}m fa`;
+  if (days === 0) return 'sot';
+  if (days === 1) return 'dje';
+  if (days < 30) return `${days}d më parë`;
+  return `${Math.floor(days / 30)}m më parë`;
 }
 
 export default async function TransfersPage({
@@ -113,8 +113,8 @@ export default async function TransfersPage({
   return (
     <div>
       <PageHeader
-        title="Trasferimenti"
-        subtitle={`Spostamenti stock tra punti vendita · ${formatInt(tabCounts[''])} totali`}
+        title="Transferimet"
+        subtitle={`Lëvizje stoku midis pikave të shitjes · ${formatInt(tabCounts[''])} gjithsej`}
         right={<TransferCreateButton stores={stores} defaultFromStoreId={session.activeStoreId} />}
       />
 
@@ -162,17 +162,17 @@ export default async function TransfersPage({
           {rows.length === 0 ? (
             <Empty
               icon="transfer"
-              title={status ? 'Nessun trasferimento' : 'Nessun trasferimento ancora'}
+              title={status ? 'Asnjë transferim' : 'Asnjë transferim ende'}
               subtitle={
                 status
-                  ? 'Prova a cambiare tab.'
-                  : 'Crea un trasferimento per spostare stock tra PdV.'
+                  ? 'Provo të ndryshosh skedën.'
+                  : 'Krijo një transferim për të lëvizur stokun midis PV.'
               }
               action={
                 !status ? (
                   <Link href="/transfers?new=1" className="btn primary">
                     <Icon name="plus" size={12} />
-                    Nuovo trasferimento
+                    Transferim i ri
                   </Link>
                 ) : undefined
               }
@@ -181,12 +181,12 @@ export default async function TransfersPage({
             <table className="tbl">
               <thead>
                 <tr>
-                  <th style={{ width: 140 }}>Numero</th>
-                  <th>Origine → Destinazione</th>
+                  <th style={{ width: 140 }}>Nr.</th>
+                  <th>Origjina → Destinacioni</th>
                   <th style={{ width: 130 }}>Status</th>
-                  <th style={{ width: 110 }}>Spedito</th>
-                  <th style={{ width: 110 }}>Ricevuto</th>
-                  <th style={{ width: 100 }}>Creato</th>
+                  <th style={{ width: 110 }}>Dërguar</th>
+                  <th style={{ width: 110 }}>Marrë</th>
+                  <th style={{ width: 100 }}>Krijuar</th>
                 </tr>
               </thead>
               <tbody>

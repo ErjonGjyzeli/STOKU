@@ -10,15 +10,15 @@ import { createClient } from '@/lib/supabase/server';
 import { ProductsCreateButton } from './products-create-button';
 import { ProductsRows, type ProductRow } from './products-rows';
 
-export const metadata = { title: 'Prodotti — STOKU' };
+export const metadata = { title: 'Produktet — STOKU' };
 
 const PAGE_SIZE = 25;
 
 const CONDITION_LABEL: Record<string, string> = {
-  new: 'Nuovo',
-  used: 'Usato',
-  refurbished: 'Rigenerato',
-  damaged: 'Danneggiato',
+  new: 'I ri',
+  used: 'I përdorur',
+  refurbished: 'I rinovuar',
+  damaged: 'I dëmtuar',
 };
 
 type SearchParams = {
@@ -87,9 +87,9 @@ export default async function ProductsPage({
   if (productsRes.error) {
     return (
       <div>
-        <PageHeader title="Prodotti" />
+        <PageHeader title="Produktet" />
         <div style={{ padding: 24 }}>
-          <p style={{ color: 'var(--danger)' }}>Errore: {productsRes.error.message}</p>
+          <p style={{ color: 'var(--danger)' }}>Gabim: {productsRes.error.message}</p>
         </div>
       </div>
     );
@@ -163,11 +163,11 @@ export default async function ProductsPage({
   return (
     <div>
       <PageHeader
-        title="Prodotti"
+        title="Produktet"
         subtitle={
           total > 0
-            ? `${formatInt(total)} prodotti nel catalogo · ${rangeFrom}–${rangeTo} mostrati`
-            : 'Nessun prodotto — crea il primo articolo per iniziare'
+            ? `${formatInt(total)} produkte në katalog · ${rangeFrom}–${rangeTo} të shfaqura`
+            : 'Asnjë produkt — krijo artikullin e parë për të filluar'
         }
         right={<ProductsCreateButton categories={categories} />}
       />
@@ -190,7 +190,7 @@ export default async function ProductsPage({
             type="search"
             name="q"
             defaultValue={q}
-            placeholder='Cerca…'
+            placeholder='Kërko…'
             autoComplete="off"
           />
         </div>
@@ -198,7 +198,7 @@ export default async function ProductsPage({
         <div className="stoku-input" style={{ width: 180, height: 28 }}>
           <Icon name="filter" size={13} />
           <select name="category" defaultValue={categoryId ? String(categoryId) : ''}>
-            <option value="">Tutte le categorie</option>
+            <option value="">Të gjitha kategoritë</option>
             {categories.map((c) => (
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}
@@ -207,7 +207,7 @@ export default async function ProductsPage({
 
         <div className="stoku-input" style={{ width: 150, height: 28 }}>
           <select name="condition" defaultValue={condition}>
-            <option value="">Condizione</option>
+            <option value="">Gjendja</option>
             {Object.entries(CONDITION_LABEL).map(([k, label]) => (
               <option key={k} value={k}>{label}</option>
             ))}
@@ -222,13 +222,13 @@ export default async function ProductsPage({
             href={`/products${buildQuery(params, { status: v, page: undefined })}`}
             className={status === v ? 'btn primary sm' : 'btn ghost sm'}
           >
-            {v === 'active' ? 'Attivi' : v === 'inactive' ? 'Disattivati' : 'Tutti'}
+            {v === 'active' ? 'Aktive' : v === 'inactive' ? 'Joaktive' : 'Të gjitha'}
           </Link>
         ))}
 
         {activeFilters > 0 && (
           <button type="submit" className="btn ghost sm">
-            <Icon name="search" size={12} /> Cerca
+            <Icon name="search" size={12} /> Kërko
           </button>
         )}
         {(q || categoryId || condition) && (
@@ -241,11 +241,11 @@ export default async function ProductsPage({
           {products.length === 0 ? (
             <Empty
               icon="box"
-              title={activeFilters > 0 ? 'Nessun prodotto trovato' : 'Nessun prodotto ancora'}
+              title={activeFilters > 0 ? 'Asnjë produkt gjetur' : 'Asnjë produkt ende'}
               subtitle={
                 activeFilters > 0
-                  ? 'Prova a modificare i filtri o resetta la ricerca.'
-                  : 'La creazione del primo prodotto arriva nello step successivo (F2.2).'
+                  ? 'Provo të ndryshosh filtrat ose rivendos kërkimin.'
+                  : 'Krijo produktin e parë për të filluar.'
               }
             />
           ) : (
@@ -253,13 +253,13 @@ export default async function ProductsPage({
               <thead>
                 <tr>
                   <th style={{ width: 36 }} />
-                  <th>Prodotto</th>
+                  <th>Produkti</th>
                   <th style={{ width: 130 }}>SKU / OEM</th>
-                  <th style={{ width: 160 }}>Veicolo</th>
-                  <th style={{ width: 110 }}>Condizione</th>
-                  <th style={{ width: 160 }}>Stock per punto</th>
+                  <th style={{ width: 160 }}>Mjeti</th>
+                  <th style={{ width: 110 }}>Gjendja</th>
+                  <th style={{ width: 160 }}>Stok për pikë</th>
                   <th style={{ width: 70, textAlign: 'right' }}>Disp.</th>
-                  <th style={{ width: 100, textAlign: 'right' }}>Prezzo</th>
+                  <th style={{ width: 100, textAlign: 'right' }}>Çmimi</th>
                   <th style={{ width: 120 }} />
                 </tr>
               </thead>
@@ -299,7 +299,7 @@ export default async function ProductsPage({
             style={{ justifyContent: 'space-between', alignItems: 'center', gap: 12 }}
           >
             <div className="meta" style={{ fontSize: 11 }}>
-              Pagina {page} di {totalPages}
+              Faqja {page} nga {totalPages}
             </div>
             <div className="row" style={{ gap: 6 }}>
               {page > 1 ? (
@@ -307,11 +307,11 @@ export default async function ProductsPage({
                   href={`/products${buildQuery(params, { page: String(page - 1) })}`}
                   className="btn ghost sm"
                 >
-                  <Icon name="chevronLeft" size={12} /> Precedente
+                  <Icon name="chevronLeft" size={12} /> Para
                 </Link>
               ) : (
                 <span className="btn ghost sm" aria-disabled="true" style={{ opacity: 0.4 }}>
-                  <Icon name="chevronLeft" size={12} /> Precedente
+                  <Icon name="chevronLeft" size={12} /> Para
                 </span>
               )}
               {page < totalPages ? (
@@ -319,11 +319,11 @@ export default async function ProductsPage({
                   href={`/products${buildQuery(params, { page: String(page + 1) })}`}
                   className="btn ghost sm"
                 >
-                  Successiva <Icon name="chevronRight" size={12} />
+                  Pas <Icon name="chevronRight" size={12} />
                 </Link>
               ) : (
                 <span className="btn ghost sm" aria-disabled="true" style={{ opacity: 0.4 }}>
-                  Successiva <Icon name="chevronRight" size={12} />
+                  Pas <Icon name="chevronRight" size={12} />
                 </span>
               )}
             </div>

@@ -6,16 +6,16 @@ export const ALLOWED_TRANSITIONS: Record<string, string[]> = {
 };
 
 export const STATUS_LABEL: Record<string, string> = {
-  draft: 'Bozza',
-  in_transit: 'In transito',
-  completed: 'Completato',
-  cancelled: 'Annullato',
+  draft: 'Draft',
+  in_transit: 'Në tranzit',
+  completed: 'Kompletuar',
+  cancelled: 'Anuluar',
 };
 
 export const STATUS_ACTION_LABEL: Record<string, string> = {
-  in_transit: 'Spedisci (decrementa origine)',
-  completed: 'Ricevuto (aggiorna destinazione)',
-  cancelled: 'Annulla',
+  in_transit: 'Dërgoni (dekrement origjinën)',
+  completed: 'Marrë (përditëso destinacionin)',
+  cancelled: 'Anulo',
 };
 
 export type TransferStatus = 'draft' | 'in_transit' | 'completed' | 'cancelled';

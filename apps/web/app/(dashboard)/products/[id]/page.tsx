@@ -12,10 +12,10 @@ import { formatCurrency, formatDayMonthShort } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 
 const CONDITION_LABEL: Record<string, string> = {
-  new: 'Nuovo',
-  used: 'Usato',
-  refurbished: 'Rigenerato',
-  damaged: 'Danneggiato',
+  new: 'I ri',
+  used: 'I përdorur',
+  refurbished: 'I rinovuar',
+  damaged: 'I dëmtuar',
 };
 
 type BadgeVariant = 'default' | 'ok' | 'warn' | 'danger' | 'info' | 'draft' | 'accent';
@@ -28,28 +28,28 @@ const CONDITION_VARIANT: Record<string, BadgeVariant> = {
 };
 
 const MOVEMENT_LABEL: Record<string, string> = {
-  sale: 'Vendita',
-  return: 'Reso',
-  adjustment: 'Rettifica',
-  intake: 'Carico',
-  damage: 'Perdita',
-  transfer_out: 'Trasferimento uscita',
-  transfer_in: 'Trasferimento entrata',
-  reservation: 'Prenotazione',
-  unreservation: 'Rilascio prenotazione',
+  sale: 'Shitje',
+  return: 'Kthim',
+  adjustment: 'Rregullim',
+  intake: 'Ngarkim',
+  damage: 'Humbje',
+  transfer_out: 'Dalje transferim',
+  transfer_in: 'Hyrje transferim',
+  reservation: 'Rezervim',
+  unreservation: 'Çlirim rezervimi',
 };
 
 function relativeTime(iso: string | null) {
   if (!iso) return '—';
   const diffMs = Date.now() - new Date(iso).getTime();
   const minutes = Math.floor(diffMs / 60_000);
-  if (minutes < 1) return 'adesso';
-  if (minutes < 60) return `${minutes} min fa`;
+  if (minutes < 1) return 'tani';
+  if (minutes < 60) return `${minutes} min më parë`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} ${hours === 1 ? 'ora' : 'ore'} fa`;
+  if (hours < 24) return `${hours} orë më parë`;
   const days = Math.floor(hours / 24);
-  if (days === 1) return 'ieri';
-  if (days < 7) return `${days} giorni fa`;
+  if (days === 1) return 'dje';
+  if (days < 7) return `${days} ditë më parë`;
   return formatDayMonthShort(iso);
 }
 
@@ -130,7 +130,7 @@ export default async function ProductDetailPage({
       <PageHeader
         title={p.name}
         breadcrumb={[
-          { label: 'Prodotti', href: '/products' },
+          { label: 'Produktet', href: '/products' },
           { label: p.sku },
         ]}
         subtitle={
@@ -156,13 +156,13 @@ export default async function ProductDetailPage({
               rel="noopener noreferrer"
               className="btn sm"
             >
-              <Icon name="qr" size={12} /> Etichetta QR
+              <Icon name="qr" size={12} /> Etiketa QR
             </a>
             <Link href={`/products/${p.id}/edit`} className="btn sm">
-              <Icon name="edit" size={12} /> Modifica
+              <Icon name="edit" size={12} /> Modifiko
             </Link>
             <Link href={`/orders/new?addProductId=${p.id}`} className="btn primary">
-              <Icon name="cart" size={13} /> Aggiungi a ordine
+              <Icon name="cart" size={13} /> Shto në porosi
             </Link>
           </div>
         }
@@ -198,8 +198,7 @@ export default async function ProductDetailPage({
                   <div className="col" style={{ alignItems: 'center', gap: 4 }}>
                     <Icon name="image" size={28} />
                     <span className="meta" style={{ fontSize: 10 }}>
-                      {images.length} foto
-                    </span>
+                      {images.length} foto</span>
                   </div>
                 </div>
                 <div className="col" style={{ gap: 6 }}>
@@ -220,13 +219,13 @@ export default async function ProductDetailPage({
             </div>
           </Panel>
 
-          <Panel title="Descrizione">
+          <Panel title="Përshkrimi">
             {p.description ? (
               <div style={{ fontSize: 11, lineHeight: 1.55, color: 'var(--ink-2)' }}>
                 {p.description}
               </div>
             ) : (
-              <span className="faint">Nessuna descrizione</span>
+              <span className="faint">Asnjë përshkrim</span>
             )}
             <div
               className="product-detail-desc-grid"
@@ -241,13 +240,13 @@ export default async function ProductDetailPage({
             >
               <div>
                 <div className="meta" style={{ fontSize: 10 }}>
-                  Categoria
+                  Kategoria
                 </div>
                 <div>{category?.name ?? '—'}</div>
               </div>
               <div>
                 <div className="meta" style={{ fontSize: 10 }}>
-                  Nr. vecchio
+                  Nr. i vjetër
                 </div>
                 <div className="mono" style={{ fontSize: 11 }}>
                   {p.legacy_nr ?? '—'}
@@ -263,15 +262,15 @@ export default async function ProductDetailPage({
               </div>
               <div>
                 <div className="meta" style={{ fontSize: 10 }}>
-                  Stato
+                  Statusi
                 </div>
                 <div>
                   {p.is_active ? (
                     <StokuBadge variant="ok" dot>
-                      Attivo
+                      Aktiv
                     </StokuBadge>
                   ) : (
-                    <StokuBadge variant="draft">Disattivato</StokuBadge>
+                    <StokuBadge variant="draft">Çaktivizuar</StokuBadge>
                   )}
                 </div>
               </div>
@@ -279,7 +278,7 @@ export default async function ProductDetailPage({
           </Panel>
 
           {(p.vehicle_make || p.vehicle_model) && (
-            <Panel title="Compatibilità veicolo">
+            <Panel title="Përputhshmëria e mjetit">
               <div className="row" style={{ gap: 12 }}>
                 <Icon name="car" size={14} />
                 <div className="row" style={{ gap: 8, fontSize: 11 }}>
@@ -299,11 +298,11 @@ export default async function ProductDetailPage({
 
         {/* RIGHT: price + stock + history */}
         <div className="col" style={{ gap: 16 }}>
-          <Panel title="Prezzo">
+          <Panel title="Çmimi">
             <div className="row" style={{ gap: 16, alignItems: 'baseline' }}>
               <div className="col" style={{ gap: 2 }}>
                 <div className="meta" style={{ fontSize: 10 }}>
-                  Vendita
+                  Shitje
                 </div>
                 <div
                   className="mono"
@@ -319,7 +318,7 @@ export default async function ProductDetailPage({
                   <div style={{ width: 1, height: 32, background: 'var(--border)' }} />
                   <div className="col" style={{ gap: 2 }}>
                     <div className="meta" style={{ fontSize: 10 }}>
-                      Costo
+                      Kosto
                     </div>
                     <div className="mono" style={{ fontSize: 12, color: 'var(--ink-2)' }}>
                       {formatCurrency(p.price_cost, p.currency)}
@@ -328,7 +327,7 @@ export default async function ProductDetailPage({
                   {margin != null && (
                     <div className="col" style={{ gap: 2 }}>
                       <div className="meta" style={{ fontSize: 10 }}>
-                        Margine
+                        Marzhi
                       </div>
                       <div
                         className="mono"
@@ -344,23 +343,23 @@ export default async function ProductDetailPage({
           </Panel>
 
           <Panel
-            title="Stock per punto"
+            title="Stoku për pikë"
             padded={false}
             right={
               <Link href="/transfers/new" className="btn ghost sm">
-                <Icon name="swap" size={11} /> Trasferisci
+                <Icon name="swap" size={11} /> Transfero
               </Link>
             }
           >
             {stockRows.length === 0 ? (
-              <Empty icon="box" title="Nessun record stock" subtitle="Nessuno stock registrato." />
+              <Empty icon="box" title="Asnjë rekord stoku" subtitle="Asnjë stok i regjistruar." />
             ) : (
               <table className="tbl" style={{ marginTop: -4 }}>
                 <thead>
                   <tr>
-                    <th>Punto</th>
-                    <th className="r">Totale</th>
-                    <th className="r">Ris.</th>
+                    <th>Pika</th>
+                    <th className="r">Totali</th>
+                    <th className="r">Rez.</th>
                     <th className="r">Disp.</th>
                     <th className="r">Min</th>
                   </tr>
@@ -420,7 +419,7 @@ export default async function ProductDetailPage({
                         borderBottom: 'none',
                       }}
                     >
-                      Totale
+                      Totali
                     </td>
                     <td
                       className="r mono"
@@ -465,9 +464,9 @@ export default async function ProductDetailPage({
             )}
           </Panel>
 
-          <Panel title="Movimenti recenti" padded={false}>
+          <Panel title="Lëvizjet e fundit" padded={false}>
             {movements.length === 0 ? (
-              <Empty icon="history" title="Nessun movimento" subtitle="I movimenti stock appariranno qui." />
+              <Empty icon="history" title="Asnjë lëvizje" subtitle="Lëvizjet e stokut do të shfaqen këtu." />
             ) : (
               <div className="col">
                 {movements.map((m, i) => {

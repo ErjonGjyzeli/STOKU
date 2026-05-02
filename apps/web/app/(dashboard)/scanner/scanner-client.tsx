@@ -174,7 +174,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
     if (typeof window === 'undefined') return;
     if (!navigator.mediaDevices?.getUserMedia) {
       setCameraState('error');
-      setCameraError('Fotocamera non supportata da questo browser');
+      setCameraError('Kamera nuk mbështetet nga ky browser');
       return;
     }
     setCameraState('requesting');
@@ -184,7 +184,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
       const video = videoRef.current;
       if (!video) {
         setCameraState('error');
-        setCameraError('Elemento video non pronto');
+        setCameraError('Elementi video nuk është gati');
         return;
       }
       const controls = await reader.decodeFromConstraints(
@@ -200,10 +200,10 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
       setCameraState('error');
       setCameraError(
         err instanceof Error && err.name === 'NotAllowedError'
-          ? 'Accesso alla fotocamera negato. Concedi i permessi e riprova.'
+          ? 'Qasja në kamerë u refuzua. Jep lejet dhe provo përsëri.'
           : err instanceof Error
             ? err.message
-            : 'Errore avvio fotocamera',
+            : 'Gabim gjatë nisjes së kamerës',
       );
     }
   }, [handleScanText]);
@@ -281,7 +281,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
         title="Scanner"
         subtitle={
           <>
-            Scansione continua · Punto{' '}
+            Skanim i vazhdueshëm · Pika{' '}
             <span className="mono">{storeCode || '—'}</span>
           </>
         }
@@ -311,12 +311,12 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                     name={m === 'camera' ? 'qr' : m === 'usb' ? 'keyboard' : 'edit'}
                     size={12}
                   />
-                  {m === 'camera' ? 'Fotocamera' : m === 'usb' ? 'USB' : 'Manuale'}
+                  {m === 'camera' ? 'Kamera' : m === 'usb' ? 'USB' : 'Manual'}
                 </button>
               ))}
             </div>
             <button type="button" className="btn ghost sm" onClick={clearHistory}>
-              <Icon name="x" size={12} /> Pulisci lista
+              <Icon name="x" size={12} /> Pastro listën
             </button>
           </>
         }
@@ -417,15 +417,15 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                       </div>
                     ) : cameraState === 'requesting' ? (
                       <div style={{ fontSize: 11, fontWeight: 500 }}>
-                        Avvio fotocamera…
+                        Duke nisur kamerën…
                       </div>
                     ) : (
                       <>
                         <div style={{ fontSize: 11, fontWeight: 500 }}>
-                          Punta il barcode / QR
+                          Drejto barkodin / QR
                         </div>
                         <div style={{ fontSize: 10, opacity: 0.6 }}>
-                          Fotocamera attiva · luce sufficiente
+                          Kamera aktive · dritë e mjaftueshme
                         </div>
                       </>
                     )}
@@ -442,16 +442,16 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
               >
                 <Icon name="keyboard" size={42} />
                 <div style={{ fontSize: 11, fontWeight: 500 }}>
-                  Scanner USB connesso
+                  Skaneri USB i lidhur
                 </div>
                 <div style={{ fontSize: 10, opacity: 0.6 }}>
-                  Scansiona — il codice arriverà automaticamente
+                  Skanoni — kodi do të arrijë automatikisht
                 </div>
                 <input
                   ref={usbInputRef}
                   type="text"
                   onKeyDown={handleUsbKeyDown}
-                  placeholder="In attesa scansione USB…"
+                  placeholder="Duke pritur skanimin USB…"
                   style={{
                     width: '100%',
                     height: 38,
@@ -477,7 +477,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
               >
                 <Icon name="edit" size={28} />
                 <div style={{ fontSize: 11, opacity: 0.7 }}>
-                  Inserisci codice SKU / OEM
+                  Fut kodin SKU / OEM
                 </div>
                 <input
                   value={manualCode}
@@ -497,7 +497,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                   }}
                 />
                 <button type="submit" className="btn primary sm">
-                  Aggiungi
+                  Shto
                 </button>
               </form>
             )}
@@ -505,11 +505,11 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
 
           {/* Scan session table */}
           <Panel
-            title={`Scansioni di questa sessione (${scans.length})`}
+            title={`Skanimet e kësaj sesioni (${scans.length})`}
             padded={false}
             right={
               <span className="mono meta" style={{ fontSize: 10 }}>
-                {totalQty} pezzi
+                {totalQty} copë
               </span>
             }
           >
@@ -517,11 +517,11 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
               <thead>
                 <tr>
                   <th style={{ width: 36 }}>#</th>
-                  <th>Prodotto</th>
+                  <th>Produkti</th>
                   <th style={{ width: 110 }}>SKU</th>
-                  <th style={{ width: 60, textAlign: 'center' }}>Qtà</th>
-                  <th style={{ width: 80 }}>Stock ora</th>
-                  <th style={{ width: 80 }}>Quando</th>
+                  <th style={{ width: 60, textAlign: 'center' }}>Sasi</th>
+                  <th style={{ width: 80 }}>Stok tani</th>
+                  <th style={{ width: 80 }}>Kur</th>
                   <th style={{ width: 36 }} />
                 </tr>
               </thead>
@@ -531,8 +531,8 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                     <td colSpan={7}>
                       <Empty
                         icon="qr"
-                        title="Nessuna scansione ancora"
-                        subtitle="Scansiona il primo barcode per iniziare."
+                        title="Asnjë skanim ende"
+                        subtitle="Skanoni barkodin e parë për të filluar."
                       />
                     </td>
                   </tr>
@@ -615,7 +615,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                             justifyContent: 'center',
                           }}
                           onClick={() => removeItem(s.id)}
-                          aria-label="Rimuovi"
+                          aria-label="Hiq"
                         >
                           <Icon name="x" size={11} />
                         </button>
@@ -631,14 +631,14 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
         {/* Right sidebar */}
         <div className="col" style={{ gap: 14, position: 'sticky', top: 14 }}>
           {/* Action on scan */}
-          <Panel title="Azione su scansione">
+          <Panel title="Veprimi gjatë skanimit">
             <div className="col" style={{ gap: 6 }}>
               {(
                 [
-                  { v: 'lookup', label: 'Solo visualizza', sub: 'Apri i dettagli del prodotto' },
-                  { v: 'intake', label: 'Carico stock', sub: 'Aggiungi +1 al punto vendita' },
-                  { v: 'sale', label: 'Vendita', sub: 'Apri POS con quei pezzi' },
-                  { v: 'adjust', label: 'Rettifica', sub: 'Correggi la quantità' },
+                  { v: 'lookup', label: 'Vetëm shiko', sub: 'Hap detajet e produktit' },
+                  { v: 'intake', label: 'Ngarkim stoku', sub: 'Shto +1 në pikën e shitjes' },
+                  { v: 'sale', label: 'Shitje', sub: 'Hap POS me ato copë' },
+                  { v: 'adjust', label: 'Rregullim', sub: 'Korrigjo sasinë' },
                 ] as { v: ScanAction; label: string; sub: string }[]
               ).map((o) => (
                 <button
@@ -689,27 +689,27 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
           </Panel>
 
           {/* Session stats */}
-          <Panel title="Sessione">
+          <Panel title="Sesioni">
             <div className="col" style={{ gap: 8 }}>
-              <StatRow label="Iniziata" value={sessionStart} />
+              <StatRow label="Filluar" value={sessionStart} />
               <StatRow
-                label="Punto"
+                label="Pika"
                 value={<span className="mono">{storeCode || '—'}</span>}
               />
-              <StatRow label="Operatore" value={userName || '—'} />
+              <StatRow label="Operatori" value={userName || '—'} />
               <StatRow
-                label="Scansioni"
+                label="Skanimet"
                 value={<span className="mono">{scans.length}</span>}
               />
               <StatRow
-                label="Pezzi totali"
+                label="Copë gjithsej"
                 value={<span className="mono">{totalQty}</span>}
               />
             </div>
           </Panel>
 
           {/* Sounds */}
-          <Panel title="Suoni">
+          <Panel title="Tinguj">
             <div className="col" style={{ gap: 6, fontSize: 11 }}>
               <label className="row" style={{ gap: 8, cursor: 'pointer' }}>
                 <input
@@ -717,7 +717,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                   checked={soundScan}
                   onChange={(e) => setSoundScan(e.target.checked)}
                 />
-                Bip dopo ogni scansione
+                Bip pas çdo skanimi
               </label>
               <label className="row" style={{ gap: 8, cursor: 'pointer' }}>
                 <input
@@ -725,7 +725,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                   checked={soundVibrate}
                   onChange={(e) => setSoundVibrate(e.target.checked)}
                 />
-                Vibrazione mobile
+                Vibrim celular
               </label>
               <label className="row" style={{ gap: 8, cursor: 'pointer' }}>
                 <input
@@ -733,7 +733,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                   checked={autoOpen}
                   onChange={(e) => setAutoOpen(e.target.checked)}
                 />
-                Apri automaticamente dettagli
+                Hap automatikisht detajet
               </label>
             </div>
           </Panel>

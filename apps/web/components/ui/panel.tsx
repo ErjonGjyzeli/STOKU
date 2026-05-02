@@ -34,7 +34,7 @@ export function Panel({ title, right, padded = true, children, style, className 
         >
           <div
             style={{
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',

@@ -288,7 +288,7 @@ export function TireFormDialog({ open, onOpenChange, onSubmit, title, categories
             />
           </Field>
 
-          <div className="row" style={{ gap: 16, fontSize: 12 }}>
+          <div className="row" style={{ gap: 16, fontSize: 11 }}>
             <label className="row" style={{ gap: 6 }}>
               <input type="checkbox" {...register('tire_runflat')} />
               Runflat

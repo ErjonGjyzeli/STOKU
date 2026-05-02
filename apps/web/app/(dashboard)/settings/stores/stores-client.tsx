@@ -117,7 +117,7 @@ export function StoresClient({ stores }: { stores: StoreRow[] }) {
                         <StokuBadge variant="draft">Disattivato</StokuBadge>
                       )}
                     </td>
-                    <td className="mono" style={{ fontSize: 11 }}>
+                    <td className="mono" style={{ fontSize: 10 }}>
                       {store.phone ?? <span className="faint">—</span>}
                     </td>
                     <td>

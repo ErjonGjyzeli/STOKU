@@ -94,7 +94,7 @@ export function Topbar({ stores }: Props) {
         <div className="vdivider" style={{ height: 20, alignSelf: 'center' }} />
 
         {pageTitle && (
-          <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>{pageTitle}</span>
+          <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>{pageTitle}</span>
         )}
 
         <div style={{ flex: 1 }} />
@@ -119,7 +119,7 @@ export function Topbar({ stores }: Props) {
           aria-label="Cerca"
         >
           <Icon name="search" size={13} />
-          <span className="dim topbar-search-label" style={{ fontSize: 12, flex: 1, textAlign: 'left' }}>
+          <span className="dim topbar-search-label" style={{ fontSize: 11, flex: 1, textAlign: 'left' }}>
             Cerca…
           </span>
         </button>

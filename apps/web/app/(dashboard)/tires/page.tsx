@@ -331,16 +331,16 @@ export default async function TiresPage({
                           </div>
                         )}
                       </td>
-                      <td className="mono" style={{ fontWeight: 500, fontSize: 11 }}>
+                      <td className="mono" style={{ fontWeight: 500, fontSize: 10 }}>
                         {p.sku}
                       </td>
                       <td>
                         <div className="col" style={{ gap: 0 }}>
-                          <span className="mono" style={{ fontWeight: 600, fontSize: 12 }}>
+                          <span className="mono" style={{ fontWeight: 600, fontSize: 11 }}>
                             {size ?? <span className="faint">—</span>}
                           </span>
                           {sizeIndex && (
-                            <span className="mono meta" style={{ fontSize: 11 }}>
+                            <span className="mono meta" style={{ fontSize: 10 }}>
                               {sizeIndex}
                             </span>
                           )}
@@ -351,19 +351,19 @@ export default async function TiresPage({
                           <span style={{ fontWeight: 500 }}>
                             {p.vehicle_make ?? <span className="faint">—</span>}
                           </span>
-                          <span className="meta" style={{ fontSize: 11 }}>{p.name}</span>
+                          <span className="meta" style={{ fontSize: 10 }}>{p.name}</span>
                         </div>
                       </td>
                       <td style={{ textAlign: 'center' }}>
                         <SeasonIcon season={seasonKey} />
                       </td>
-                      <td className="mono" style={{ fontSize: 11 }}>
+                      <td className="mono" style={{ fontSize: 10 }}>
                         {p.tire_dot ?? <span className="faint">—</span>}
                       </td>
                       <td>
                         {treadMm != null ? (
                           <div className="row" style={{ gap: 4, alignItems: 'center' }}>
-                            <span className="mono" style={{ fontSize: 12, fontWeight: 500 }}>
+                            <span className="mono" style={{ fontSize: 11, fontWeight: 500 }}>
                               {treadMm.toFixed(1)}
                             </span>
                             <span className="meta" style={{ fontSize: 10 }}>mm</span>
@@ -434,7 +434,7 @@ export default async function TiresPage({
             className="row"
             style={{ justifyContent: 'space-between', alignItems: 'center', gap: 12 }}
           >
-            <div className="meta" style={{ fontSize: 12 }}>
+            <div className="meta" style={{ fontSize: 11 }}>
               Pagina {page} di {totalPages}
             </div>
             <div className="row" style={{ gap: 6 }}>
@@ -484,7 +484,7 @@ function SeasonIcon({ season }: { season: 'summer' | 'winter' | 'allseason' | nu
           justifyContent: 'center',
           background: 'oklch(0.92 0.05 80)',
           color: 'oklch(0.55 0.18 60)',
-          fontSize: 11,
+          fontSize: 10,
         }}
       >
         ☀
@@ -504,7 +504,7 @@ function SeasonIcon({ season }: { season: 'summer' | 'winter' | 'allseason' | nu
           justifyContent: 'center',
           background: 'oklch(0.93 0.04 230)',
           color: 'oklch(0.5 0.15 230)',
-          fontSize: 11,
+          fontSize: 10,
         }}
       >
         ❄
@@ -524,7 +524,7 @@ function SeasonIcon({ season }: { season: 'summer' | 'winter' | 'allseason' | nu
           justifyContent: 'center',
           background: 'oklch(0.93 0.05 150)',
           color: 'oklch(0.5 0.13 150)',
-          fontSize: 11,
+          fontSize: 10,
         }}
       >
         ◐

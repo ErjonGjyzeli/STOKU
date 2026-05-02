@@ -103,7 +103,7 @@ export function Sidebar({ role, email, fullName, counts }: Props) {
         display: 'flex',
         flexDirection: 'column',
         color: 'var(--sbar-ink)',
-        fontSize: 12,
+        fontSize: 11,
         height: '100vh',
         overflow: 'hidden',
       }}
@@ -132,7 +132,7 @@ export function Sidebar({ role, email, fullName, counts }: Props) {
             color: 'var(--stoku-accent-fg)',
             fontFamily: 'var(--font-jetbrains-mono, monospace)',
             fontWeight: 700,
-            fontSize: 12,
+            fontSize: 11,
             letterSpacing: '-0.04em',
             flexShrink: 0,
           }}
@@ -141,7 +141,7 @@ export function Sidebar({ role, email, fullName, counts }: Props) {
         </div>
         {!collapsed && (
           <>
-            <div style={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.01em', color: '#fff' }}>
+            <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: '-0.01em', color: '#fff' }}>
               Stoku
             </div>
           </>
@@ -201,7 +201,7 @@ export function Sidebar({ role, email, fullName, counts }: Props) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: 600,
               flexShrink: 0,
             }}
@@ -213,12 +213,12 @@ export function Sidebar({ role, email, fullName, counts }: Props) {
             <div className="col stretch" style={{ gap: 0, minWidth: 0 }}>
               <div
                 className="truncate-1"
-                style={{ fontSize: 12, fontWeight: 500, color: '#fff' }}
+                style={{ fontSize: 11, fontWeight: 500, color: '#fff' }}
                 title={fullName ?? email}
               >
                 {fullName ?? email}
               </div>
-              <div style={{ fontSize: 10.5, color: 'var(--sbar-ink-dim)' }}>{ROLE_LABEL[role]}</div>
+              <div style={{ fontSize: 10, color: 'var(--sbar-ink-dim)' }}>{ROLE_LABEL[role]}</div>
             </div>
           )}
           <form action="/auth/signout" method="post">
@@ -290,7 +290,7 @@ function SidebarLink({
     borderRadius: 'var(--r-sm)',
     background: active ? 'var(--sbar-2)' : 'transparent',
     color: active ? '#fff' : 'var(--sbar-ink)',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: active ? 500 : 400,
     textDecoration: 'none',
     position: 'relative',
@@ -320,7 +320,7 @@ function SidebarLink({
             <span
               className="mono"
               style={{
-                fontSize: 10.5,
+                fontSize: 10,
                 padding: '1px 5px',
                 borderRadius: 3,
                 color: active ? 'var(--sbar-ink)' : 'var(--sbar-ink-dim)',

@@ -137,7 +137,7 @@ export default async function TransfersPage({
               href={`/transfers${buildQuery(params, { status: t.value })}`}
               style={{
                 padding: '10px 14px',
-                fontSize: 12,
+                fontSize: 11,
                 color: active ? 'var(--ink-1)' : 'var(--ink-3)',
                 fontWeight: active ? 600 : 400,
                 borderBottom: active ? '2px solid var(--stoku-accent)' : '2px solid transparent',
@@ -148,7 +148,7 @@ export default async function TransfersPage({
             >
               {t.label}
               {cnt > 0 && (
-                <span className="mono" style={{ fontSize: 11, marginLeft: 5, color: active ? 'var(--ink-3)' : 'var(--ink-4)' }}>
+                <span className="mono" style={{ fontSize: 10, marginLeft: 5, color: active ? 'var(--ink-3)' : 'var(--ink-4)' }}>
                   {cnt}
                 </span>
               )}
@@ -194,7 +194,7 @@ export default async function TransfersPage({
                   <tr key={t.id}>
                     <td>
                       <Link href={`/transfers/${t.id}`} style={{ color: 'inherit' }}>
-                        <span className="mono" style={{ fontSize: 12, fontWeight: 500 }}>{t.transfer_number}</span>
+                        <span className="mono" style={{ fontSize: 11, fontWeight: 500 }}>{t.transfer_number}</span>
                       </Link>
                     </td>
                     <td>
@@ -206,7 +206,7 @@ export default async function TransfersPage({
                         <span className="meta">{t.to_store?.name}</span>
                       </div>
                       {t.notes && (
-                        <div className="faint" style={{ fontSize: 11 }}>{t.notes}</div>
+                        <div className="faint" style={{ fontSize: 10 }}>{t.notes}</div>
                       )}
                     </td>
                     <td>
@@ -214,13 +214,13 @@ export default async function TransfersPage({
                         {STATUS_LABEL[t.status] ?? t.status}
                       </StokuBadge>
                     </td>
-                    <td className="meta" style={{ fontSize: 12 }}>
+                    <td className="meta" style={{ fontSize: 11 }}>
                       {relativeDate(t.shipped_at)}
                     </td>
-                    <td className="meta" style={{ fontSize: 12 }}>
+                    <td className="meta" style={{ fontSize: 11 }}>
                       {relativeDate(t.received_at)}
                     </td>
-                    <td className="meta" style={{ fontSize: 12 }}>
+                    <td className="meta" style={{ fontSize: 11 }}>
                       {relativeDate(t.created_at)}
                     </td>
                   </tr>

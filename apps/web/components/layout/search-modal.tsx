@@ -267,12 +267,12 @@ export function SearchModal({ initialQ, onClose }: Props) {
               background: 'transparent',
               border: 'none',
               outline: 'none',
-              fontSize: 12,
+              fontSize: 11,
               color: 'inherit',
             }}
           />
           {loading && (
-            <span style={{ fontSize: 11, color: 'var(--ink-4)' }}>…</span>
+            <span style={{ fontSize: 10, color: 'var(--ink-4)' }}>…</span>
           )}
           <button
             type="button"
@@ -295,13 +295,13 @@ export function SearchModal({ initialQ, onClose }: Props) {
         {/* Results */}
         <div style={{ overflowY: 'auto', flex: 1, padding: '6px 0' }}>
           {q.trim().length < 2 && (
-            <div style={{ padding: '24px 16px', textAlign: 'center', fontSize: 11, color: 'var(--ink-4)' }}>
+            <div style={{ padding: '24px 16px', textAlign: 'center', fontSize: 10, color: 'var(--ink-4)' }}>
               Digita per cercare
             </div>
           )}
 
           {q.trim().length >= 2 && !loading && items.length === 0 && (
-            <div style={{ padding: '24px 16px', textAlign: 'center', fontSize: 11, color: 'var(--ink-4)' }}>
+            <div style={{ padding: '24px 16px', textAlign: 'center', fontSize: 10, color: 'var(--ink-4)' }}>
               Nessun risultato per <strong>"{q}"</strong>
             </div>
           )}
@@ -326,7 +326,7 @@ export function SearchModal({ initialQ, onClose }: Props) {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div
                   style={{
-                    fontSize: 11,
+                    fontSize: 10,
                     fontWeight: 500,
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',

@@ -163,7 +163,7 @@ export default async function OrdersPage({
                 href={href}
                 style={{
                   padding: '10px 14px',
-                  fontSize: 12,
+                  fontSize: 11,
                   color: active ? 'var(--ink-1)' : 'var(--ink-3)',
                   fontWeight: active ? 600 : 400,
                   borderBottom: active ? '2px solid var(--stoku-accent)' : '2px solid transparent',
@@ -174,7 +174,7 @@ export default async function OrdersPage({
               >
                 {t.label}
                 {count > 0 && (
-                  <span className="mono" style={{ fontSize: 11, marginLeft: 5, color: active ? 'var(--ink-3)' : 'var(--ink-4)' }}>
+                  <span className="mono" style={{ fontSize: 10, marginLeft: 5, color: active ? 'var(--ink-3)' : 'var(--ink-4)' }}>
                     {formatInt(count)}
                   </span>
                 )}
@@ -227,7 +227,7 @@ export default async function OrdersPage({
                   <tr key={o.id}>
                     <td>
                       <Link href={`/orders/${o.id}`} style={{ color: 'inherit' }}>
-                        <span className="mono" style={{ fontSize: 12, fontWeight: 500 }}>{o.order_number}</span>
+                        <span className="mono" style={{ fontSize: 11, fontWeight: 500 }}>{o.order_number}</span>
                       </Link>
                     </td>
                     <td className="truncate-1">
@@ -237,7 +237,7 @@ export default async function OrdersPage({
                         <span className="faint">Vendita banco</span>
                       )}
                     </td>
-                    <td className="mono" style={{ fontSize: 11 }}>
+                    <td className="mono" style={{ fontSize: 10 }}>
                       {o.store?.code ?? <span className="faint">—</span>}
                     </td>
                     <td>
@@ -251,7 +251,7 @@ export default async function OrdersPage({
                     <td className="mono r" style={{ fontWeight: 600 }}>
                       {currency(Number(o.total), o.currency)}
                     </td>
-                    <td className="meta" style={{ fontSize: 12 }}>
+                    <td className="meta" style={{ fontSize: 11 }}>
                       {relativeDate(o.created_at)}
                     </td>
                   </tr>
@@ -263,7 +263,7 @@ export default async function OrdersPage({
 
         {totalPages > 1 && (
           <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center', gap: 12, marginTop: 12 }}>
-            <div className="meta" style={{ fontSize: 12 }}>Pagina {page} di {totalPages}</div>
+            <div className="meta" style={{ fontSize: 11 }}>Pagina {page} di {totalPages}</div>
             <div className="row" style={{ gap: 6 }}>
               {page > 1 ? (
                 <Link href={`/orders${buildQuery(params, { page: String(page - 1) })}`} className="btn ghost sm">

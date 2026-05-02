@@ -128,7 +128,7 @@ export function ShelvesClient({
                 return (
                   <tr key={s.id}>
                     {showStoreColumn && (
-                      <td className="mono" style={{ fontSize: 11, fontWeight: 500 }}>
+                      <td className="mono" style={{ fontSize: 10, fontWeight: 500 }}>
                         {s.store_code ?? <span className="faint">—</span>}
                       </td>
                     )}
@@ -161,7 +161,7 @@ export function ShelvesClient({
                       ) : (
                         <span
                           className="mono"
-                          style={{ fontSize: 11, color: fillColor(percent) }}
+                          style={{ fontSize: 10, color: fillColor(percent) }}
                         >
                           {percent}%
                         </span>

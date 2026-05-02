@@ -46,7 +46,7 @@ export function ImportForm() {
       <Panel padded>
         <form onSubmit={onSubmit} className="col" style={{ gap: 12 }}>
           <div className="col" style={{ gap: 4 }}>
-            <span className="meta" style={{ fontSize: 11 }}>
+            <span className="meta" style={{ fontSize: 10 }}>
               FILE XLSX / CSV
             </span>
             <div className="row" style={{ gap: 8 }}>
@@ -67,13 +67,13 @@ export function ImportForm() {
               >
                 Scegli file
               </StokuButton>
-              <span className="meta" style={{ fontSize: 12 }}>
+              <span className="meta" style={{ fontSize: 11 }}>
                 {fileName ?? 'Nessun file selezionato'}
               </span>
             </div>
           </div>
 
-          <details style={{ fontSize: 12, color: 'var(--ink-2)' }}>
+          <details style={{ fontSize: 11, color: 'var(--ink-2)' }}>
             <summary style={{ cursor: 'pointer' }}>Colonne attese (case-insensitive)</summary>
             <div style={{ paddingTop: 8, lineHeight: 1.5 }}>
               <div>
@@ -111,7 +111,7 @@ export function ImportForm() {
 
       {result && result.ok && (
         <Panel title="Risultato import">
-          <div className="col" style={{ gap: 8, fontSize: 12 }}>
+          <div className="col" style={{ gap: 8, fontSize: 11 }}>
             <div className="row" style={{ gap: 16 }}>
               <Stat label="Inseriti" value={result.inserted} variant="ok" />
               <Stat label="Saltati" value={result.skipped} variant="warn" />
@@ -120,19 +120,19 @@ export function ImportForm() {
 
             {result.unknownCategories.length > 0 && (
               <div className="col" style={{ gap: 4 }}>
-                <span className="meta" style={{ fontSize: 11 }}>
+                <span className="meta" style={{ fontSize: 10 }}>
                   CATEGORIE SCONOSCIUTE (NULL ASSEGNATO)
                 </span>
-                <div style={{ fontSize: 12 }}>{result.unknownCategories.join(', ')}</div>
+                <div style={{ fontSize: 11 }}>{result.unknownCategories.join(', ')}</div>
               </div>
             )}
 
             {result.errors.length > 0 && (
               <div className="col" style={{ gap: 4 }}>
-                <span className="meta" style={{ fontSize: 11 }}>
+                <span className="meta" style={{ fontSize: 10 }}>
                   ERRORI (PRIMI 50)
                 </span>
-                <div style={{ fontSize: 12, lineHeight: 1.5 }}>
+                <div style={{ fontSize: 11, lineHeight: 1.5 }}>
                   {result.errors.map((e, i) => (
                     <div key={i}>
                       Riga {e.row}: {e.message}
@@ -157,7 +157,7 @@ export function ImportForm() {
         <Panel>
           <div className="col" style={{ gap: 6 }}>
             <div style={{ color: 'var(--danger)', fontWeight: 500 }}>Import fallito</div>
-            <div className="faint" style={{ fontSize: 12 }}>
+            <div className="faint" style={{ fontSize: 11 }}>
               {result.error}
             </div>
           </div>
@@ -179,7 +179,7 @@ function Stat({
   const color = variant === 'ok' ? 'var(--ok)' : variant === 'warn' ? 'var(--warn)' : undefined;
   return (
     <div className="col" style={{ gap: 2 }}>
-      <span className="meta" style={{ fontSize: 11 }}>
+      <span className="meta" style={{ fontSize: 10 }}>
         {label.toUpperCase()}
       </span>
       <span className="mono" style={{ fontSize: 20, fontWeight: 600, color }}>

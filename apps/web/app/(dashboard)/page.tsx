@@ -298,7 +298,7 @@ export default async function HomePage() {
                 <tbody>
                   {recentOrders.map((o) => (
                     <tr key={o.id}>
-                      <td className="mono" style={{ fontSize: 11, fontWeight: 500 }}>
+                      <td className="mono" style={{ fontSize: 10, fontWeight: 500 }}>
                         <Link href={`/orders/${o.id}`} style={{ color: 'inherit' }}>
                           {o.order_number}
                         </Link>
@@ -310,7 +310,7 @@ export default async function HomePage() {
                           <span className="faint">Vendita banco</span>
                         )}
                       </td>
-                      <td className="mono" style={{ fontSize: 11, color: 'var(--ink-3)' }}>
+                      <td className="mono" style={{ fontSize: 10, color: 'var(--ink-3)' }}>
                         {o.store?.code ?? <span className="faint">—</span>}
                       </td>
                       <td>
@@ -323,7 +323,7 @@ export default async function HomePage() {
                       </td>
                       <td
                         className="meta"
-                        style={{ textAlign: 'right', fontSize: 12 }}
+                        style={{ textAlign: 'right', fontSize: 11 }}
                       >
                         {relativeTime(o.created_at)}
                       </td>
@@ -380,18 +380,18 @@ export default async function HomePage() {
                           <div className="col stretch" style={{ gap: 0, minWidth: 0 }}>
                             <div
                               className="truncate-1"
-                              style={{ fontSize: 12, fontWeight: 500 }}
+                              style={{ fontSize: 11, fontWeight: 500 }}
                             >
                               {r.product_name ?? '—'}
                             </div>
-                            <div className="mono meta" style={{ fontSize: 10.5 }}>
+                            <div className="mono meta" style={{ fontSize: 10 }}>
                               {r.product_sku ?? '—'} · {r.store_code ?? '—'}
                             </div>
                           </div>
                           <span
                             className="mono"
                             style={{
-                              fontSize: 12,
+                              fontSize: 11,
                               fontWeight: 500,
                               color: outOfStock ? 'var(--danger)' : 'var(--warn)',
                               whiteSpace: 'nowrap',
@@ -432,14 +432,14 @@ export default async function HomePage() {
                       style={{
                         padding: '8px 12px',
                         borderBottom: '1px solid var(--stoku-border)',
-                        fontSize: 12,
+                        fontSize: 11,
                       }}
                     >
                       <div className="row" style={{ gap: 8, justifyContent: 'space-between' }}>
                         <Link
                           href={`/transfers/${t.id}`}
                           className="mono"
-                          style={{ fontSize: 11, fontWeight: 500, color: 'inherit' }}
+                          style={{ fontSize: 10, fontWeight: 500, color: 'inherit' }}
                         >
                           {t.transfer_number}
                         </Link>
@@ -495,20 +495,20 @@ export default async function HomePage() {
                     </div>
                     <div
                       className="row"
-                      style={{ gap: 4, fontSize: 12, flex: 1, minWidth: 0, flexWrap: 'wrap' }}
+                      style={{ gap: 4, fontSize: 11, flex: 1, minWidth: 0, flexWrap: 'wrap' }}
                     >
                       <span style={{ fontWeight: 500 }}>{who}</span>
                       <span className="dim">{action}</span>
-                      <span className="mono" style={{ fontSize: 12 }}>
+                      <span className="mono" style={{ fontSize: 11 }}>
                         {target}
                       </span>
                       {a.store?.code && (
-                        <span className="meta" style={{ fontSize: 11 }}>
+                        <span className="meta" style={{ fontSize: 10 }}>
                           · {a.store.code}
                         </span>
                       )}
                     </div>
-                    <span className="meta" style={{ fontSize: 12, whiteSpace: 'nowrap' }}>
+                    <span className="meta" style={{ fontSize: 11, whiteSpace: 'nowrap' }}>
                       {relativeTime(a.created_at)}
                     </span>
                   </div>
@@ -554,7 +554,7 @@ function Stat({
     >
       <div
         style={{
-          fontSize: 11,
+          fontSize: 10,
           fontWeight: 500,
           color: 'var(--ink-3)',
           textTransform: 'uppercase',
@@ -578,7 +578,7 @@ function Stat({
       {hint && (
         <div
           className="mono"
-          style={{ marginTop: 2, fontSize: 11, color: 'var(--ink-3)' }}
+          style={{ marginTop: 2, fontSize: 10, color: 'var(--ink-3)' }}
         >
           {hint}
         </div>

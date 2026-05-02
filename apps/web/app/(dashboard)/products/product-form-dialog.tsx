@@ -234,7 +234,7 @@ export function ProductFormDialog({
             <Input {...register('oem_code')} placeholder="0265 800 1234" />
           </Field>
 
-          <label className="row" style={{ gap: 8, fontSize: 12, color: 'var(--ink-2)' }}>
+          <label className="row" style={{ gap: 8, fontSize: 11, color: 'var(--ink-2)' }}>
             <input type="checkbox" {...register('is_active')} />
             Prodotto attivo (visibile in vendita)
           </label>

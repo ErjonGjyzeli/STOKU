@@ -25,7 +25,7 @@ export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
 
   if (stores.length === 0) {
     return (
-      <span className="meta" style={{ fontSize: 12 }}>
+      <span className="meta" style={{ fontSize: 11 }}>
         Nessun punto vendita
       </span>
     );
@@ -67,7 +67,7 @@ export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
             <span className="topbar-store-code" style={{ fontWeight: 500 }}>
               {active.code}
             </span>
-            <span className="dim topbar-store-name" style={{ fontSize: 11 }}>
+            <span className="dim topbar-store-name" style={{ fontSize: 10 }}>
               · {active.name}
             </span>
           </>
@@ -105,7 +105,7 @@ export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
           >
             <Icon name="grid" size={13} />
             <div className="col stretch" style={{ gap: 0 }}>
-              <div style={{ fontSize: 12, fontWeight: 500 }}>Tutti i magazzini</div>
+              <div style={{ fontSize: 11, fontWeight: 500 }}>Tutti i magazzini</div>
               <div className="meta" style={{ fontSize: 10 }}>
                 Nessuno scope — liste non filtrate
               </div>
@@ -125,7 +125,7 @@ export function StoreSwitcher({ stores }: { stores: StoreLite[] }) {
             >
               <Icon name="store" size={13} />
               <div className="col stretch" style={{ gap: 0 }}>
-                <div style={{ fontSize: 12, fontWeight: 500 }}>
+                <div style={{ fontSize: 11, fontWeight: 500 }}>
                   {s.code} · {s.name}
                 </div>
               </div>

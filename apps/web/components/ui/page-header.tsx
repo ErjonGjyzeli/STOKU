@@ -28,7 +28,7 @@ export function PageHeader({ title, subtitle, right, breadcrumb }: Props) {
     >
       <div className="col" style={{ gap: 4, minWidth: 0 }}>
         {breadcrumb && breadcrumb.length > 0 && (
-          <div className="row" style={{ gap: 4, fontSize: 12, color: 'var(--ink-3)' }}>
+          <div className="row" style={{ gap: 4, fontSize: 11, color: 'var(--ink-3)' }}>
             {breadcrumb.map((b, i) => (
               <span key={`${b.label}-${i}`} className="row" style={{ gap: 4 }}>
                 {i > 0 && <Icon name="chevronRight" size={11} />}
@@ -46,7 +46,7 @@ export function PageHeader({ title, subtitle, right, breadcrumb }: Props) {
         <h1
           style={{
             margin: 0,
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: 600,
             letterSpacing: '-0.02em',
           }}
@@ -54,7 +54,7 @@ export function PageHeader({ title, subtitle, right, breadcrumb }: Props) {
           {title}
         </h1>
         {subtitle && (
-          <div className="meta" style={{ fontSize: 12 }}>
+          <div className="meta" style={{ fontSize: 11 }}>
             {subtitle}
           </div>
         )}

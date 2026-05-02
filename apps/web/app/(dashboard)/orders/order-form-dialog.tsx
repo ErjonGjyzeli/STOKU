@@ -179,7 +179,7 @@ export function OrderFormDialog({
                         background: 'transparent',
                         border: 'none',
                         outline: 'none',
-                        fontSize: 12,
+                        fontSize: 11,
                         color: 'inherit',
                       }}
                     />
@@ -196,7 +196,7 @@ export function OrderFormDialog({
                         width: '100%',
                         textAlign: 'left',
                         padding: '7px 10px',
-                        fontSize: 12,
+                        fontSize: 11,
                         background: customerId === COUNTER_SENTINEL_NONE ? 'var(--accent)' : 'transparent',
                         cursor: 'pointer',
                         display: 'block',
@@ -219,7 +219,7 @@ export function OrderFormDialog({
                           width: '100%',
                           textAlign: 'left',
                           padding: '7px 10px',
-                          fontSize: 12,
+                          fontSize: 11,
                           background: customerId === c.id ? 'var(--accent)' : 'transparent',
                           cursor: 'pointer',
                           display: 'block',
@@ -231,7 +231,7 @@ export function OrderFormDialog({
                       </button>
                     ))}
                     {filteredCustomers.length === 0 && (
-                      <div style={{ padding: '7px 10px', fontSize: 12, color: 'var(--muted-foreground)' }}>
+                      <div style={{ padding: '7px 10px', fontSize: 11, color: 'var(--muted-foreground)' }}>
                         Nessun cliente trovato
                       </div>
                     )}

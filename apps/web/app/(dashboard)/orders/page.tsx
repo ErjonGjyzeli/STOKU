@@ -143,16 +143,8 @@ export default async function OrdersPage({
       />
 
       {/* Tab bar + search */}
-      <div
-        style={{
-          padding: '0 24px',
-          borderBottom: '1px solid var(--stoku-border)',
-          display: 'flex',
-          gap: 0,
-          alignItems: 'center',
-        }}
-      >
-        <div className="row" style={{ gap: 0, flex: 1 }}>
+      <div className="tab-search-bar">
+        <div className="tab-search-bar__tabs">
           {TABS.map((t) => {
             const active = status === t.value;
             const count = tabCounts[t.value] ?? 0;
@@ -182,9 +174,9 @@ export default async function OrdersPage({
             );
           })}
         </div>
-        <form method="get" style={{ display: 'flex', alignItems: 'center' }}>
+        <form method="get" className="tab-search-bar__search">
           {status && <input type="hidden" name="status" value={status} />}
-          <div className="stoku-input" style={{ width: 260, height: 28 }}>
+          <div className="stoku-input" style={{ height: 28 }}>
             <Icon name="search" size={13} />
             <input
               type="search"

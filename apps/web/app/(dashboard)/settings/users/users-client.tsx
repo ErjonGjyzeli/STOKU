@@ -11,6 +11,7 @@ import { StokuBadge } from '@/components/ui/stoku-badge';
 import { StokuButton } from '@/components/ui/stoku-button';
 import {
   createStaffUser,
+  deleteStaffUser,
   resetStaffPassword,
   updateStaffUser,
   type CreateUserInput,
@@ -64,6 +65,7 @@ export function UsersClient({ staff, stores }: { staff: StaffRow[]; stores: Stor
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<StaffRow | null>(null);
   const [resetting, setResetting] = useState<StaffRow | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   async function handleCreate(values: CreateUserInput) {
     const res = await createStaffUser(values);
@@ -95,6 +97,16 @@ export function UsersClient({ staff, stores }: { staff: StaffRow[]; stores: Stor
     }
     toast.success('Fjalëkalimi u përditësua');
     return true;
+  }
+
+  async function handleDelete(id: string) {
+    const res = await deleteStaffUser(id);
+    if (!res.ok) {
+      toast.error('Gabim', { description: res.error });
+    } else {
+      toast.success('Përdoruesi u fshi');
+    }
+    setDeletingId(null);
   }
 
   const storeByCode = new Map(stores.map((s) => [s.id, s]));
@@ -192,28 +204,58 @@ export function UsersClient({ staff, stores }: { staff: StaffRow[]; stores: Stor
                       )}
                     </td>
                     <td>
-                      <div className="row" style={{ gap: 4, justifyContent: 'flex-end' }}>
-                        <button
-                          type="button"
-                          className="btn ghost sm"
-                          style={{ width: 24, padding: 0, justifyContent: 'center' }}
-                          onClick={() => setEditing(u)}
-                          title="Modifiko"
-                          aria-label="Modifiko"
-                        >
-                          <Icon name="edit" size={12} />
-                        </button>
-                        <button
-                          type="button"
-                          className="btn ghost sm"
-                          style={{ width: 24, padding: 0, justifyContent: 'center' }}
-                          onClick={() => setResetting(u)}
-                          title="Rivendos fjalëkalimin"
-                          aria-label="Rivendos fjalëkalimin"
-                        >
-                          <Icon name="lock" size={12} />
-                        </button>
-                      </div>
+                      {deletingId === u.id ? (
+                        <div className="row" style={{ gap: 4, justifyContent: 'flex-end' }}>
+                          <button
+                            type="button"
+                            className="btn danger sm"
+                            style={{ fontSize: 10 }}
+                            onClick={() => handleDelete(u.id)}
+                          >
+                            Konfirmo
+                          </button>
+                          <button
+                            type="button"
+                            className="btn ghost sm"
+                            onClick={() => setDeletingId(null)}
+                          >
+                            Anulo
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="row" style={{ gap: 4, justifyContent: 'flex-end' }}>
+                          <button
+                            type="button"
+                            className="btn ghost sm"
+                            style={{ width: 24, padding: 0, justifyContent: 'center' }}
+                            onClick={() => setEditing(u)}
+                            title="Modifiko"
+                            aria-label="Modifiko"
+                          >
+                            <Icon name="edit" size={12} />
+                          </button>
+                          <button
+                            type="button"
+                            className="btn ghost sm"
+                            style={{ width: 24, padding: 0, justifyContent: 'center' }}
+                            onClick={() => setResetting(u)}
+                            title="Rivendos fjalëkalimin"
+                            aria-label="Rivendos fjalëkalimin"
+                          >
+                            <Icon name="lock" size={12} />
+                          </button>
+                          <button
+                            type="button"
+                            className="btn ghost sm danger"
+                            style={{ width: 24, padding: 0, justifyContent: 'center' }}
+                            onClick={() => setDeletingId(u.id)}
+                            title="Fshi përdoruesin"
+                            aria-label="Fshi përdoruesin"
+                          >
+                            <Icon name="trash" size={12} />
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}

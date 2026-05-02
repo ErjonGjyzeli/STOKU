@@ -611,6 +611,30 @@
     }
   }
 
+  /* Tab bar + search — tabs scroll, search pinned right on desktop */
+  .tab-search-bar {
+    padding: 0 24px;
+    border-bottom: 1px solid var(--stoku-border);
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .tab-search-bar__tabs {
+    display: flex;
+    gap: 0;
+    flex: 1;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tab-search-bar__tabs::-webkit-scrollbar { display: none; }
+  .tab-search-bar__search {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    width: 220px;
+  }
+  .tab-search-bar__search .stoku-input { width: 100%; }
+
   /* Login: desktop split, mobile single column */
   .login-shell {
     display: grid;
@@ -657,6 +681,11 @@
       grid-template-columns: 1fr !important;
       padding: 12px !important;
     }
+    /* Tab bar + search: wrap vertically, search full-width on mobile */
+    .tab-search-bar { flex-wrap: wrap !important; padding: 0 12px !important; }
+    .tab-search-bar__tabs { order: 1; }
+    .tab-search-bar__search { order: 2; width: 100% !important; flex-shrink: 1 !important; border-top: 1px solid var(--stoku-border); padding: 6px 0; }
+    .tab-search-bar__search .stoku-input { width: 100% !important; }
     /* Product detail: single column layout su mobile */
     .product-detail-grid {
       grid-template-columns: 1fr !important;

@@ -149,7 +149,7 @@ export default async function ProductDetailPage({
           </span>
         }
         right={
-          <>
+          <div className="row" style={{ gap: 6, flexWrap: 'wrap' }}>
             <a
               href={`/products/${p.id}/label`}
               target="_blank"
@@ -164,11 +164,12 @@ export default async function ProductDetailPage({
             <Link href={`/orders/new?addProductId=${p.id}`} className="btn primary">
               <Icon name="cart" size={13} /> Aggiungi a ordine
             </Link>
-          </>
+          </div>
         }
       />
 
       <div
+        className="product-detail-grid"
         style={{
           padding: 24,
           display: 'grid',
@@ -228,6 +229,7 @@ export default async function ProductDetailPage({
               <span className="faint">Nessuna descrizione</span>
             )}
             <div
+              className="product-detail-desc-grid"
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(4,1fr)',

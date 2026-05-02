@@ -725,9 +725,14 @@
   @media (max-width: 768px) {
     .stoku-app {
       grid-template-columns: 1fr;
+      height: 100dvh !important;
+      max-height: 100dvh !important;
     }
     .stoku-app[data-sidebar='collapsed'] {
       grid-template-columns: 1fr;
+    }
+    .stoku-main {
+      height: 100dvh !important;
     }
     .stoku-app > aside {
       position: fixed;

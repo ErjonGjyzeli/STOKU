@@ -107,7 +107,7 @@ export default async function LabelsPage({
                 >
                   TIPO
                 </legend>
-                <label className="row" style={{ gap: 6, alignItems: 'center' }}>
+                <label className="row" style={{ gap: 6, alignItems: 'center', fontSize: 11 }}>
                   <input
                     type="radio"
                     name="kind"
@@ -116,7 +116,7 @@ export default async function LabelsPage({
                   />
                   Produktet
                 </label>
-                <label className="row" style={{ gap: 6, alignItems: 'center' }}>
+                <label className="row" style={{ gap: 6, alignItems: 'center', fontSize: 11 }}>
                   <input
                     type="radio"
                     name="kind"
@@ -125,7 +125,7 @@ export default async function LabelsPage({
                   />
                   Gomat
                 </label>
-                <label className="row" style={{ gap: 6, alignItems: 'center' }}>
+                <label className="row" style={{ gap: 6, alignItems: 'center', fontSize: 11 }}>
                   <input
                     type="radio"
                     name="kind"
@@ -145,7 +145,7 @@ export default async function LabelsPage({
                 >
                   FORMATO
                 </legend>
-                <label className="row" style={{ gap: 6, alignItems: 'center' }}>
+                <label className="row" style={{ gap: 6, alignItems: 'center', fontSize: 11 }}>
                   <input
                     type="radio"
                     name="format"
@@ -154,7 +154,7 @@ export default async function LabelsPage({
                   />
                   A4 24-up
                 </label>
-                <label className="row" style={{ gap: 6, alignItems: 'center' }}>
+                <label className="row" style={{ gap: 6, alignItems: 'center', fontSize: 11 }}>
                   <input
                     type="radio"
                     name="format"

@@ -64,7 +64,6 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
   const [action, setAction] = useState<ScanAction>('lookup');
   const [cameraState, setCameraState] = useState<CameraState>('idle');
   const [cameraError, setCameraError] = useState<string | null>(null);
-  const [cameraEnabled, setCameraEnabled] = useState(false);
   const [scans, setScans] = useState<ScanItem[]>([]);
   const [manualCode, setManualCode] = useState('');
   const [soundScan, setSoundScan] = useState(true);
@@ -209,14 +208,9 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
     }
   }, [handleScanText]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (mode === 'camera' && cameraEnabled) {
-      void startCamera();
-    } else {
-      stopCamera();
-    }
-  }, [mode, cameraEnabled]);
+    if (mode !== 'camera') stopCamera();
+  }, [mode, stopCamera]);
 
   useEffect(() => {
     return () => {
@@ -317,12 +311,12 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
             {mode === 'camera' && (
               <button
                 type="button"
-                className={cameraEnabled && cameraState === 'active' ? 'btn sm danger' : 'btn sm primary'}
+                className={cameraState === 'active' ? 'btn sm danger' : 'btn sm primary'}
                 disabled={cameraState === 'requesting'}
-                onClick={() => setCameraEnabled((v) => !v)}
+                onClick={() => cameraState === 'active' ? stopCamera() : void startCamera()}
               >
-                <Icon name={cameraEnabled && cameraState !== 'idle' ? 'x' : 'qr'} size={12} />
-                {cameraEnabled && cameraState !== 'idle' ? 'Ndal' : 'Fillo'}
+                <Icon name={cameraState === 'active' ? 'x' : 'qr'} size={12} />
+                {cameraState === 'active' ? 'Ndal' : 'Fillo'}
               </button>
             )}
             <button type="button" className="btn ghost sm" onClick={clearHistory}>
@@ -429,7 +423,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                       <div style={{ fontSize: 11, fontWeight: 500 }}>
                         Duke nisur kamerën…
                       </div>
-                    ) : !cameraEnabled ? (
+                    ) : cameraState === 'idle' ? (
                       <>
                         <div style={{ fontSize: 11, fontWeight: 500 }}>
                           Kamera e ndalur
@@ -437,7 +431,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                         <button
                           type="button"
                           className="btn primary sm"
-                          onClick={() => setCameraEnabled(true)}
+                          onClick={() => void startCamera()}
                           style={{ marginTop: 4 }}
                         >
                           <Icon name="qr" size={12} /> Fillo kamerën
@@ -459,7 +453,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                 {cameraState === 'active' && (
                   <button
                     type="button"
-                    onClick={() => setCameraEnabled(false)}
+                    onClick={stopCamera}
                     style={{
                       position: 'absolute',
                       bottom: 10,

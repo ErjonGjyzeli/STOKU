@@ -11,7 +11,7 @@ import { requireSession } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { InventoryCountClient, type CountRow } from './inventory-count-client';
 
-export const metadata = { title: 'Inventario scaffale — STOKU' };
+export const metadata = { title: 'Inventar rafti — STOKU' };
 
 const idSchema = z.string().uuid();
 
@@ -46,7 +46,7 @@ export default async function ShelfInventoryPage({
     .eq('id', idCheck.data)
     .maybeSingle();
   if (shelfErr) {
-    return <p style={{ padding: 24, color: 'var(--danger)' }}>Errore: {shelfErr.message}</p>;
+    return <p style={{ padding: 24, color: 'var(--danger)' }}>Gabim: {shelfErr.message}</p>;
   }
   if (!shelf) notFound();
 
@@ -93,18 +93,18 @@ export default async function ShelfInventoryPage({
     <div>
       <PageHeader
         breadcrumb={[
-          { label: 'Scaffali', href: '/shelves' },
+          { label: 'Raftet', href: '/shelves' },
           { label: shelf.code, href: `/shelves/${shelf.id}` },
-          { label: 'Inventario' },
+          { label: 'Inventar' },
         ]}
         title={
           <span className="row" style={{ gap: 10, alignItems: 'center' }}>
             <Icon name="check" size={16} />
-            <span>Inventario fisico</span>
+            <span>Inventar fizik</span>
             <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)' }}>
               {shelf.code}
             </span>
-            {!shelf.is_active && <StokuBadge variant="draft">Disattivato</StokuBadge>}
+            {!shelf.is_active && <StokuBadge variant="draft">Çaktivizuar</StokuBadge>}
           </span>
         }
         subtitle={
@@ -115,7 +115,7 @@ export default async function ShelfInventoryPage({
         }
         right={
           <Link href={`/shelves/${shelf.id}`} className="btn ghost sm">
-            <Icon name="chevronLeft" size={12} /> Torna allo scaffale
+            <Icon name="chevronLeft" size={12} /> Kthehu te rafti
           </Link>
         }
       />
@@ -125,8 +125,8 @@ export default async function ShelfInventoryPage({
           <Panel padded={false}>
             <Empty
               icon="box"
-              title="Scaffale vuoto"
-              subtitle="Nessun prodotto da contare in questo scaffale."
+              title="Rafti bosh"
+              subtitle="Asnjë produkt për t'u kontuar në këtë raft."
             />
           </Panel>
         ) : (

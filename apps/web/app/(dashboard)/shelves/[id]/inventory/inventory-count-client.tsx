@@ -60,18 +60,18 @@ export function InventoryCountClient({ shelf, rows }: Props) {
 
   function resetAllToLogical() {
     setCounts(Object.fromEntries(rows.map((r) => [r.productId, String(r.logical)])));
-    toast.success('Valori riportati al logico');
+    toast.success('Vlerat u rivendosën në logjik');
   }
 
   function handleSubmit() {
     if (stats.invalid > 0) {
-      toast.error(`${stats.invalid} righe con valore non valido`);
+      toast.error(`${stats.invalid} rreshta me vlerë të pavlefshme`);
       return;
     }
     const adjustments = stats.positive + stats.negative;
     const msg = adjustments === 0
-      ? `Confermi che tutti i ${rows.length} prodotti tornano? Verrà aggiornato solo "ultima conta".`
-      : `Conferma rettifica: ${adjustments} differenze, ${stats.matches} in pari.`;
+      ? `Konfirmon që të gjithë ${rows.length} produktet kthehen? Vetëm "kontë e fundit" do të përditësohet.`
+      : `Konfirmo rregullimin: ${adjustments} diferenca, ${stats.matches} në barazi.`;
     if (!confirm(msg)) return;
 
     const payload = rows.map((r) => ({
@@ -82,12 +82,12 @@ export function InventoryCountClient({ shelf, rows }: Props) {
     startTransition(async () => {
       const res = await applyInventoryCount({ shelfId: shelf.id, counts: payload });
       if (!res.ok) {
-        toast.error('Rettifica fallita', { description: res.error });
+        toast.error('Rregullimi dështoi', { description: res.error });
         return;
       }
       const { adjusted, matched, skipped, errors } = res.data;
-      const summary = `${matched} in pari, ${adjusted} rettificate${
-        skipped > 0 ? `, ${skipped} saltate` : ''
+      const summary = `${matched} në barazi, ${adjusted} rregulluar${
+        skipped > 0 ? `, ${skipped} kapërcyer` : ''
       }`;
       if (errors.length > 0) {
         toast.warning(summary, {
@@ -107,12 +107,12 @@ export function InventoryCountClient({ shelf, rows }: Props) {
     <>
       <Panel padded>
         <div className="row" style={{ gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-          <Stat label="Righe" value={String(rows.length)} />
-          <Stat label="In pari" value={String(stats.matches)} tone="ok" />
-          <Stat label="In più" value={String(stats.positive)} tone="warn" />
-          <Stat label="In meno" value={String(stats.negative)} tone="danger" />
+          <Stat label="Rreshtat" value={String(rows.length)} />
+          <Stat label="Në barazi" value={String(stats.matches)} tone="ok" />
+          <Stat label="Tepricë" value={String(stats.positive)} tone="warn" />
+          <Stat label="Mungesë" value={String(stats.negative)} tone="danger" />
           {stats.invalid > 0 && (
-            <Stat label="Non valide" value={String(stats.invalid)} tone="danger" />
+            <Stat label="Të pavlefshme" value={String(stats.invalid)} tone="danger" />
           )}
           <div className="row" style={{ gap: 6, marginLeft: 'auto' }}>
             <button
@@ -120,12 +120,12 @@ export function InventoryCountClient({ shelf, rows }: Props) {
               className="btn ghost sm"
               onClick={resetAllToLogical}
               disabled={pending}
-              title="Riporta tutti i valori al logico"
+              title="Rivendos të gjitha vlerat në logjik"
             >
-              Resetta a logico
+              Rivendos logjikun
             </button>
             <Button type="button" onClick={handleSubmit} disabled={pending}>
-              {pending ? 'Salvo…' : 'Conferma rettifica'}
+              {pending ? 'Duke ruajtur…' : 'Konfirmo rregullimin'}
             </Button>
           </div>
         </div>
@@ -137,9 +137,9 @@ export function InventoryCountClient({ shelf, rows }: Props) {
             <tr>
               <th style={{ width: 56 }} />
               <th style={{ width: 130 }}>SKU</th>
-              <th>Prodotto</th>
-              <th style={{ width: 80, textAlign: 'right' }}>Logico</th>
-              <th style={{ width: 90, textAlign: 'right' }}>Prenot.</th>
+              <th>Produkti</th>
+              <th style={{ width: 80, textAlign: 'right' }}>Logjik</th>
+              <th style={{ width: 90, textAlign: 'right' }}>Rez.</th>
               <th style={{ width: 110, textAlign: 'right' }}>Reale</th>
               <th style={{ width: 80, textAlign: 'right' }}>Δ</th>
             </tr>
@@ -200,7 +200,7 @@ export function InventoryCountClient({ shelf, rows }: Props) {
                     {row.name}
                     {!row.isActive && (
                       <StokuBadge variant="draft" style={{ marginLeft: 8 }}>
-                        Disattivato
+                        Çaktivizuar
                       </StokuBadge>
                     )}
                   </td>

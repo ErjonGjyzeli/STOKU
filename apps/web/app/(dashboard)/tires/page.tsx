@@ -11,7 +11,7 @@ import { createClient } from '@/lib/supabase/server';
 import { TiresCreateButton } from './tires-create-button';
 import { TiresFilterBar, type TiresFilters } from './tires-filter-bar';
 
-export const metadata = { title: 'Pneumatici — STOKU' };
+export const metadata = { title: 'Gomat — STOKU' };
 
 const PAGE_SIZE = 25;
 
@@ -154,9 +154,9 @@ export default async function TiresPage({
   if (productsRes.error) {
     return (
       <div>
-        <PageHeader title="Pneumatici" />
+        <PageHeader title="Gomat" />
         <div style={{ padding: 24 }}>
-          <p style={{ color: 'var(--danger)' }}>Errore: {productsRes.error.message}</p>
+          <p style={{ color: 'var(--danger)' }}>Gabim: {productsRes.error.message}</p>
         </div>
       </div>
     );
@@ -224,11 +224,11 @@ export default async function TiresPage({
   return (
     <div>
       <PageHeader
-        title="Pneumatici"
+        title="Gomat"
         subtitle={
           total > 0
-            ? `${formatInt(total)} pneumatici · ${rangeFrom}–${rangeTo}`
-            : 'Nessun pneumatico trovato'
+            ? `${formatInt(total)} goma · ${rangeFrom}–${rangeTo}`
+            : 'Asnjë gomë e gjetur'
         }
         right={<TiresCreateButton categories={tireCategories} />}
       />
@@ -254,11 +254,11 @@ export default async function TiresPage({
           {products.length === 0 ? (
             <Empty
               icon="disc"
-              title={hasFilters ? 'Nessun pneumatico trovato' : 'Nessun pneumatico ancora'}
+              title={hasFilters ? 'Asnjë gomë e gjetur' : 'Asnjë gomë ende'}
               subtitle={
                 hasFilters
-                  ? 'Prova a rimuovere qualche filtro o cambiare misura.'
-                  : 'Aggiungi pneumatici da Inventario assegnando una categoria gomma (estive, invernali, 4 stagioni).'
+                  ? 'Provo të heqësh disa filtra ose të ndryshosh masën.'
+                  : 'Shto goma duke i caktuar kategorinë gomë (verore, dimërore, 4 stinë).'
               }
             />
           ) : (
@@ -267,13 +267,13 @@ export default async function TiresPage({
                 <tr>
                   <th style={{ width: 36 }} />
                   <th style={{ width: 110 }}>SKU</th>
-                  <th>Misura · Indici</th>
-                  <th>Marca / Modello</th>
-                  <th style={{ width: 60, textAlign: 'center' }}>Stagione</th>
+                  <th>Masa · Indekset</th>
+                  <th>Marka / Modeli</th>
+                  <th style={{ width: 60, textAlign: 'center' }}>Stina</th>
                   <th style={{ width: 80 }}>DOT</th>
                   <th style={{ width: 100 }}>Battistrada</th>
                   <th style={{ width: 60 }}>Tag</th>
-                  <th style={{ width: 100, textAlign: 'right' }}>Prezzo</th>
+                  <th style={{ width: 100, textAlign: 'right' }}>Çmimi</th>
                   <th style={{ width: 80, textAlign: 'right' }}>Disp.</th>
                 </tr>
               </thead>
@@ -435,7 +435,7 @@ export default async function TiresPage({
             style={{ justifyContent: 'space-between', alignItems: 'center', gap: 12 }}
           >
             <div className="meta" style={{ fontSize: 11 }}>
-              Pagina {page} di {totalPages}
+              Faqja {page} nga {totalPages}
             </div>
             <div className="row" style={{ gap: 6 }}>
               {page > 1 ? (
@@ -443,11 +443,11 @@ export default async function TiresPage({
                   href={`/tires${buildQuery(params, { page: String(page - 1) })}`}
                   className="btn ghost sm"
                 >
-                  <Icon name="chevronLeft" size={12} /> Precedente
+                  <Icon name="chevronLeft" size={12} /> Para
                 </Link>
               ) : (
                 <span className="btn ghost sm" aria-disabled="true" style={{ opacity: 0.4 }}>
-                  <Icon name="chevronLeft" size={12} /> Precedente
+                  <Icon name="chevronLeft" size={12} /> Para
                 </span>
               )}
               {page < totalPages ? (
@@ -455,11 +455,11 @@ export default async function TiresPage({
                   href={`/tires${buildQuery(params, { page: String(page + 1) })}`}
                   className="btn ghost sm"
                 >
-                  Successiva <Icon name="chevronRight" size={12} />
+                  Pas <Icon name="chevronRight" size={12} />
                 </Link>
               ) : (
                 <span className="btn ghost sm" aria-disabled="true" style={{ opacity: 0.4 }}>
-                  Successiva <Icon name="chevronRight" size={12} />
+                  Pas <Icon name="chevronRight" size={12} />
                 </span>
               )}
             </div>
@@ -474,7 +474,7 @@ function SeasonIcon({ season }: { season: 'summer' | 'winter' | 'allseason' | nu
   if (season === 'summer') {
     return (
       <span
-        title="Estive"
+        title="Verore"
         style={{
           width: 18,
           height: 18,
@@ -494,7 +494,7 @@ function SeasonIcon({ season }: { season: 'summer' | 'winter' | 'allseason' | nu
   if (season === 'winter') {
     return (
       <span
-        title="Invernali"
+        title="Dimërore"
         style={{
           width: 18,
           height: 18,
@@ -514,7 +514,7 @@ function SeasonIcon({ season }: { season: 'summer' | 'winter' | 'allseason' | nu
   if (season === 'allseason') {
     return (
       <span
-        title="4 Stagioni"
+        title="4 Stinë"
         style={{
           width: 18,
           height: 18,

@@ -81,12 +81,12 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
 
   async function handleAdd() {
     if (!selectedProductId) {
-      toast.error('Seleziona un prodotto');
+      toast.error('Zgjidh një produkt');
       return;
     }
     const qtyNum = Number(qty);
     if (!Number.isInteger(qtyNum) || qtyNum <= 0) {
-      toast.error('Quantità deve essere intero > 0');
+      toast.error('Sasia duhet të jetë numër i plotë > 0');
       return;
     }
     setSubmitting(true);
@@ -97,31 +97,31 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
     });
     setSubmitting(false);
     if (!res.ok) {
-      toast.error('Aggiunta fallita', { description: res.error });
+      toast.error('Shtimi dështoi', { description: res.error });
       return;
     }
-    toast.success('Riga aggiunta');
+    toast.success('Rreshti u shtua');
     setSelectedProductId('');
     setProductQuery('');
     setQty('1');
   }
 
   function handleRemove(itemId: string) {
-    if (!confirm('Rimuovere la riga?')) return;
+    if (!confirm('Të hiqet rreshti?')) return;
     startTransition(async () => {
       const res = await removeTransferItem(transfer.id, itemId);
       if (!res.ok) {
-        toast.error('Errore', { description: res.error });
+        toast.error('Gabim', { description: res.error });
         return;
       }
-      toast.success('Riga rimossa');
+      toast.success('Rreshti u hoq');
     });
   }
 
   function handleTransition(next: TransferTransitionStatus) {
     const msg =
       next === 'cancelled'
-        ? `Annullare trasferimento ${transfer.transfer_number}?`
+        ? `Të anulohet transferimi ${transfer.transfer_number}?`
         : `${STATUS_ACTION_LABEL[next] ?? next}?`;
     if (!confirm(msg)) return;
     startTransition(async () => {
@@ -130,7 +130,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
         new_status: next,
       });
       if (!res.ok) {
-        toast.error('Transizione fallita', { description: res.error });
+        toast.error('Tranzicioni dështoi', { description: res.error });
         return;
       }
       toast.success(`→ ${STATUS_LABEL[next] ?? next}`);
@@ -140,7 +140,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
   function handleReceivedChange(itemId: string, raw: string) {
     const qtyNum = Number(raw);
     if (!Number.isInteger(qtyNum) || qtyNum < 0) {
-      toast.error('Quantità ricevuta non valida');
+      toast.error('Sasia e marrë e pavlefshme');
       return;
     }
     startTransition(async () => {
@@ -149,7 +149,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
         quantity_received: qtyNum,
       });
       if (!res.ok) {
-        toast.error('Errore', { description: res.error });
+        toast.error('Gabim', { description: res.error });
       }
     });
   }
@@ -157,7 +157,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
   return (
     <div className="col" style={{ gap: 16 }}>
       <Panel
-        title={`Righe trasferimento (${items.length})`}
+        title={`Rreshtat e transferimit (${items.length})`}
         padded={false}
         right={
           <StokuBadge variant={STATUS_VARIANT[transfer.status] ?? 'default'}>
@@ -168,11 +168,11 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
         {items.length === 0 ? (
           <Empty
             icon="transfer"
-            title="Nessun articolo"
+            title="Asnjë artikull"
             subtitle={
               isDraft
-                ? 'Aggiungi il primo articolo dal modulo qui sotto.'
-                : 'Trasferimento senza righe.'
+                ? 'Shto artikullin e parë nga formulari më poshtë.'
+                : 'Transferim pa rreshta.'
             }
           />
         ) : (
@@ -180,10 +180,10 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
             <thead>
               <tr>
                 <th style={{ width: 130 }}>SKU</th>
-                <th>Nome</th>
-                <th style={{ width: 90, textAlign: 'right' }}>Inviati</th>
+                <th>Emri</th>
+                <th style={{ width: 90, textAlign: 'right' }}>Dërguar</th>
                 {(isInTransit || transfer.status === 'completed') && (
-                  <th style={{ width: 120, textAlign: 'right' }}>Ricevuti</th>
+                  <th style={{ width: 120, textAlign: 'right' }}>Marrë</th>
                 )}
                 {isDraft && <th style={{ width: 40 }} />}
               </tr>
@@ -232,8 +232,8 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
                           style={{ width: 24, padding: 0, justifyContent: 'center' }}
                           onClick={() => handleRemove(it.id)}
                           disabled={pending}
-                          title="Rimuovi"
-                          aria-label="Rimuovi riga"
+                          title="Hiq"
+                          aria-label="Hiq rreshtin"
                         >
                           <Icon name="trash" size={12} />
                         </button>
@@ -248,13 +248,13 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
       </Panel>
 
       {isDraft && (
-        <Panel title="Aggiungi articolo">
+        <Panel title="Shto artikull">
           <div className="col" style={{ gap: 10 }}>
             <div className="stoku-input" style={{ height: 32 }}>
               <Icon name="search" size={13} />
               <input
                 type="search"
-                placeholder="Cerca…"
+                placeholder="Kërko…"
                 value={productQuery}
                 onChange={(e) => {
                   setProductQuery(e.target.value);
@@ -274,7 +274,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
               >
                 {filtered.length === 0 ? (
                   <div style={{ padding: 12, color: 'var(--ink-3)', fontSize: 11 }}>
-                    Nessun prodotto
+                    Asnjë produkt
                   </div>
                 ) : (
                   <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
@@ -313,7 +313,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
             <div className="row" style={{ gap: 10, alignItems: 'flex-end' }}>
               <div className="col" style={{ gap: 4, width: 100 }}>
                 <span className="meta" style={{ fontSize: 10 }}>
-                  QTA
+                  SASI
                 </span>
                 <Input
                   type="number"
@@ -327,7 +327,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
                 onClick={handleAdd}
                 disabled={submitting || !selectedProductId}
               >
-                {submitting ? 'Aggiungo…' : 'Aggiungi riga'}
+                {submitting ? 'Duke shtuar…' : 'Shto rresht'}
               </Button>
             </div>
           </div>
@@ -335,7 +335,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
       )}
 
       {nextStatuses.length > 0 && (
-        <Panel title="Azioni">
+        <Panel title="Veprimet">
           <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
             {nextStatuses.map((s) => {
               const destructive = s === 'cancelled';
@@ -359,7 +359,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
           </div>
           {isDraft && items.length === 0 && (
             <div className="meta" style={{ fontSize: 11, marginTop: 6 }}>
-              Aggiungi almeno una riga per poter spedire.
+              Shto të paktën një rresht për të dërguar.
             </div>
           )}
         </Panel>
@@ -367,7 +367,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
 
       <div className="row" style={{ gap: 8 }}>
         <Link href="/transfers" className="btn ghost sm">
-          Torna ai trasferimenti
+          Kthehu te transferimet
         </Link>
       </div>
     </div>

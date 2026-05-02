@@ -15,23 +15,23 @@ export function ProductsCreateButton({ categories }: { categories: Category[] })
   async function handleSubmit(values: ProductInput) {
     const res = await createProduct(values);
     if (!res.ok) {
-      toast.error('Creazione fallita', { description: res.error });
+      toast.error('Krijimi dështoi', { description: res.error });
       return false;
     }
-    toast.success('Prodotto creato');
+    toast.success('Produkti u krijua');
     return true;
   }
 
   return (
     <>
       <StokuButton icon="plus" variant="primary" onClick={() => setOpen(true)}>
-        Nuovo prodotto
+        Produkt i ri
       </StokuButton>
       <ProductFormDialog
         open={open}
         onOpenChange={setOpen}
         onSubmit={handleSubmit}
-        title="Nuovo prodotto"
+        title="Produkt i ri"
         categories={categories}
       />
     </>

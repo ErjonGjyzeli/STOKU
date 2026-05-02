@@ -30,7 +30,7 @@ export function TransferCreateButton({ stores, defaultFromStoreId }: Props) {
   return (
     <>
       <StokuButton icon="plus" variant="primary" onClick={() => setOpen(true)}>
-        <span>Nuovo trasferimento</span>
+        <span>Transferim i ri</span>
       </StokuButton>
       <TransferFormDialog
         open={open}

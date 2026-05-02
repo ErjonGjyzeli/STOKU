@@ -27,9 +27,9 @@ type StoreRow = {
 };
 
 const TYPE_LABEL: Record<string, string> = {
-  shop: 'Negozio',
-  warehouse: 'Magazzino',
-  mixed: 'Misto',
+  shop: 'Dyqan',
+  warehouse: 'Magazina',
+  mixed: 'Miks',
 };
 
 export function StoresClient({ stores }: { stores: StoreRow[] }) {
@@ -40,29 +40,29 @@ export function StoresClient({ stores }: { stores: StoreRow[] }) {
   function handleToggle(store: StoreRow) {
     startTransition(async () => {
       const res = await toggleStoreActive(store.id, !store.is_active);
-      if (!res.ok) toast.error('Errore', { description: res.error });
-      else toast.success(store.is_active ? 'Disattivato' : 'Attivato');
+      if (!res.ok) toast.error('Gabim', { description: res.error });
+      else toast.success(store.is_active ? 'Çaktivizuar' : 'Aktivizuar');
     });
   }
 
   async function handleSubmit(values: StoreInput, id?: number) {
     const res = id ? await updateStore(id, values) : await createStore(values);
     if (!res.ok) {
-      toast.error('Errore', { description: res.error });
+      toast.error('Gabim', { description: res.error });
       return false;
     }
-    toast.success(id ? 'Punto vendita aggiornato' : 'Punto vendita creato');
+    toast.success(id ? 'Pika e shitjes u përditësua' : 'Pika e shitjes u krijua');
     return true;
   }
 
   return (
     <div>
       <PageHeader
-        title="Punti vendita"
-        subtitle={`${stores.length} configurati · Negozi, magazzini e punti misti`}
+        title="Pikat e shitjes"
+        subtitle={`${stores.length} të konfiguruara · Dyqane, magazina dhe pika miks`}
         right={
           <StokuButton icon="plus" variant="primary" onClick={() => setCreating(true)}>
-            Nuovo punto
+            Pikë e re
           </StokuButton>
         }
       />
@@ -72,11 +72,11 @@ export function StoresClient({ stores }: { stores: StoreRow[] }) {
           {stores.length === 0 ? (
             <Empty
               icon="store"
-              title="Nessun punto vendita"
-              subtitle="Crea il primo punto vendita per iniziare."
+              title="Asnjë pikë shitjeje"
+              subtitle="Krijo pikën e parë të shitjes për të filluar."
               action={
                 <StokuButton icon="plus" variant="primary" onClick={() => setCreating(true)}>
-                  Crea punto vendita
+                  Krijo
                 </StokuButton>
               }
             />
@@ -84,12 +84,12 @@ export function StoresClient({ stores }: { stores: StoreRow[] }) {
             <table className="tbl">
               <thead>
                 <tr>
-                  <th style={{ width: 90 }}>Codice</th>
-                  <th>Nome</th>
-                  <th style={{ width: 140 }}>Città</th>
-                  <th style={{ width: 140 }}>Tipo</th>
-                  <th style={{ width: 110 }}>Stato</th>
-                  <th style={{ width: 160 }}>Telefono</th>
+                  <th style={{ width: 90 }}>Kodi</th>
+                  <th>Emri</th>
+                  <th style={{ width: 140 }}>Qyteti</th>
+                  <th style={{ width: 140 }}>Tipi</th>
+                  <th style={{ width: 110 }}>Statusi</th>
+                  <th style={{ width: 160 }}>Telefoni</th>
                   <th style={{ width: 90 }} />
                 </tr>
               </thead>
@@ -111,10 +111,10 @@ export function StoresClient({ stores }: { stores: StoreRow[] }) {
                     <td>
                       {store.is_active ? (
                         <StokuBadge variant="ok" dot>
-                          Attivo
+                          Aktiv
                         </StokuBadge>
                       ) : (
-                        <StokuBadge variant="draft">Disattivato</StokuBadge>
+                        <StokuBadge variant="draft">Çaktivizuar</StokuBadge>
                       )}
                     </td>
                     <td className="mono" style={{ fontSize: 10 }}>
@@ -127,8 +127,8 @@ export function StoresClient({ stores }: { stores: StoreRow[] }) {
                           className="btn ghost sm"
                           style={{ width: 24, padding: 0, justifyContent: 'center' }}
                           onClick={() => setEditing(store)}
-                          title="Modifica"
-                          aria-label="Modifica"
+                          title="Modifiko"
+                          aria-label="Modifiko"
                         >
                           <Icon name="edit" size={12} />
                         </button>
@@ -138,8 +138,8 @@ export function StoresClient({ stores }: { stores: StoreRow[] }) {
                           style={{ width: 24, padding: 0, justifyContent: 'center' }}
                           onClick={() => handleToggle(store)}
                           disabled={pending}
-                          title={store.is_active ? 'Disattiva' : 'Attiva'}
-                          aria-label={store.is_active ? 'Disattiva' : 'Attiva'}
+                          title={store.is_active ? 'Çaktivizo' : 'Aktivo'}
+                          aria-label={store.is_active ? 'Çaktivizo' : 'Aktivo'}
                         >
                           <Icon name="ring" size={12} />
                         </button>
@@ -157,14 +157,14 @@ export function StoresClient({ stores }: { stores: StoreRow[] }) {
         open={creating}
         onOpenChange={setCreating}
         onSubmit={handleSubmit}
-        title="Nuovo punto vendita"
+        title="Pikë e re shitjeje"
       />
       {editing && (
         <StoreFormDialog
           open={!!editing}
           onOpenChange={(o) => !o && setEditing(null)}
           onSubmit={(values) => handleSubmit(values, editing.id)}
-          title={`Modifica ${editing.code}`}
+          title={`Modifiko ${editing.code}`}
           initial={{
             code: editing.code,
             name: editing.name,

@@ -40,18 +40,18 @@ type SearchResults = {
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  draft: 'Bozza',
-  confirmed: 'Confermato',
-  paid: 'Pagato',
-  shipped: 'Spedito',
-  completed: 'Completato',
-  cancelled: 'Annullato',
+  draft: 'Draft',
+  confirmed: 'Konfirmuar',
+  paid: 'Paguar',
+  shipped: 'Dërguar',
+  completed: 'Kompletuar',
+  cancelled: 'Anuluar',
 };
 
 const SEASON_LABELS: Record<string, string> = {
-  'tires-summer': 'Estiva',
-  'tires-winter': 'Invernale',
-  'tires-allseason': '4 Stagioni',
+  'tires-summer': 'Verore',
+  'tires-winter': 'Dimërore',
+  'tires-allseason': '4 Stinë',
 };
 
 type ResultItem = {
@@ -66,9 +66,9 @@ type ResultItem = {
 
 const ROLE_LABELS: Record<string, string> = {
   admin: 'Admin',
-  sales: 'Vendita',
-  warehouse: 'Magazzino',
-  viewer: 'Visualizzatore',
+  sales: 'Shitje',
+  warehouse: 'Magazina',
+  viewer: 'Vëzhgues',
 };
 
 function buildItems(results: SearchResults): ResultItem[] {
@@ -91,7 +91,7 @@ function buildItems(results: SearchResults): ResultItem[] {
         icon: 'disc',
         primary: size,
         secondary: sub || null,
-        type: 'Pneumatico',
+        type: 'Gomë',
         typeColor: 'var(--color-blue, #3b82f6)',
       });
     } else {
@@ -101,7 +101,7 @@ function buildItems(results: SearchResults): ResultItem[] {
         icon: 'box',
         primary: p.name,
         secondary: p.sku,
-        type: 'Prodotto',
+        type: 'Produkt',
         typeColor: 'var(--color-green, #22c55e)',
       });
     }
@@ -114,7 +114,7 @@ function buildItems(results: SearchResults): ResultItem[] {
       icon: 'user',
       primary: c.name,
       secondary: c.code ?? null,
-      type: 'Cliente',
+      type: 'Klient',
       typeColor: 'var(--color-orange, #f97316)',
     });
   }
@@ -129,7 +129,7 @@ function buildItems(results: SearchResults): ResultItem[] {
       icon: 'cart',
       primary: o.order_number,
       secondary: sub || null,
-      type: 'Ordine',
+      type: 'Porosi',
       typeColor: 'var(--ink-4)',
     });
   }
@@ -141,7 +141,7 @@ function buildItems(results: SearchResults): ResultItem[] {
       icon: 'users',
       primary: s.full_name ?? s.email,
       secondary: [ROLE_LABELS[s.role] ?? s.role, s.email].filter(Boolean).join(' · '),
-      type: 'Utente',
+      type: 'Përdorues',
       typeColor: 'var(--ink-4)',
     });
   }
@@ -154,7 +154,7 @@ function buildItems(results: SearchResults): ResultItem[] {
       icon: 'building',
       primary: sh.code,
       secondary: [sh.description, store?.code].filter(Boolean).join(' · '),
-      type: 'Scaffale',
+      type: 'Raft',
       typeColor: 'var(--ink-4)',
     });
   }
@@ -166,7 +166,7 @@ function buildItems(results: SearchResults): ResultItem[] {
       icon: 'store',
       primary: st.name,
       secondary: st.code,
-      type: 'Punto vendita',
+      type: 'Pikë shitjeje',
       typeColor: 'var(--ink-4)',
     });
   }
@@ -261,7 +261,7 @@ export function SearchModal({ initialQ, onClose }: Props) {
             type="text"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Cerca…"
+            placeholder="Kërko…"
             style={{
               flex: 1,
               background: 'transparent',
@@ -296,13 +296,13 @@ export function SearchModal({ initialQ, onClose }: Props) {
         <div style={{ overflowY: 'auto', flex: 1, padding: '6px 0' }}>
           {q.trim().length < 2 && (
             <div style={{ padding: '24px 16px', textAlign: 'center', fontSize: 10, color: 'var(--ink-4)' }}>
-              Digita per cercare
+              Shkruani për të kërkuar
             </div>
           )}
 
           {q.trim().length >= 2 && !loading && items.length === 0 && (
             <div style={{ padding: '24px 16px', textAlign: 'center', fontSize: 10, color: 'var(--ink-4)' }}>
-              Nessun risultato per <strong>"{q}"</strong>
+              Asnjë rezultat për <strong>"{q}"</strong>
             </div>
           )}
 

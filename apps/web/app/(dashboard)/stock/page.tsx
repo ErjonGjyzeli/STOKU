@@ -10,15 +10,15 @@ import { requireSession } from '@/lib/auth/session';
 import { formatInt } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 
-export const metadata = { title: 'Magazzino — STOKU' };
+export const metadata = { title: 'Magazina — STOKU' };
 
 const PAGE_SIZE = 50;
 
 const KIND_LABEL: Record<string, string> = {
-  open: 'Aperto',
-  cabinet: 'Armadio',
-  drawer: 'Cassettiera',
-  floor: 'Pavimento',
+  open: 'I hapur',
+  cabinet: 'Kabineti',
+  drawer: 'Sirtarët',
+  floor: 'Dyshemeja',
 };
 
 type SearchParams = {
@@ -90,7 +90,7 @@ export default async function StockPage({
   ]);
 
   if (stockRes.error) {
-    return <p style={{ padding: 24, color: 'var(--danger)' }}>Errore: {stockRes.error.message}</p>;
+    return <p style={{ padding: 24, color: 'var(--danger)' }}>Gabim: {stockRes.error.message}</p>;
   }
 
   let rows = stockRes.data ?? [];
@@ -115,16 +115,16 @@ export default async function StockPage({
   return (
     <div>
       <PageHeader
-        title="Magazzino"
+        title="Magazina"
         subtitle={
           total > 0
-            ? `${formatInt(total)} righe stock · pagina ${page}/${totalPages}`
-            : 'Nessuna giacenza — le righe appaiono dopo il primo movimento'
+            ? `${formatInt(total)} rreshta stoku · faqja ${page}/${totalPages}`
+            : 'Asnjë gjendje — rreshtat shfaqen pas lëvizjes së parë'
         }
         right={
           session.profile.role === 'admin' ? (
             <Link href="/settings/stores" className="btn ghost sm">
-              <Icon name="store" size={12} /> Gestisci PdV
+              <Icon name="store" size={12} /> Menaxho PV
             </Link>
           ) : undefined
         }
@@ -146,16 +146,16 @@ export default async function StockPage({
             type="search"
             name="q"
             defaultValue={q}
-            placeholder="Cerca…"
+            placeholder="Kërko…"
             autoComplete="off"
           />
         </div>
         <label className="row" style={{ gap: 6, fontSize: 11, padding: '5px 10px', border: '1px solid var(--stoku-border)', borderRadius: 'var(--r-md)', cursor: 'pointer', background: lowOnly ? 'var(--stoku-accent-bg)' : 'transparent', color: lowOnly ? 'var(--stoku-accent)' : 'inherit' }}>
           <input type="checkbox" name="low" value="1" defaultChecked={lowOnly} />
-          Solo stock basso
+          Vetëm stok i ulët
         </label>
         <span className="meta" style={{ fontSize: 10, marginLeft: 'auto' }}>
-          {formatInt(total)} righe
+          {formatInt(total)} rreshta
         </span>
         <button type="submit" className="btn ghost sm">
           <Icon name="filter" size={12} />
@@ -171,19 +171,19 @@ export default async function StockPage({
         <div className="grid-side">
           {/* Scaffali */}
           <Panel
-            title={`Scaffali${shelves.length > 0 ? ` (${shelves.length})` : ''}`}
+            title={`Raftet${shelves.length > 0 ? ` (${shelves.length})` : ''}`}
             padded={false}
             right={
               <Link href="/shelves" className="btn ghost sm">
-                Gestisci
+                Menaxho
               </Link>
             }
           >
             {shelves.length === 0 ? (
               <Empty
                 icon="shelves"
-                title="Nessuno scaffale"
-                subtitle="Crea scaffali da /shelves."
+                title="Asnjë raft"
+                subtitle="Krijo raftet nga /shelves."
               />
             ) : (
               <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
@@ -260,11 +260,11 @@ export default async function StockPage({
             {rows.length === 0 ? (
               <Empty
                 icon="building"
-                title={activeFilters > 0 ? 'Nessun risultato' : 'Nessuna giacenza'}
+                title={activeFilters > 0 ? 'Asnjë rezultat' : 'Asnjë gjendje stoku'}
                 subtitle={
                   activeFilters > 0
-                    ? 'Prova a resettare i filtri.'
-                    : 'Le righe stock compaiono al primo carico o movimento.'
+                    ? 'Provo të rivendosësh filtrat.'
+                    : 'Rreshtat e stokut shfaqen pas ngarkimit ose lëvizjes së parë.'
                 }
               />
             ) : (
@@ -272,14 +272,14 @@ export default async function StockPage({
                 <table className="tbl">
                   <thead>
                     <tr>
-                      <th style={{ width: 90 }}>Store</th>
+                      <th style={{ width: 90 }}>PV</th>
                       <th style={{ width: 110 }}>SKU</th>
-                      <th>Prodotto</th>
-                      <th style={{ width: 70, textAlign: 'right' }}>Qta</th>
-                      <th style={{ width: 80, textAlign: 'right' }}>Prenot.</th>
+                      <th>Produkti</th>
+                      <th style={{ width: 70, textAlign: 'right' }}>Sasi</th>
+                      <th style={{ width: 80, textAlign: 'right' }}>Rezerv.</th>
                       <th style={{ width: 70, textAlign: 'right' }}>Disp.</th>
-                      <th style={{ width: 70, textAlign: 'right' }}>Soglia</th>
-                      <th style={{ width: 100 }}>Posizione</th>
+                      <th style={{ width: 70, textAlign: 'right' }}>Kuota</th>
+                      <th style={{ width: 100 }}>Pozicioni</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -308,7 +308,7 @@ export default async function StockPage({
                             )}
                             {r.product?.is_active === false && (
                               <StokuBadge variant="draft" style={{ marginLeft: 8 }}>
-                                Disattivato
+                                Çaktivizuar
                               </StokuBadge>
                             )}
                           </td>
@@ -348,7 +348,7 @@ export default async function StockPage({
                 style={{ justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px' }}
               >
                 <div className="meta" style={{ fontSize: 11 }}>
-                  Pagina {page} di {totalPages}
+                  Faqja {page} nga {totalPages}
                 </div>
                 <div className="row" style={{ gap: 6 }}>
                   {page > 1 ? (
@@ -356,11 +356,11 @@ export default async function StockPage({
                       href={`/stock${buildQuery(params, { page: String(page - 1) })}`}
                       className="btn ghost sm"
                     >
-                      <Icon name="chevronLeft" size={12} /> Precedente
+                      <Icon name="chevronLeft" size={12} /> Para
                     </Link>
                   ) : (
                     <span className="btn ghost sm" aria-disabled="true" style={{ opacity: 0.4 }}>
-                      <Icon name="chevronLeft" size={12} /> Precedente
+                      <Icon name="chevronLeft" size={12} /> Para
                     </span>
                   )}
                   {page < totalPages ? (
@@ -368,11 +368,11 @@ export default async function StockPage({
                       href={`/stock${buildQuery(params, { page: String(page + 1) })}`}
                       className="btn ghost sm"
                     >
-                      Successiva <Icon name="chevronRight" size={12} />
+                      Pas <Icon name="chevronRight" size={12} />
                     </Link>
                   ) : (
                     <span className="btn ghost sm" aria-disabled="true" style={{ opacity: 0.4 }}>
-                      Successiva <Icon name="chevronRight" size={12} />
+                      Pas <Icon name="chevronRight" size={12} />
                     </span>
                   )}
                 </div>

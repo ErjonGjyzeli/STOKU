@@ -10,18 +10,18 @@ export type ActionResult<T = unknown> = { ok: true; data: T } | { ok: false; err
 
 const draftSchema = z
   .object({
-    from_store_id: z.coerce.number().int().positive('Seleziona origine'),
-    to_store_id: z.coerce.number().int().positive('Seleziona destinazione'),
+    from_store_id: z.coerce.number().int().positive('Zgjidh origjinën'),
+    to_store_id: z.coerce.number().int().positive('Zgjidh destinacionin'),
     notes: z.string().trim().max(2000).optional().or(z.literal('')),
   })
   .refine((v) => v.from_store_id !== v.to_store_id, {
-    message: 'Origine e destinazione devono essere diversi',
+    message: 'Origjina dhe destinacioni duhet të jenë të ndryshëm',
   });
 
 const itemSchema = z.object({
   transfer_id: z.string().uuid(),
   product_id: z.string().uuid(),
-  quantity: z.coerce.number().int().positive('Quantità > 0'),
+  quantity: z.coerce.number().int().positive('Sasia > 0'),
 });
 
 const transitionSchema = z.object({
@@ -48,7 +48,7 @@ export async function createDraftTransfer(
   const session = await requireSession();
   const parsed = draftSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Dati non validi' };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Të dhëna të pavlefshme' };
   }
   const transferNumber = await generateTransferNumber();
   const supabase = await createClient();
@@ -75,7 +75,7 @@ export async function addTransferItem(
   await requireSession();
   const parsed = itemSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Dati non validi' };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Të dhëna të pavlefshme' };
   }
 
   const supabase = await createClient();
@@ -87,10 +87,10 @@ export async function addTransferItem(
     .eq('id', parsed.data.transfer_id)
     .single();
   if (tErr || !transfer) {
-    return { ok: false, error: tErr?.message ?? 'Trasferimento non trovato' };
+    return { ok: false, error: tErr?.message ?? 'Transferimi nuk u gjet' };
   }
   if (transfer.status !== 'draft') {
-    return { ok: false, error: `Trasferimento ${transfer.status}: aggiungi solo in bozza` };
+    return { ok: false, error: `Transferim ${transfer.status}: shto vetëm në draft` };
   }
 
   // Verifica disponibilità allo store di origine (il trigger F1 decrementa
@@ -105,7 +105,7 @@ export async function addTransferItem(
   if (parsed.data.quantity > available) {
     return {
       ok: false,
-      error: `Quantità richiesta ${parsed.data.quantity} > disponibile ${available} a origine`,
+      error: `Sasia e kërkuar ${parsed.data.quantity} > e disponueshme ${available} në origjinë`,
     };
   }
 
@@ -133,9 +133,9 @@ export async function removeTransferItem(
     .select('status')
     .eq('id', transferId)
     .single();
-  if (!t) return { ok: false, error: 'Trasferimento non trovato' };
+  if (!t) return { ok: false, error: 'Transferimi nuk u gjet' };
   if (t.status !== 'draft') {
-    return { ok: false, error: `Trasferimento ${t.status}: rimuovi solo in bozza` };
+    return { ok: false, error: `Transferim ${t.status}: hiq vetëm në draft` };
   }
   const { error } = await supabase.from('stock_transfer_items').delete().eq('id', itemId);
   if (error) return { ok: false, error: error.message };
@@ -149,7 +149,7 @@ export async function transitionTransferStatus(
   await requireSession();
   const parsed = transitionSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Dati non validi' };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Të dhëna të pavlefshme' };
   }
   const supabase = await createClient();
   const { data: t, error: readErr } = await supabase
@@ -158,13 +158,13 @@ export async function transitionTransferStatus(
     .eq('id', parsed.data.transfer_id)
     .single();
   if (readErr || !t) {
-    return { ok: false, error: readErr?.message ?? 'Trasferimento non trovato' };
+    return { ok: false, error: readErr?.message ?? 'Transferimi nuk u gjet' };
   }
   const allowed = ALLOWED_TRANSITIONS[t.status] ?? [];
   if (!allowed.includes(parsed.data.new_status)) {
     return {
       ok: false,
-      error: `Transizione ${t.status} → ${parsed.data.new_status} non consentita`,
+      error: `Tranzicion ${t.status} → ${parsed.data.new_status} nuk lejohet`,
     };
   }
 
@@ -193,7 +193,7 @@ export async function setItemQuantityReceived(
   await requireSession();
   const parsed = quantityReceivedSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Dati non validi' };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Të dhëna të pavlefshme' };
   }
   const supabase = await createClient();
 
@@ -203,16 +203,16 @@ export async function setItemQuantityReceived(
     .select('transfer_id, quantity, transfer:stock_transfers(status)')
     .eq('id', parsed.data.item_id)
     .single();
-  if (!item) return { ok: false, error: 'Riga non trovata' };
+  if (!item) return { ok: false, error: 'Rreshti nuk u gjet' };
   const transfer = item.transfer as unknown as { status: string } | null;
   if (!transfer || transfer.status !== 'in_transit') {
     return {
       ok: false,
-      error: 'Quantità ricevuta editabile solo quando il trasferimento è in transito',
+      error: 'Sasia e marrë editohet vetëm kur transferimi është në tranzit',
     };
   }
   if (parsed.data.quantity_received > item.quantity) {
-    return { ok: false, error: `Ricevuto > inviato (${item.quantity})` };
+    return { ok: false, error: `Marrë > dërguar (${item.quantity})` };
   }
 
   const { error } = await supabase

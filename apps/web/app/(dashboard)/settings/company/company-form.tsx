@@ -44,17 +44,17 @@ export function CompanyForm({ initial }: { initial: CompanyFormValues }) {
     const res = await upsertCompanySettings(payload);
     setSubmitting(false);
     if (!res.ok) {
-      toast.error('Salvataggio fallito', { description: res.error });
+      toast.error('Ruajtja dështoi', { description: res.error });
       return;
     }
-    toast.success('Dati azienda salvati');
+    toast.success('Të dhënat e kompanisë u ruajtën');
   }
 
   return (
     <form onSubmit={onSubmit} className="col" style={{ gap: 16 }}>
-      <Panel title="Anagrafica legale">
+      <Panel title="Të dhënat ligjore">
         <div className="col" style={{ gap: 12 }}>
-          <Field label="Ragione sociale *">
+          <Field label="Emri ligjor *">
             <Input
               value={values.legal_name}
               onChange={(e) => set('legal_name', e.target.value)}
@@ -70,7 +70,7 @@ export function CompanyForm({ initial }: { initial: CompanyFormValues }) {
                 placeholder="L12345678A"
               />
             </Field>
-            <Field label="Codice fiscale">
+            <Field label="Kodi fiskal">
               <Input
                 value={values.tax_code}
                 onChange={(e) => set('tax_code', e.target.value)}
@@ -80,25 +80,25 @@ export function CompanyForm({ initial }: { initial: CompanyFormValues }) {
         </div>
       </Panel>
 
-      <Panel title="Sede">
+      <Panel title="Selia">
         <div className="col" style={{ gap: 12 }}>
-          <Field label="Indirizzo">
+          <Field label="Adresa">
             <Input
               value={values.address_line1}
               onChange={(e) => set('address_line1', e.target.value)}
             />
           </Field>
           <div className="grid grid-cols-3 gap-3">
-            <Field label="CAP">
+            <Field label="Kodi postar">
               <Input
                 value={values.postal_code}
                 onChange={(e) => set('postal_code', e.target.value)}
               />
             </Field>
-            <Field label="Città">
+            <Field label="Qyteti">
               <Input value={values.city} onChange={(e) => set('city', e.target.value)} />
             </Field>
-            <Field label="Paese (ISO 2)">
+            <Field label="Shteti (ISO 2)">
               <Input
                 value={values.country}
                 onChange={(e) => set('country', e.target.value.toUpperCase())}
@@ -108,7 +108,7 @@ export function CompanyForm({ initial }: { initial: CompanyFormValues }) {
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Telefono">
+            <Field label="Telefoni">
               <Input value={values.phone} onChange={(e) => set('phone', e.target.value)} />
             </Field>
             <Field label="Email">
@@ -122,13 +122,13 @@ export function CompanyForm({ initial }: { initial: CompanyFormValues }) {
         </div>
       </Panel>
 
-      <Panel title="Bancario">
+      <Panel title="Bankare">
         <div className="col" style={{ gap: 12 }}>
           <div className="grid grid-cols-2 gap-3">
             <Field label="IBAN">
               <Input value={values.iban} onChange={(e) => set('iban', e.target.value)} />
             </Field>
-            <Field label="Banca">
+            <Field label="Banka">
               <Input
                 value={values.bank_name}
                 onChange={(e) => set('bank_name', e.target.value)}
@@ -138,10 +138,10 @@ export function CompanyForm({ initial }: { initial: CompanyFormValues }) {
         </div>
       </Panel>
 
-      <Panel title="Fatturazione">
+      <Panel title="Faturimi">
         <div className="col" style={{ gap: 12 }}>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="IVA di default (%)">
+            <Field label="TVSH e parazgjedhur (%)">
               <Input
                 inputMode="decimal"
                 value={values.default_tax_rate}
@@ -157,14 +157,14 @@ export function CompanyForm({ initial }: { initial: CompanyFormValues }) {
               />
             </Field>
           </div>
-          <Field label="Footer fattura (note legali, contatti)">
+          <Field label="Footer fature (shënime ligjore, kontakte)">
             <textarea
               className="stoku-input"
               style={{ minHeight: 80, padding: 8, width: '100%', resize: 'vertical' }}
               rows={3}
               value={values.invoice_footer}
               onChange={(e) => set('invoice_footer', e.target.value)}
-              placeholder="Azienda iscritta al registro…"
+              placeholder="Kompania e regjistruar në regjistër…"
             />
           </Field>
         </div>
@@ -172,7 +172,7 @@ export function CompanyForm({ initial }: { initial: CompanyFormValues }) {
 
       <div className="row" style={{ gap: 8 }}>
         <StokuButton type="submit" variant="primary" icon="check" disabled={submitting}>
-          {submitting ? 'Salvataggio…' : 'Salva'}
+          {submitting ? 'Duke ruajtur…' : 'Ruaj'}
         </StokuButton>
       </div>
     </form>

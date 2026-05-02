@@ -2,7 +2,7 @@ import { requireAdmin } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { UsersClient, type StaffRow, type StoreLite } from './users-client';
 
-export const metadata = { title: 'Utenti staff — STOKU' };
+export const metadata = { title: 'Stafi — STOKU' };
 
 export default async function UsersSettingsPage() {
   await requireAdmin();
@@ -20,7 +20,7 @@ export default async function UsersSettingsPage() {
 
   if (staffErr || storesErr) {
     return (
-      <p className="text-destructive text-sm">Errore: {staffErr?.message || storesErr?.message}</p>
+      <p className="text-destructive text-sm">Gabim: {staffErr?.message || storesErr?.message}</p>
     );
   }
 

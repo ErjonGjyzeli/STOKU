@@ -15,23 +15,23 @@ export function TiresCreateButton({ categories }: { categories: Category[] }) {
   async function handleSubmit(values: TireInput) {
     const res = await createTire(values);
     if (!res.ok) {
-      toast.error('Creazione fallita', { description: res.error });
+      toast.error('Krijimi dështoi', { description: res.error });
       return false;
     }
-    toast.success('Pneumatico creato');
+    toast.success('Goma u krijua');
     return true;
   }
 
   return (
     <>
       <StokuButton icon="plus" variant="primary" onClick={() => setOpen(true)}>
-        Nuovo pneumatico
+        Gomë e re
       </StokuButton>
       <TireFormDialog
         open={open}
         onOpenChange={setOpen}
         onSubmit={handleSubmit}
-        title="Nuovo pneumatico"
+        title="Gomë e re"
         categories={categories}
       />
     </>

@@ -9,7 +9,7 @@ import { requireSession } from '@/lib/auth/session';
 import { formatDateLong } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
 
-export const metadata = { title: 'Inventario fisico — STOKU' };
+export const metadata = { title: 'Inventar fizik — STOKU' };
 
 // Spec §3.8: lista scaffali ordinati per ultima conta (i meno recenti in cima),
 // così il magazziniere sa quali scaffali contare prima.
@@ -29,8 +29,8 @@ export default async function InventoryListPage() {
   const session = await requireSession();
   const isAllScope = session.activeStoreId === null;
   const storeLabel = isAllScope
-    ? 'Tutti i PV'
-    : (session.stores.find((s) => s.id === session.activeStoreId)?.name ?? 'PV attivo');
+    ? 'Të gjitha PV'
+    : (session.stores.find((s) => s.id === session.activeStoreId)?.name ?? 'PV aktiv');
 
   const supabase = await createClient();
 
@@ -48,7 +48,7 @@ export default async function InventoryListPage() {
 
   const { data: shelves, error } = await shelvesQuery;
   if (error) {
-    return <p style={{ padding: 24, color: 'var(--danger)' }}>Errore: {error.message}</p>;
+    return <p style={{ padding: 24, color: 'var(--danger)' }}>Gabim: {error.message}</p>;
   }
 
   const list = shelves ?? [];
@@ -97,8 +97,8 @@ export default async function InventoryListPage() {
   return (
     <div>
       <PageHeader
-        title={`Inventario fisico — ${storeLabel}`}
-        subtitle="Scaffali ordinati per ultima conta (i meno recenti in cima)"
+        title={`Inventar fizik — ${storeLabel}`}
+        subtitle="Raftet e renditura sipas kontës së fundit (më të vjetrat në krye)"
       />
 
       <div style={{ padding: 24 }}>
@@ -106,8 +106,8 @@ export default async function InventoryListPage() {
           <Panel padded={false}>
             <Empty
               icon="check"
-              title="Nessuno scaffale"
-              subtitle="Crea uno scaffale per iniziare l'inventario fisico."
+              title="Asnjë raft"
+              subtitle="Krijo një raft për të filluar inventarin fizik."
             />
           </Panel>
         ) : (
@@ -115,11 +115,11 @@ export default async function InventoryListPage() {
             <table className="tbl">
               <thead>
                 <tr>
-                  <th style={{ width: 160 }}>Scaffale</th>
+                  <th style={{ width: 160 }}>Rafti</th>
                   {isAllScope && <th style={{ width: 100 }}>PV</th>}
-                  <th>Descrizione</th>
-                  <th style={{ width: 110, textAlign: 'right' }}>Prodotti</th>
-                  <th style={{ width: 160 }}>Ultima conta</th>
+                  <th>Përshkrimi</th>
+                  <th style={{ width: 110, textAlign: 'right' }}>Produktet</th>
+                  <th style={{ width: 160 }}>Kontë e fundit</th>
                   <th style={{ width: 100 }} />
                 </tr>
               </thead>
@@ -153,21 +153,21 @@ export default async function InventoryListPage() {
                             <span>{formatDate(last)}</span>
                             {stale && (
                               <StokuBadge variant="warn">
-                                {days} gg fa
+                                {days} ditë më parë
                               </StokuBadge>
                             )}
                           </span>
                         ) : (
-                          <StokuBadge variant="danger">Mai contato</StokuBadge>
+                          <StokuBadge variant="danger">Kurrë e kontuar</StokuBadge>
                         )}
                       </td>
                       <td>
                         <Link
                           href={`/shelves/${s.id}/inventory`}
                           className="btn ghost sm"
-                          aria-label={`Inventario ${s.code}`}
+                          aria-label={`Inventar ${s.code}`}
                         >
-                          <Icon name="check" size={12} /> Conta
+                          <Icon name="check" size={12} /> Konto
                         </Link>
                       </td>
                     </tr>

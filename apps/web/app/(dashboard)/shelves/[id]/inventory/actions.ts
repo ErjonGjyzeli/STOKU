@@ -46,12 +46,12 @@ export async function applyInventoryCount(
   const session = await requireSession();
   const role = session.profile.role;
   if (role !== 'admin' && role !== 'warehouse') {
-    return { ok: false, error: 'Permessi insufficienti' };
+    return { ok: false, error: 'Leje të pamjaftueshme' };
   }
 
   const parsed = inputSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Dati non validi' };
+    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Të dhëna të pavlefshme' };
   }
 
   const supabase = await createClient();
@@ -64,19 +64,19 @@ export async function applyInventoryCount(
     .eq('id', parsed.data.shelfId)
     .single();
   if (shelfErr || !shelf) {
-    return { ok: false, error: shelfErr?.message ?? 'Scaffale non trovato' };
+    return { ok: false, error: shelfErr?.message ?? 'Rafti nuk u gjet' };
   }
   if (!shelf.is_active) {
-    return { ok: false, error: 'Scaffale disattivato' };
+    return { ok: false, error: 'Rafti çaktivizuar' };
   }
   if (role === 'warehouse') {
     const inScope = session.stores.some((s) => s.id === shelf.store_id);
     if (!inScope) {
-      return { ok: false, error: 'PV non abilitato per questo utente' };
+      return { ok: false, error: 'PV nuk është i aktivizuar për këtë përdorues' };
     }
   }
 
-  const noteText = `rettifica inventario scaffale ${shelf.code}`;
+  const noteText = `rregullim inventar rafti ${shelf.code}`;
   const data: ApplyInventoryData = {
     adjusted: 0,
     matched: 0,

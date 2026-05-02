@@ -29,17 +29,17 @@ const SPEED_INDEXES = ['Q', 'R', 'S', 'T', 'H', 'V', 'W', 'Y', 'ZR'] as const;
 
 const schema = z.object({
   sku: z.string().optional().or(z.literal('')),
-  name: z.string().min(2, 'Nome minimo 2 caratteri'),
-  category_id: z.string().min(1, 'Stagione obbligatoria'),
+  name: z.string().min(2, 'Emri minimum 2 karaktere'),
+  category_id: z.string().min(1, 'Stina është e detyrueshme'),
   condition: z.enum(['new', 'used', 'refurbished', 'damaged']),
-  vehicle_make: z.string().min(1, 'Marca obbligatoria'),
+  vehicle_make: z.string().min(1, 'Marka është e detyrueshme'),
   vehicle_model: z.string().optional().or(z.literal('')),
   price_sell: z.string().optional().or(z.literal('')),
   price_cost: z.string().optional().or(z.literal('')),
   description: z.string().optional().or(z.literal('')),
-  tire_width: z.string().min(1, 'Larghezza obbligatoria'),
-  tire_aspect: z.string().min(1, 'Spalla obbligatoria'),
-  tire_diameter: z.string().min(1, 'Diametro obbligatorio'),
+  tire_width: z.string().min(1, 'Gjerësia është e detyrueshme'),
+  tire_aspect: z.string().min(1, 'Profili është i detyrueshëm'),
+  tire_diameter: z.string().min(1, 'Diametri është i detyrueshëm'),
   tire_load_index: z.string().optional().or(z.literal('')),
   tire_speed_index: z.string().optional().or(z.literal('')),
   tire_tread_mm: z.string().optional().or(z.literal('')),
@@ -134,8 +134,8 @@ export function TireFormDialog({ open, onOpenChange, onSubmit, title, categories
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
-            Misura, marca e stagione obbligatori. Lascia vuoto lo SKU per assegnarlo
-            automaticamente.
+            Masa, marka dhe stina janë të detyrueshme. Lër SKU-n bosh për ta caktuar
+            automatikisht.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(submit)} className="flex flex-col gap-4">
@@ -147,16 +147,16 @@ export function TireFormDialog({ open, onOpenChange, onSubmit, title, categories
               control={control}
               name="condition"
               render={({ field }) => (
-                <Field label="Condizione" error={errors.condition?.message}>
+                <Field label="Gjendja" error={errors.condition?.message}>
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="new">Nuovo</SelectItem>
-                      <SelectItem value="used">Usato</SelectItem>
-                      <SelectItem value="refurbished">Rigenerato</SelectItem>
-                      <SelectItem value="damaged">Danneggiato</SelectItem>
+                      <SelectItem value="new">I ri</SelectItem>
+                      <SelectItem value="used">I përdorur</SelectItem>
+                      <SelectItem value="refurbished">I rinovuar</SelectItem>
+                      <SelectItem value="damaged">I dëmtuar</SelectItem>
                     </SelectContent>
                   </Select>
                 </Field>
@@ -164,15 +164,15 @@ export function TireFormDialog({ open, onOpenChange, onSubmit, title, categories
             />
           </div>
 
-          <Field label="Nome / descrizione breve" error={errors.name?.message}>
-            <Input {...register('name')} placeholder="Es. Michelin Primacy 4 205/55 R16" />
+          <Field label="Emri / përshkrim i shkurtër" error={errors.name?.message}>
+            <Input {...register('name')} placeholder="P.sh. Michelin Primacy 4 205/55 R16" />
           </Field>
 
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Marca" error={errors.vehicle_make?.message}>
+            <Field label="Marka" error={errors.vehicle_make?.message}>
               <Input {...register('vehicle_make')} placeholder="Michelin" />
             </Field>
-            <Field label="Modello" error={errors.vehicle_model?.message}>
+            <Field label="Modeli" error={errors.vehicle_model?.message}>
               <Input {...register('vehicle_model')} placeholder="Primacy 4" />
             </Field>
           </div>
@@ -181,10 +181,10 @@ export function TireFormDialog({ open, onOpenChange, onSubmit, title, categories
             control={control}
             name="category_id"
             render={({ field }) => (
-              <Field label="Stagione" error={errors.category_id?.message}>
+              <Field label="Stina" error={errors.category_id?.message}>
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Seleziona" />
+                    <SelectValue placeholder="Zgjidh" />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((c) => (
@@ -199,21 +199,21 @@ export function TireFormDialog({ open, onOpenChange, onSubmit, title, categories
           />
 
           <div className="grid grid-cols-3 gap-3">
-            <Field label="Larghezza" error={errors.tire_width?.message}>
+            <Field label="Gjerësia" error={errors.tire_width?.message}>
               <Input
                 {...register('tire_width')}
                 inputMode="numeric"
                 placeholder="205"
               />
             </Field>
-            <Field label="Spalla" error={errors.tire_aspect?.message}>
+            <Field label="Profili" error={errors.tire_aspect?.message}>
               <Input
                 {...register('tire_aspect')}
                 inputMode="numeric"
                 placeholder="55"
               />
             </Field>
-            <Field label="Diametro (R)" error={errors.tire_diameter?.message}>
+            <Field label="Diametri (R)" error={errors.tire_diameter?.message}>
               <Input
                 {...register('tire_diameter')}
                 inputMode="decimal"
@@ -223,7 +223,7 @@ export function TireFormDialog({ open, onOpenChange, onSubmit, title, categories
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Indice carico" error={errors.tire_load_index?.message}>
+            <Field label="Indeksi i ngarkesës" error={errors.tire_load_index?.message}>
               <Input
                 {...register('tire_load_index')}
                 inputMode="numeric"
@@ -234,7 +234,7 @@ export function TireFormDialog({ open, onOpenChange, onSubmit, title, categories
               control={control}
               name="tire_speed_index"
               render={({ field }) => (
-                <Field label="Indice velocità" error={errors.tire_speed_index?.message}>
+                <Field label="Indeksi i shpejtësisë" error={errors.tire_speed_index?.message}>
                   <Select
                     value={field.value || '_none'}
                     onValueChange={(v) => field.onChange(v === '_none' ? '' : v)}
@@ -243,7 +243,7 @@ export function TireFormDialog({ open, onOpenChange, onSubmit, title, categories
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="_none">Nessuno</SelectItem>
+                      <SelectItem value="_none">Asnjë</SelectItem>
                       {SPEED_INDEXES.map((s) => (
                         <SelectItem key={s} value={s}>
                           {s}
@@ -270,21 +270,21 @@ export function TireFormDialog({ open, onOpenChange, onSubmit, title, categories
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Prezzo vendita (€)" error={errors.price_sell?.message}>
+            <Field label="Çmimi shitje (€)" error={errors.price_sell?.message}>
               <Input {...register('price_sell')} inputMode="decimal" placeholder="120,00" />
             </Field>
-            <Field label="Prezzo costo (€)" error={errors.price_cost?.message}>
+            <Field label="Çmimi kosto (€)" error={errors.price_cost?.message}>
               <Input {...register('price_cost')} inputMode="decimal" placeholder="80,00" />
             </Field>
           </div>
 
-          <Field label="Note" error={errors.description?.message}>
+          <Field label="Shënime" error={errors.description?.message}>
             <textarea
               {...register('description')}
               className="stoku-input"
               style={{ minHeight: 60, padding: 8, width: '100%', resize: 'vertical' }}
               rows={2}
-              placeholder="Note compatibilità, stato usura, etc."
+              placeholder="Shënime përputhshmërie, gjendja e konsumit, etj."
             />
           </Field>
 
@@ -295,20 +295,20 @@ export function TireFormDialog({ open, onOpenChange, onSubmit, title, categories
             </label>
             <label className="row" style={{ gap: 6 }}>
               <input type="checkbox" {...register('tire_reinforced')} />
-              Rinforzata
+              E forcuar
             </label>
             <label className="row" style={{ gap: 6, marginLeft: 'auto' }}>
               <input type="checkbox" {...register('is_active')} />
-              Attivo
+              Aktiv
             </label>
           </div>
 
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              Annulla
+              Anulo
             </Button>
             <Button type="submit" disabled={submitting}>
-              {submitting ? 'Salvataggio…' : 'Salva'}
+              {submitting ? 'Duke ruajtur…' : 'Ruaj'}
             </Button>
           </DialogFooter>
         </form>

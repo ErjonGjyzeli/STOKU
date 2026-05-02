@@ -97,7 +97,7 @@ export async function importProducts(formData: FormData): Promise<ImportResult> 
   await requireSession();
   const file = formData.get('file');
   if (!(file instanceof File) || file.size === 0) {
-    return { ok: false, error: 'File mancante' };
+    return { ok: false, error: 'Skedari mungon' };
   }
 
   const buffer = await file.arrayBuffer();
@@ -105,17 +105,17 @@ export async function importProducts(formData: FormData): Promise<ImportResult> 
   try {
     workbook = XLSX.read(buffer, { type: 'array' });
   } catch (err) {
-    return { ok: false, error: `File non leggibile: ${(err as Error).message}` };
+    return { ok: false, error: `Skedari nuk lexohet: ${(err as Error).message}` };
   }
 
   const sheetName = workbook.SheetNames[0];
-  if (!sheetName) return { ok: false, error: 'Nessun foglio nel file' };
+  if (!sheetName) return { ok: false, error: 'Asnjë fletë në skedar' };
   const sheet = workbook.Sheets[sheetName];
   const raw: RawRow[] = XLSX.utils.sheet_to_json(sheet, { defval: null, raw: true });
 
-  if (raw.length === 0) return { ok: false, error: 'Foglio vuoto' };
+  if (raw.length === 0) return { ok: false, error: 'Fleta bosh' };
   if (raw.length > MAX_ROWS) {
-    return { ok: false, error: `Superato il limite di ${MAX_ROWS} righe per import` };
+    return { ok: false, error: `Tejkaluar kufirin prej ${MAX_ROWS} rreshtave për import` };
   }
 
   // Build header → field index per il primo record
@@ -129,7 +129,7 @@ export async function importProducts(formData: FormData): Promise<ImportResult> 
   if (!Object.values(headerToField).includes('name')) {
     return {
       ok: false,
-      error: `Colonna "nome/name" non trovata. Colonne riconosciute: ${Object.keys(HEADER_MAP).join(', ')}`,
+      error: `Kolona "nome/name" nuk u gjet. Kolonat e njohura: ${Object.keys(HEADER_MAP).join(', ')}`,
     };
   }
 

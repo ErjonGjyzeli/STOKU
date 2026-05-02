@@ -72,10 +72,10 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
   async function handleCreate(values: CustomerInput) {
     const res = await createCustomer(values);
     if (!res.ok) {
-      toast.error('Creazione fallita', { description: res.error });
+      toast.error('Krijimi dështoi', { description: res.error });
       return false;
     }
-    toast.success('Cliente creato');
+    toast.success('Klienti u krijua');
     return true;
   }
 
@@ -83,35 +83,35 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
     if (!editing) return false;
     const res = await updateCustomer(editing.id, values);
     if (!res.ok) {
-      toast.error('Aggiornamento fallito', { description: res.error });
+      toast.error('Përditësimi dështoi', { description: res.error });
       return false;
     }
-    toast.success('Cliente aggiornato');
+    toast.success('Klienti u përditësua');
     return true;
   }
 
   function handleDelete(c: CustomerRow) {
-    if (!confirm(`Eliminare ${c.name}?`)) return;
+    if (!confirm(`Fshi ${c.name}?`)) return;
     startTransition(async () => {
       const res = await deleteCustomer(c.id);
       if (!res.ok) {
         toast.error('Errore', {
-          description: `${res.error} — potrebbero esserci ordini associati`,
+          description: `${res.error} — mund të ketë porosi të lidhura`,
         });
         return;
       }
-      toast.success('Cliente eliminato');
+      toast.success('Klienti u fshi');
     });
   }
 
   return (
     <div>
       <PageHeader
-        title="Clienti"
-        subtitle={`${formatInt(total)} clienti totali`}
+        title="Klientët"
+        subtitle={`${formatInt(total)} klientë gjithsej`}
         right={
           <StokuButton icon="plus" variant="primary" onClick={() => setCreating(true)}>
-            Nuovo cliente
+            Klient i ri
           </StokuButton>
         }
       />
@@ -132,7 +132,7 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Cerca…"
+            placeholder="Kërko…"
           />
         </div>
         {(['all', 'business', 'private'] as const).map((v) => (
@@ -142,12 +142,12 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
             onClick={() => setTypeFilter(v)}
             className={typeFilter === v ? 'btn primary sm' : 'btn ghost sm'}
           >
-            {v === 'all' ? 'Tutti' : v === 'business' ? 'Azienda' : 'Privato'}
+            {v === 'all' ? 'Të gjithë' : v === 'business' ? 'Biznes' : 'Privat'}
           </button>
         ))}
         {(q || typeFilter !== 'all') && (
           <span className="meta" style={{ fontSize: 10, marginLeft: 4 }}>
-            {formatInt(filtered.length)} risultati
+            {formatInt(filtered.length)} rezultate
           </span>
         )}
       </div>
@@ -157,11 +157,11 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
           {filtered.length === 0 ? (
             <Empty
               icon="users"
-              title="Nessun cliente"
-              subtitle="Crea il primo cliente per iniziare il libro acquisti."
+              title="Asnjë klient"
+              subtitle="Krijo klientin e parë për të filluar librin e blerësve."
               action={
                 <StokuButton icon="plus" variant="primary" onClick={() => setCreating(true)}>
-                  Crea cliente
+                  Krijo klient
                 </StokuButton>
               }
             />
@@ -169,11 +169,11 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
             <table className="tbl">
               <thead>
                 <tr>
-                  <th style={{ width: 110 }}>Codice</th>
-                  <th>Nome</th>
-                  <th style={{ width: 100 }}>Tipo</th>
-                  <th style={{ width: 160 }}>Telefono</th>
-                  <th style={{ width: 140 }}>Città</th>
+                  <th style={{ width: 110 }}>Kodi</th>
+                  <th>Emri</th>
+                  <th style={{ width: 100 }}>Lloji</th>
+                  <th style={{ width: 160 }}>Telefoni</th>
+                  <th style={{ width: 140 }}>Qyteti</th>
                   <th style={{ width: 130 }}>NIPT / P.IVA</th>
                   <th style={{ width: 80 }} />
                 </tr>
@@ -202,7 +202,7 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
                     </td>
                     <td>
                       <StokuBadge variant={c.type === 'business' ? 'info' : 'default'}>
-                        {c.type === 'business' ? 'Azienda' : 'Privato'}
+                        {c.type === 'business' ? 'Biznes' : 'Privat'}
                       </StokuBadge>
                     </td>
                     <td className="mono" style={{ fontSize: 10 }}>
@@ -223,8 +223,8 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
                           className="btn ghost sm"
                           style={{ width: 24, padding: 0, justifyContent: 'center' }}
                           onClick={() => setEditing(c)}
-                          title="Modifica"
-                          aria-label="Modifica"
+                          title="Modifiko"
+                          aria-label="Modifiko"
                         >
                           <Icon name="edit" size={12} />
                         </button>
@@ -234,8 +234,8 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
                           style={{ width: 24, padding: 0, justifyContent: 'center' }}
                           onClick={() => handleDelete(c)}
                           disabled={pending}
-                          title="Elimina"
-                          aria-label="Elimina"
+                          title="Fshi"
+                          aria-label="Fshi"
                         >
                           <Icon name="trash" size={12} />
                         </button>
@@ -253,14 +253,14 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
         open={creating}
         onOpenChange={setCreating}
         onSubmit={handleCreate}
-        title="Nuovo cliente"
+        title="Klient i ri"
       />
       {editing && (
         <CustomerFormDialog
           open={!!editing}
           onOpenChange={(o) => !o && setEditing(null)}
           onSubmit={handleEdit}
-          title={`Modifica ${editing.name}`}
+          title={`Modifiko ${editing.name}`}
           initial={toForm(editing)}
         />
       )}

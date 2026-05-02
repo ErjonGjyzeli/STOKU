@@ -3,7 +3,7 @@ import { requireAdmin } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { CompanyForm, type CompanyFormValues } from './company-form';
 
-export const metadata = { title: 'Dati azienda — STOKU' };
+export const metadata = { title: 'Të dhënat e kompanisë — STOKU' };
 
 export default async function CompanySettingsPage() {
   await requireAdmin();
@@ -35,9 +35,9 @@ export default async function CompanySettingsPage() {
   return (
     <div>
       <PageHeader
-        title="Dati azienda"
-        subtitle="Ragione sociale, NIPT/P.IVA, sede, coordinate bancarie e footer fattura."
-        breadcrumb={[{ label: 'Impostazioni' }, { label: 'Azienda' }]}
+        title="Të dhënat e kompanisë"
+        subtitle="Emri ligjor, NIPT, selia, koordinatat bankare dhe footer i faturës."
+        breadcrumb={[{ label: 'Cilësimet' }, { label: 'Kompania' }]}
       />
       <div style={{ padding: 24, maxWidth: 800 }}>
         <CompanyForm initial={initial} />

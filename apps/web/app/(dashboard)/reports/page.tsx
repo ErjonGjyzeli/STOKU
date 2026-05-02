@@ -19,15 +19,15 @@ import {
   type ReportTab,
 } from './queries';
 
-export const metadata = { title: 'Report — STOKU' };
+export const metadata = { title: 'Raporte — STOKU' };
 
 type BadgeVariant = 'default' | 'ok' | 'warn' | 'danger' | 'info' | 'draft' | 'accent';
 
 const STATUS_LABEL: Record<string, string> = {
-  confirmed: 'Confermato',
-  paid: 'Pagato',
-  shipped: 'Spedito',
-  completed: 'Completato',
+  confirmed: 'Konfirmuar',
+  paid: 'Paguar',
+  shipped: 'Dërguar',
+  completed: 'Kompletuar',
 };
 const STATUS_VARIANT: Record<string, BadgeVariant> = {
   confirmed: 'info',
@@ -37,15 +37,15 @@ const STATUS_VARIANT: Record<string, BadgeVariant> = {
 };
 
 const REASON_LABEL: Record<string, string> = {
-  sale: 'Vendita',
-  return: 'Reso',
-  adjustment: 'Rettifica',
-  intake: 'Carico',
-  damage: 'Danno/perdita',
-  transfer_out: 'Uscita trasf.',
-  transfer_in: 'Entrata trasf.',
-  reservation: 'Prenotazione',
-  unreservation: 'Svincolo',
+  sale: 'Shitje',
+  return: 'Kthim',
+  adjustment: 'Rregullim',
+  intake: 'Ngarkim',
+  damage: 'Dëm/humbje',
+  transfer_out: 'Dalje transf.',
+  transfer_in: 'Hyrje transf.',
+  reservation: 'Rezervim',
+  unreservation: 'Çlirim',
 };
 
 type SearchParams = {
@@ -127,8 +127,8 @@ export default async function ReportsPage({
   return (
     <div>
       <PageHeader
-        title="Report"
-        subtitle="Esporta per contabilità, decisioni, audit"
+        title="Raporte"
+        subtitle="Eksporto për kontabilitet, vendime, auditim"
         right={
           <form method="get" className="row" style={{ gap: 8, alignItems: 'center' }}>
             <input type="hidden" name="tab" value={tab} />
@@ -147,7 +147,7 @@ export default async function ReportsPage({
               </>
             )}
             <button type="submit" className="btn ghost sm">
-              <Icon name="filter" size={12} /> Applica
+              <Icon name="filter" size={12} /> Apliko
             </button>
             <a href={csvHref} className="btn ghost sm" target="_blank" rel="noopener noreferrer">
               <Icon name="download" size={12} /> CSV
@@ -158,9 +158,9 @@ export default async function ReportsPage({
 
       <div style={{ padding: '0 24px', borderBottom: '1px solid var(--stoku-border)' }}>
         <div className="row" style={{ gap: 0 }}>
-          <TabLink current={tab} label="Vendite" target="sales" icon="cart" params={params} />
-          <TabLink current={tab} label="Inventario" target="inventory" icon="box" params={params} />
-          <TabLink current={tab} label="Movimenti" target="movements" icon="history" params={params} />
+          <TabLink current={tab} label="Shitje" target="sales" icon="cart" params={params} />
+          <TabLink current={tab} label="Inventar" target="inventory" icon="box" params={params} />
+          <TabLink current={tab} label="Lëvizje" target="movements" icon="history" params={params} />
         </div>
       </div>
 
@@ -168,23 +168,23 @@ export default async function ReportsPage({
 
         {tab === 'sales' && (
           <Panel
-            title={`Vendite (${salesRows.length}) — totale ${currency(totalSales, salesRows[0]?.currency ?? 'EUR')}`}
+            title={`Shitje (${salesRows.length}) — totali ${currency(totalSales, salesRows[0]?.currency ?? 'EUR')}`}
             padded={false}
           >
             {salesRows.length === 0 ? (
-              <Empty icon="cart" title="Nessun ordine" subtitle="Filtri non restituiscono righe." />
+              <Empty icon="cart" title="Asnjë porosi" subtitle="Filtrat nuk kthejnë asnjë rresht." />
             ) : (
               <table className="tbl">
                 <thead>
                   <tr>
                     <th style={{ width: 100 }}>Data</th>
-                    <th style={{ width: 120 }}>Numero</th>
-                    <th>Cliente</th>
-                    <th style={{ width: 80 }}>Store</th>
+                    <th style={{ width: 120 }}>Nr.</th>
+                    <th>Klienti</th>
+                    <th style={{ width: 80 }}>PV</th>
                     <th style={{ width: 120 }}>Status</th>
-                    <th style={{ width: 110, textAlign: 'right' }}>Subtotale</th>
-                    <th style={{ width: 110, textAlign: 'right' }}>IVA</th>
-                    <th style={{ width: 110, textAlign: 'right' }}>Totale</th>
+                    <th style={{ width: 110, textAlign: 'right' }}>Nëntotali</th>
+                    <th style={{ width: 110, textAlign: 'right' }}>TVSH</th>
+                    <th style={{ width: 110, textAlign: 'right' }}>Totali</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -197,7 +197,7 @@ export default async function ReportsPage({
                         </Link>
                       </td>
                       <td className="truncate-1">
-                        {r.customer_name ?? <span className="faint">Vendita banco</span>}
+                        {r.customer_name ?? <span className="faint">Shitje banaku</span>}
                       </td>
                       <td className="mono" style={{ fontSize: 10 }}>
                         {r.store_code ?? <span className="faint">—</span>}
@@ -225,20 +225,20 @@ export default async function ReportsPage({
         )}
 
         {tab === 'inventory' && (
-          <Panel title={`Inventario (${inventoryRows.length} righe)`} padded={false}>
+          <Panel title={`Inventar (${inventoryRows.length} rreshta)`} padded={false}>
             {inventoryRows.length === 0 ? (
-              <Empty icon="building" title="Nessuna giacenza" />
+              <Empty icon="building" title="Asnjë gjendje stoku" />
             ) : (
               <table className="tbl">
                 <thead>
                   <tr>
-                    <th style={{ width: 80 }}>Store</th>
+                    <th style={{ width: 80 }}>PV</th>
                     <th style={{ width: 120 }}>SKU</th>
-                    <th>Nome</th>
-                    <th style={{ width: 80, textAlign: 'right' }}>Qta</th>
-                    <th style={{ width: 80, textAlign: 'right' }}>Prenot.</th>
+                    <th>Emri</th>
+                    <th style={{ width: 80, textAlign: 'right' }}>Sasi</th>
+                    <th style={{ width: 80, textAlign: 'right' }}>Rezerv.</th>
                     <th style={{ width: 80, textAlign: 'right' }}>Disp.</th>
-                    <th style={{ width: 80, textAlign: 'right' }}>Soglia</th>
+                    <th style={{ width: 80, textAlign: 'right' }}>Kuota</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -280,20 +280,20 @@ export default async function ReportsPage({
         )}
 
         {tab === 'movements' && (
-          <Panel title={`Movimenti (${movementRows.length})`} padded={false}>
+          <Panel title={`Lëvizje (${movementRows.length})`} padded={false}>
             {movementRows.length === 0 ? (
-              <Empty icon="history" title="Nessun movimento" />
+              <Empty icon="history" title="Asnjë lëvizje" />
             ) : (
               <table className="tbl">
                 <thead>
                   <tr>
-                    <th style={{ width: 130 }}>Quando</th>
-                    <th style={{ width: 130 }}>Causale</th>
+                    <th style={{ width: 130 }}>Kur</th>
+                    <th style={{ width: 130 }}>Arsyeja</th>
                     <th style={{ width: 120 }}>SKU</th>
-                    <th>Prodotto</th>
-                    <th style={{ width: 80 }}>Store</th>
+                    <th>Produkti</th>
+                    <th style={{ width: 80 }}>PV</th>
                     <th style={{ width: 80, textAlign: 'right' }}>Delta</th>
-                    <th style={{ width: 140 }}>Riferimento</th>
+                    <th style={{ width: 140 }}>Referenca</th>
                   </tr>
                 </thead>
                 <tbody>

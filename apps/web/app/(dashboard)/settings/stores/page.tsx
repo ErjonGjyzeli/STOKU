@@ -2,7 +2,7 @@ import { requireAdmin } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 import { StoresClient } from './stores-client';
 
-export const metadata = { title: 'Punti vendita — STOKU' };
+export const metadata = { title: 'Pikat e shitjes — STOKU' };
 
 export default async function StoresSettingsPage() {
   await requireAdmin();
@@ -15,7 +15,7 @@ export default async function StoresSettingsPage() {
     .order('code');
 
   if (error) {
-    return <p className="text-destructive text-sm">Errore: {error.message}</p>;
+    return <p className="text-destructive text-sm">Gabim: {error.message}</p>;
   }
 
   return <StoresClient stores={data ?? []} />;

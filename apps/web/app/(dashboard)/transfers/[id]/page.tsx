@@ -13,7 +13,7 @@ import {
   type TransferSummary,
 } from './transfer-detail-client';
 
-export const metadata = { title: 'Trasferimento — STOKU' };
+export const metadata = { title: 'Transferim — STOKU' };
 
 function formatDate(iso: string | null) {
   if (!iso) return null;
@@ -79,21 +79,21 @@ export default async function TransferDetailPage({
   return (
     <div>
       <PageHeader
-        title={`Trasferimento ${transfer.transfer_number}`}
+        title={`Transferim ${transfer.transfer_number}`}
         subtitle={`${transfer.from_store?.code ?? ''} → ${transfer.to_store?.code ?? ''}`}
-        breadcrumb={[{ label: 'Trasferimenti' }, { label: transfer.transfer_number }]}
+        breadcrumb={[{ label: 'Transferimet' }, { label: transfer.transfer_number }]}
         right={
           <Link href="/transfers" className="btn ghost sm">
-            Torna ai trasferimenti
+            Kthehu te transferimet
           </Link>
         }
       />
       <div className="grid-side" style={{ padding: 24 }}>
         <div className="col" style={{ gap: 16 }}>
-          <Panel title="Dettagli">
+          <Panel title="Detaje">
             <dl className="col" style={{ gap: 8, margin: 0, fontSize: 11 }}>
               <Detail
-                label="Origine"
+                label="Origjina"
                 value={
                   transfer.from_store
                     ? `${transfer.from_store.code} · ${transfer.from_store.name}`
@@ -101,21 +101,21 @@ export default async function TransferDetailPage({
                 }
               />
               <Detail
-                label="Destinazione"
+                label="Destinacioni"
                 value={
                   transfer.to_store
                     ? `${transfer.to_store.code} · ${transfer.to_store.name}`
                     : '—'
                 }
               />
-              <Detail label="Creato" value={formatDate(transfer.created_at) ?? '—'} />
+              <Detail label="Krijuar" value={formatDate(transfer.created_at) ?? '—'} />
               {transfer.shipped_at && (
-                <Detail label="Spedito" value={formatDate(transfer.shipped_at) ?? '—'} />
+                <Detail label="Dërguar" value={formatDate(transfer.shipped_at) ?? '—'} />
               )}
               {transfer.received_at && (
-                <Detail label="Ricevuto" value={formatDate(transfer.received_at) ?? '—'} />
+                <Detail label="Marrë" value={formatDate(transfer.received_at) ?? '—'} />
               )}
-              {transfer.notes && <Detail label="Note" value={transfer.notes} />}
+              {transfer.notes && <Detail label="Shënime" value={transfer.notes} />}
             </dl>
           </Panel>
         </div>

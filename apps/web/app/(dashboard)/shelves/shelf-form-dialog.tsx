@@ -34,11 +34,11 @@ const schema = z.object({
   code: z
     .string()
     .trim()
-    .min(2, 'Codice minimo 2 caratteri')
-    .max(40, 'Codice massimo 40 caratteri')
-    .regex(CODE_REGEX, 'Solo lettere/cifre, blocchi separati da "-"'),
-  store_id: z.number().int().positive('Seleziona PV'),
-  description: z.string().trim().max(200, 'Massimo 200 caratteri').optional().or(z.literal('')),
+    .min(2, 'Kodi minimum 2 karaktere')
+    .max(40, 'Kodi maksimum 40 karaktere')
+    .regex(CODE_REGEX, 'Vetëm shkronja/shifra, blloqe të ndara me "-"'),
+  store_id: z.number().int().positive('Zgjidh PV'),
+  description: z.string().trim().max(200, 'Maksimum 200 karaktere').optional().or(z.literal('')),
   kind: z.enum(['open', 'cabinet', 'drawer', 'floor']),
   capacity: z.string().optional(),
   is_active: z.boolean(),
@@ -59,10 +59,10 @@ type Props = {
 };
 
 const KIND_LABEL: Record<FormValues['kind'], string> = {
-  open: 'Aperto',
-  cabinet: 'Armadio',
-  drawer: 'Cassettiera',
-  floor: 'Pavimento',
+  open: 'I hapur',
+  cabinet: 'Kabineti',
+  drawer: 'Sirtarët',
+  floor: 'Dyshemeja',
 };
 
 function emptyValues(defaultStoreId: number | null | undefined): FormValues {
@@ -136,12 +136,12 @@ export function ShelfFormDialog({
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
-            Codice gerarchico es. <code>TIR-A-12-3</code> oppure <code>DUR-MAIN</code>.
+            Kodi hierarkik p.sh. <code>TIR-A-12-3</code> ose <code>DUR-MAIN</code>.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(submit)} className="flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Codice" error={errors.code?.message}>
+            <Field label="Kodi" error={errors.code?.message}>
               <Input
                 {...register('code')}
                 placeholder="TIR-A-12-3"
@@ -153,13 +153,13 @@ export function ShelfFormDialog({
               control={control}
               name="store_id"
               render={({ field }) => (
-                <Field label="Punto vendita" error={errors.store_id?.message}>
+                <Field label="Pika e shitjes" error={errors.store_id?.message}>
                   <Select
                     value={field.value ? String(field.value) : ''}
                     onValueChange={(v) => field.onChange(Number(v))}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Seleziona PV" />
+                      <SelectValue placeholder="Zgjidh PV" />
                     </SelectTrigger>
                     <SelectContent>
                       {stores.map((s) => (
@@ -173,15 +173,15 @@ export function ShelfFormDialog({
               )}
             />
           </div>
-          <Field label="Descrizione" error={errors.description?.message}>
-            <Input {...register('description')} placeholder="Es. Corridoio A, ripiano alto" />
+          <Field label="Përshkrimi" error={errors.description?.message}>
+            <Input {...register('description')} placeholder="P.sh. Korridor A, rrafti i lartë" />
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Controller
               control={control}
               name="kind"
               render={({ field }) => (
-                <Field label="Tipo" error={errors.kind?.message}>
+                <Field label="Tipi" error={errors.kind?.message}>
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
                       <SelectValue />
@@ -197,11 +197,11 @@ export function ShelfFormDialog({
                 </Field>
               )}
             />
-            <Field label="Capacità (opz.)" error={errors.capacity?.message}>
+            <Field label="Kapaciteti (opz.)" error={errors.capacity?.message}>
               <Input
                 {...register('capacity')}
                 inputMode="numeric"
-                placeholder="es. 50"
+                placeholder="p.sh. 50"
               />
             </Field>
           </div>
@@ -215,16 +215,16 @@ export function ShelfFormDialog({
                   checked={!!field.value}
                   onChange={(e) => field.onChange(e.target.checked)}
                 />
-                Attivo
+                Aktiv
               </label>
             )}
           />
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              Annulla
+              Anulo
             </Button>
             <Button type="submit" disabled={submitting}>
-              Salva
+              Ruaj
             </Button>
           </DialogFooter>
         </form>

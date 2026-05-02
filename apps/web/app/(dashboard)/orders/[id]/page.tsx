@@ -13,7 +13,7 @@ import {
   type ProductOption,
 } from './order-detail-client';
 
-export const metadata = { title: 'Ordine — STOKU' };
+export const metadata = { title: 'Porosi — STOKU' };
 
 function formatDate(iso: string | null) {
   if (!iso) return null;
@@ -97,48 +97,48 @@ export default async function OrderDetailPage({
 
   const customerLabel = order.customer
     ? `${order.customer.code ? `${order.customer.code} · ` : ''}${order.customer.name}`
-    : 'Vendita banco';
+    : 'Shitje banaku';
 
   return (
     <div>
       <PageHeader
-        title={`Ordine ${order.order_number}`}
+        title={`Porosi ${order.order_number}`}
         subtitle={`${customerLabel} · ${order.store?.code ?? ''} ${order.store?.name ?? ''}`}
         breadcrumb={[
-          { label: 'Ordini' },
+          { label: 'Porositë' },
           { label: order.order_number },
         ]}
         right={
           <Link href="/orders" className="btn ghost sm">
-            Torna agli ordini
+            Kthehu te porositë
           </Link>
         }
       />
       <div className="grid-side" style={{ padding: 24 }}>
         <div className="col" style={{ gap: 16 }}>
-          <Panel title="Dettagli">
+          <Panel title="Detaje">
             <dl className="col" style={{ gap: 8, margin: 0, fontSize: 11 }}>
-              <Detail label="Cliente" value={customerLabel} />
+              <Detail label="Klienti" value={customerLabel} />
               <Detail
-                label="Punto vendita"
+                label="Pika e shitjes"
                 value={
                   order.store ? `${order.store.code} · ${order.store.name}` : '—'
                 }
               />
-              <Detail label="Creato" value={formatDate(order.created_at) ?? '—'} />
+              <Detail label="Krijuar" value={formatDate(order.created_at) ?? '—'} />
               {order.confirmed_at && (
                 <Detail
-                  label="Confermato"
+                  label="Konfirmuar"
                   value={formatDate(order.confirmed_at) ?? '—'}
                 />
               )}
               {order.completed_at && (
                 <Detail
-                  label="Completato"
+                  label="Kompletuar"
                   value={formatDate(order.completed_at) ?? '—'}
                 />
               )}
-              {order.notes && <Detail label="Note" value={order.notes} />}
+              {order.notes && <Detail label="Shënime" value={order.notes} />}
             </dl>
           </Panel>
         </div>

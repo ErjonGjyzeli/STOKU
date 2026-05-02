@@ -14,34 +14,34 @@ type Props = {
 };
 
 const PAGE_TITLES: Record<string, string> = {
-  '/': 'Dashboard',
-  '/scanner': 'Scanner',
-  '/products': 'Prodotti',
-  '/tires': 'Pneumatici',
-  '/stock': 'Magazzino',
-  '/shelves': 'Scaffali',
-  '/orders': 'Ordini',
-  '/orders/new': 'Nuovo ordine',
-  '/customers': 'Clienti',
-  '/transfers': 'Trasferimenti',
-  '/transfers/new': 'Nuovo trasferimento',
-  '/reports': 'Report',
-  '/labels': 'Etichette',
-  '/settings/stores': 'Punti vendita',
-  '/settings/users': 'Utenti',
-  '/settings/company': 'Azienda',
+  '/': 'Paneli',
+  '/scanner': 'Skaneri',
+  '/products': 'Produktet',
+  '/tires': 'Gomat',
+  '/stock': 'Magazina',
+  '/shelves': 'Raftet',
+  '/orders': 'Porositë',
+  '/orders/new': 'Porosi e re',
+  '/customers': 'Klientët',
+  '/transfers': 'Transferimet',
+  '/transfers/new': 'Transferim i ri',
+  '/reports': 'Raporte',
+  '/labels': 'Etiketat',
+  '/settings/stores': 'Pikat e shitjes',
+  '/settings/users': 'Përdoruesit',
+  '/settings/company': 'Kompania',
   '/import': 'Import Excel',
 };
 
 function getPageTitle(pathname: string): string {
   const exact = PAGE_TITLES[pathname];
   if (exact) return exact;
-  if (pathname.startsWith('/products/')) return 'Prodotti';
-  if (pathname.startsWith('/orders/')) return 'Ordini';
-  if (pathname.startsWith('/customers/')) return 'Clienti';
-  if (pathname.startsWith('/transfers/')) return 'Trasferimenti';
-  if (pathname.startsWith('/shelves/')) return 'Scaffali';
-  if (pathname.startsWith('/settings/')) return 'Impostazioni';
+  if (pathname.startsWith('/products/')) return 'Produktet';
+  if (pathname.startsWith('/orders/')) return 'Porositë';
+  if (pathname.startsWith('/customers/')) return 'Klientët';
+  if (pathname.startsWith('/transfers/')) return 'Transferimet';
+  if (pathname.startsWith('/shelves/')) return 'Raftet';
+  if (pathname.startsWith('/settings/')) return 'Cilësimet';
   return '';
 }
 
@@ -84,7 +84,7 @@ export function Topbar({ stores }: Props) {
           onClick={toggle}
           className="btn ghost"
           style={{ padding: 6, width: 28, flexShrink: 0 }}
-          title={mode === 'collapsed' ? 'Apri menu' : 'Collassa menu'}
+          title={mode === 'collapsed' ? 'Hap menunë' : 'Mbyll menunë'}
           aria-label="Toggle sidebar"
         >
           <Icon name="menu" size={14} />
@@ -116,11 +116,11 @@ export function Topbar({ stores }: Props) {
             fontFamily: 'inherit',
             color: 'inherit',
           }}
-          aria-label="Cerca"
+          aria-label="Kërko"
         >
           <Icon name="search" size={13} />
           <span className="dim topbar-search-label" style={{ fontSize: 11, flex: 1, textAlign: 'left' }}>
-            Cerca…
+            Kërko…
           </span>
         </button>
       </header>

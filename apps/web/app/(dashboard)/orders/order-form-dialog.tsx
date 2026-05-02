@@ -81,12 +81,12 @@ export function OrderFormDialog({
   const selectedCustomer = customers.find((c) => c.id === customerId);
   const customerLabel =
     customerId === COUNTER_SENTINEL_NONE
-      ? 'Vendita banco'
+      ? 'Shitje banaku'
       : selectedCustomer
         ? selectedCustomer.code
           ? `${selectedCustomer.code} · ${selectedCustomer.name}`
           : selectedCustomer.name
-        : 'Vendita banco';
+        : 'Shitje banaku';
 
   const filteredCustomers = customerSearch
     ? customers.filter(
@@ -99,7 +99,7 @@ export function OrderFormDialog({
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!storeId) {
-      toast.error('Seleziona un punto vendita');
+      toast.error('Zgjidh një pikë shitjeje');
       return;
     }
     setSubmitting(true);
@@ -110,10 +110,10 @@ export function OrderFormDialog({
     });
     setSubmitting(false);
     if (!res.ok) {
-      toast.error('Creazione fallita', { description: res.error });
+      toast.error('Krijimi dështoi', { description: res.error });
       return;
     }
-    toast.success('Bozza creata');
+    toast.success('Drafti u krijua');
     onOpenChange(false);
     router.push(`/orders/${res.data.id}`);
   }
@@ -122,15 +122,14 @@ export function OrderFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Nuovo ordine</DialogTitle>
+          <DialogTitle>Porosi e re</DialogTitle>
           <DialogDescription>
-            Crea una bozza. Gli articoli si aggiungono nel dettaglio con reserve stock
-            automatica.
+            Krijo një draft. Artikujt shtohen në detaje me rezervim automatik stoku.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <Label>Cliente (opzionale — vendita banco se vuoto)</Label>
+            <Label>Klienti (opsional — shitje banaku nëse bosh)</Label>
             <div ref={customerRef} style={{ position: 'relative' }}>
               <button
                 type="button"
@@ -173,7 +172,7 @@ export function OrderFormDialog({
                       type="text"
                       value={customerSearch}
                       onChange={(e) => setCustomerSearch(e.target.value)}
-                      placeholder="Cerca cliente…"
+                      placeholder="Kërko klient…"
                       style={{
                         width: '100%',
                         background: 'transparent',
@@ -204,7 +203,7 @@ export function OrderFormDialog({
                         color: 'inherit',
                       }}
                     >
-                      Vendita banco
+                      Shitje banaku
                     </button>
                     {filteredCustomers.map((c) => (
                       <button
@@ -232,7 +231,7 @@ export function OrderFormDialog({
                     ))}
                     {filteredCustomers.length === 0 && (
                       <div style={{ padding: '7px 10px', fontSize: 11, color: 'var(--muted-foreground)' }}>
-                        Nessun cliente trovato
+                        Asnjë klient i gjetur
                       </div>
                     )}
                   </div>
@@ -242,10 +241,10 @@ export function OrderFormDialog({
           </div>
 
           <div className="flex flex-col gap-1">
-            <Label>Punto vendita</Label>
+            <Label>Pika e shitjes</Label>
             <Select value={storeId} onValueChange={(v) => setStoreId(v ?? '')}>
               <SelectTrigger>
-                <SelectValue placeholder="Seleziona store" />
+                <SelectValue placeholder="Zgjidh pikën" />
               </SelectTrigger>
               <SelectContent>
                 {stores.map((s) => (
@@ -258,23 +257,23 @@ export function OrderFormDialog({
           </div>
 
           <div className="flex flex-col gap-1">
-            <Label>Note interne (opzionale)</Label>
+            <Label>Shënime interne (opsionale)</Label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="stoku-input"
               style={{ minHeight: 72, padding: 8, width: '100%', resize: 'vertical' }}
               rows={3}
-              placeholder="Specifiche tecniche, richieste, reminder…"
+              placeholder="Specifika teknike, kërkesa, kujtues…"
             />
           </div>
 
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              Annulla
+              Anulo
             </Button>
             <Button type="submit" disabled={submitting || !storeId}>
-              {submitting ? 'Creazione…' : 'Crea bozza'}
+              {submitting ? 'Duke krijuar…' : 'Krijo draft'}
             </Button>
           </DialogFooter>
         </form>

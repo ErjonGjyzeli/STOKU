@@ -39,10 +39,10 @@ function buildHref(values: TiresFilters): string {
 }
 
 const SEASONS: Array<{ value: TiresFilters['season']; label: string }> = [
-  { value: '', label: 'Tutte' },
-  { value: 'summer', label: '☀ Estate' },
-  { value: 'winter', label: '❄ Inverno' },
-  { value: 'allseason', label: '◐ 4 Stagioni' },
+  { value: '', label: 'Të gjitha' },
+  { value: 'summer', label: '☀ Verore' },
+  { value: 'winter', label: '❄ Dimërore' },
+  { value: 'allseason', label: '◐ 4 Stinë' },
 ];
 
 export function TiresFilterBar({
@@ -81,7 +81,7 @@ export function TiresFilterBar({
           type="search"
           value={values.q}
           onChange={(e) => update('q', e.target.value)}
-          placeholder="Cerca…"
+          placeholder="Kërko…"
           autoComplete="off"
         />
       </div>
@@ -89,7 +89,7 @@ export function TiresFilterBar({
       {/* Width / Aspect / Diameter */}
       <div className="stoku-input" style={{ width: 80, height: 28 }}>
         <select value={values.width} onChange={(e) => update('width', e.target.value)}>
-          <option value="">Larg.</option>
+          <option value="">Gjer.</option>
           {availableWidths.map((w) => (
             <option key={w} value={w}>{w}</option>
           ))}

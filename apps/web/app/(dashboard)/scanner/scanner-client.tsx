@@ -64,6 +64,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
   const [action, setAction] = useState<ScanAction>('lookup');
   const [cameraState, setCameraState] = useState<CameraState>('idle');
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [cameraEnabled, setCameraEnabled] = useState(true);
   const [scans, setScans] = useState<ScanItem[]>([]);
   const [manualCode, setManualCode] = useState('');
   const [soundScan, setSoundScan] = useState(true);
@@ -210,12 +211,12 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (mode === 'camera') {
+    if (mode === 'camera' && cameraEnabled) {
       void startCamera();
     } else {
       stopCamera();
     }
-  }, [mode]);
+  }, [mode, cameraEnabled]);
 
   useEffect(() => {
     return () => {
@@ -419,6 +420,20 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                       <div style={{ fontSize: 11, fontWeight: 500 }}>
                         Duke nisur kamerën…
                       </div>
+                    ) : !cameraEnabled ? (
+                      <>
+                        <div style={{ fontSize: 11, fontWeight: 500 }}>
+                          Kamera e ndalur
+                        </div>
+                        <button
+                          type="button"
+                          className="btn primary sm"
+                          onClick={() => setCameraEnabled(true)}
+                          style={{ marginTop: 4 }}
+                        >
+                          <Icon name="qr" size={12} /> Fillo kamerën
+                        </button>
+                      </>
                     ) : (
                       <>
                         <div style={{ fontSize: 11, fontWeight: 500 }}>
@@ -430,6 +445,33 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                       </>
                     )}
                   </div>
+                )}
+                {/* Stop camera button — shown when active */}
+                {cameraState === 'active' && (
+                  <button
+                    type="button"
+                    onClick={() => setCameraEnabled(false)}
+                    style={{
+                      position: 'absolute',
+                      bottom: 10,
+                      right: 10,
+                      zIndex: 10,
+                      height: 26,
+                      padding: '0 10px',
+                      borderRadius: 'var(--r-md)',
+                      border: 'none',
+                      background: 'rgba(0,0,0,0.55)',
+                      color: '#fff',
+                      fontSize: 10,
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 5,
+                    }}
+                  >
+                    <Icon name="x" size={10} /> Ndal kamerën
+                  </button>
                 )}
               </>
             )}

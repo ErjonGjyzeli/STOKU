@@ -111,7 +111,7 @@ export function ImportForm() {
 
       {result && result.ok && (
         <Panel title="Risultato import">
-          <div className="col" style={{ gap: 8, fontSize: 13 }}>
+          <div className="col" style={{ gap: 8, fontSize: 12 }}>
             <div className="row" style={{ gap: 16 }}>
               <Stat label="Inseriti" value={result.inserted} variant="ok" />
               <Stat label="Saltati" value={result.skipped} variant="warn" />
@@ -157,7 +157,7 @@ export function ImportForm() {
         <Panel>
           <div className="col" style={{ gap: 6 }}>
             <div style={{ color: 'var(--danger)', fontWeight: 500 }}>Import fallito</div>
-            <div className="faint" style={{ fontSize: 13 }}>
+            <div className="faint" style={{ fontSize: 12 }}>
               {result.error}
             </div>
           </div>

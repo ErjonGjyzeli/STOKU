@@ -91,7 +91,7 @@ export default async function TransferDetailPage({
       <div className="grid-side" style={{ padding: 24 }}>
         <div className="col" style={{ gap: 16 }}>
           <Panel title="Dettagli">
-            <dl className="col" style={{ gap: 8, margin: 0, fontSize: 13 }}>
+            <dl className="col" style={{ gap: 8, margin: 0, fontSize: 12 }}>
               <Detail
                 label="Origine"
                 value={

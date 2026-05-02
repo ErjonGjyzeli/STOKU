@@ -163,7 +163,7 @@ export default async function OrdersPage({
                 href={href}
                 style={{
                   padding: '10px 14px',
-                  fontSize: 13,
+                  fontSize: 12,
                   color: active ? 'var(--ink-1)' : 'var(--ink-3)',
                   fontWeight: active ? 600 : 400,
                   borderBottom: active ? '2px solid var(--stoku-accent)' : '2px solid transparent',

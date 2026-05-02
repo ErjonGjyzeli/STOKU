@@ -254,7 +254,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
               <Icon name="search" size={13} />
               <input
                 type="search"
-                placeholder="Cerca per SKU o nome…"
+                placeholder="Cerca…"
                 value={productQuery}
                 onChange={(e) => {
                   setProductQuery(e.target.value);
@@ -273,7 +273,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
                 }}
               >
                 {filtered.length === 0 ? (
-                  <div style={{ padding: 12, color: 'var(--ink-3)', fontSize: 13 }}>
+                  <div style={{ padding: 12, color: 'var(--ink-3)', fontSize: 12 }}>
                     Nessun prodotto
                   </div>
                 ) : (
@@ -293,7 +293,7 @@ export function TransferDetailClient({ transfer, items, products }: Props) {
                                 : 'transparent',
                             border: 'none',
                             cursor: 'pointer',
-                            fontSize: 13,
+                            fontSize: 12,
                             display: 'flex',
                             gap: 10,
                           }}

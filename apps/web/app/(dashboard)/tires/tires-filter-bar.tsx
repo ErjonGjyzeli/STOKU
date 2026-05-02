@@ -81,7 +81,7 @@ export function TiresFilterBar({
           type="search"
           value={values.q}
           onChange={(e) => update('q', e.target.value)}
-          placeholder="Marca, modello, SKU…"
+          placeholder="Cerca…"
           autoComplete="off"
         />
       </div>
@@ -95,7 +95,7 @@ export function TiresFilterBar({
           ))}
         </select>
       </div>
-      <span className="meta" style={{ fontSize: 13 }}>/</span>
+      <span className="meta" style={{ fontSize: 12 }}>/</span>
       <div className="stoku-input" style={{ width: 70, height: 28 }}>
         <select value={values.aspect} onChange={(e) => update('aspect', e.target.value)}>
           <option value="">Prof.</option>
@@ -104,7 +104,7 @@ export function TiresFilterBar({
           ))}
         </select>
       </div>
-      <span className="meta" style={{ fontSize: 13 }}>R</span>
+      <span className="meta" style={{ fontSize: 12 }}>R</span>
       <div className="stoku-input" style={{ width: 70, height: 28 }}>
         <select value={values.diameter} onChange={(e) => update('diameter', e.target.value)}>
           <option value="">Diam.</option>

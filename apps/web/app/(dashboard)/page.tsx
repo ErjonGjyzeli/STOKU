@@ -495,7 +495,7 @@ export default async function HomePage() {
                     </div>
                     <div
                       className="row"
-                      style={{ gap: 4, fontSize: 13, flex: 1, minWidth: 0, flexWrap: 'wrap' }}
+                      style={{ gap: 4, fontSize: 12, flex: 1, minWidth: 0, flexWrap: 'wrap' }}
                     >
                       <span style={{ fontWeight: 500 }}>{who}</span>
                       <span className="dim">{action}</span>

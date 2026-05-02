@@ -101,7 +101,7 @@ export default async function ShelfInventoryPage({
           <span className="row" style={{ gap: 10, alignItems: 'center' }}>
             <Icon name="check" size={16} />
             <span>Inventario fisico</span>
-            <span className="mono" style={{ fontSize: 14, color: 'var(--ink-3)' }}>
+            <span className="mono" style={{ fontSize: 12, color: 'var(--ink-3)' }}>
               {shelf.code}
             </span>
             {!shelf.is_active && <StokuBadge variant="draft">Disattivato</StokuBadge>}

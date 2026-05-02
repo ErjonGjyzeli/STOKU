@@ -54,7 +54,7 @@ export function PageHeader({ title, subtitle, right, breadcrumb }: Props) {
           {title}
         </h1>
         {subtitle && (
-          <div className="meta" style={{ fontSize: 13 }}>
+          <div className="meta" style={{ fontSize: 12 }}>
             {subtitle}
           </div>
         )}

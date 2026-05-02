@@ -120,7 +120,7 @@ export function LoginForm() {
             Gestionale per ricambi auto usati su più punti vendita. Ruoli staff, trasferimenti, IVA
             20%, fatture PDF.
           </p>
-          <div className="col" style={{ gap: 8, marginTop: 28, fontSize: 13 }}>
+          <div className="col" style={{ gap: 8, marginTop: 28, fontSize: 12 }}>
             {FEATURES.map((feature) => (
               <div key={feature} className="row" style={{ gap: 8 }}>
                 <Icon name="check" size={14} />
@@ -146,7 +146,7 @@ export function LoginForm() {
           <h2 style={{ fontSize: 22, fontWeight: 600, margin: 0, letterSpacing: '-0.01em' }}>
             Bentornato.
           </h2>
-          <p className="meta" style={{ fontSize: 13, marginTop: 4 }}>
+          <p className="meta" style={{ fontSize: 12, marginTop: 4 }}>
             Accedi per continuare.
           </p>
 

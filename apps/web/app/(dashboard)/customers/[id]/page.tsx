@@ -117,7 +117,7 @@ export default async function CustomerDetailPage({
                   >
                     {label}
                   </dt>
-                  <dd style={{ margin: 0, fontSize: 13 }}>
+                  <dd style={{ margin: 0, fontSize: 12 }}>
                     {value ?? <span className="faint">—</span>}
                   </dd>
                 </div>
@@ -127,7 +127,7 @@ export default async function CustomerDetailPage({
 
           {customer.notes && (
             <Panel title="Note">
-              <p style={{ fontSize: 13, whiteSpace: 'pre-wrap', margin: 0 }}>{customer.notes}</p>
+              <p style={{ fontSize: 12, whiteSpace: 'pre-wrap', margin: 0 }}>{customer.notes}</p>
             </Panel>
           )}
         </div>

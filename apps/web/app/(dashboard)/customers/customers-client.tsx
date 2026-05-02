@@ -132,7 +132,7 @@ export function CustomersClient({ customers, total }: { customers: CustomerRow[]
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Nome, telefono, NIPT…"
+            placeholder="Cerca…"
           />
         </div>
         {(['all', 'business', 'private'] as const).map((v) => (

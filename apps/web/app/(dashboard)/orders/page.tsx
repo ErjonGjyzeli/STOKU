@@ -190,7 +190,7 @@ export default async function OrdersPage({
               type="search"
               name="q"
               defaultValue={q}
-              placeholder="Numero ordine o cliente…"
+              placeholder="Cerca…"
               autoComplete="off"
             />
           </div>

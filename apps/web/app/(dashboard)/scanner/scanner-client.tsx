@@ -64,7 +64,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
   const [action, setAction] = useState<ScanAction>('lookup');
   const [cameraState, setCameraState] = useState<CameraState>('idle');
   const [cameraError, setCameraError] = useState<string | null>(null);
-  const [cameraEnabled, setCameraEnabled] = useState(true);
+  const [cameraEnabled, setCameraEnabled] = useState(false);
   const [scans, setScans] = useState<ScanItem[]>([]);
   const [manualCode, setManualCode] = useState('');
   const [soundScan, setSoundScan] = useState(true);
@@ -271,7 +271,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
     setScans((prev) => prev.filter((s) => s.id !== id));
   }, []);
 
-  const sessionStart = sessionStartRef.current.toLocaleTimeString('it-IT', {
+  const sessionStart = sessionStartRef.current.toLocaleTimeString('sq', {
     hour: '2-digit',
     minute: '2-digit',
   });
@@ -279,7 +279,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
   return (
     <div>
       <PageHeader
-        title="Scanner"
+        title="Skaneri"
         subtitle={
           <>
             Skanim i vazhdueshëm · Pika{' '}
@@ -316,6 +316,17 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                 </button>
               ))}
             </div>
+            {mode === 'camera' && (
+              <button
+                type="button"
+                className={cameraEnabled && cameraState === 'active' ? 'btn sm danger' : 'btn sm primary'}
+                disabled={cameraState === 'requesting'}
+                onClick={() => setCameraEnabled((v) => !v)}
+              >
+                <Icon name={cameraEnabled && cameraState !== 'idle' ? 'x' : 'qr'} size={12} />
+                {cameraEnabled && cameraState !== 'idle' ? 'Ndal' : 'Fillo'}
+              </button>
+            )}
             <button type="button" className="btn ghost sm" onClick={clearHistory}>
               <Icon name="x" size={12} /> Pastro listën
             </button>
@@ -641,7 +652,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                         )}
                       </td>
                       <td className="meta" style={{ fontSize: 10 }}>
-                        {new Date(s.ts).toLocaleTimeString('it-IT', {
+                        {new Date(s.ts).toLocaleTimeString('sq', {
                           hour: '2-digit',
                           minute: '2-digit',
                           second: '2-digit',

@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import { requireSession } from '@/lib/auth/session';
 import { ScannerClient } from './scanner-client';
 
-export const metadata = { title: 'Scanner — STOKU' };
+export const metadata = { title: 'Skaneri — STOKU' };
 
 export default async function ScannerPage() {
   const session = await requireSession();

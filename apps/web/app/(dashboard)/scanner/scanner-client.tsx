@@ -271,10 +271,8 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
     setScans((prev) => prev.filter((s) => s.id !== id));
   }, []);
 
-  const sessionStart = sessionStartRef.current.toLocaleTimeString('sq', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  const d = sessionStartRef.current;
+  const sessionStart = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 
   return (
     <div>
@@ -652,11 +650,7 @@ export function ScannerClient({ storeCode, activeStoreId, userName }: Props) {
                         )}
                       </td>
                       <td className="meta" style={{ fontSize: 10 }}>
-                        {new Date(s.ts).toLocaleTimeString('sq', {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          second: '2-digit',
-                        })}
+                        {(() => { const t = new Date(s.ts); return `${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}:${String(t.getSeconds()).padStart(2,'0')}`; })()}
                       </td>
                       <td>
                         <button

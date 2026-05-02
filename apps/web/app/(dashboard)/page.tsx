@@ -102,11 +102,15 @@ export default async function HomePage() {
     .from('orders')
     .select('id', { count: 'exact', head: true })
     .gte('created_at', todayIso);
-  const mtdOrdersQuery = supabase
+  const todayRevenueQuery = supabase
     .from('orders')
     .select('total')
     .in('status', REVENUE_STATUSES)
-    .gte('created_at', monthIso);
+    .gte('created_at', todayIso);
+  const draftCountQuery = supabase
+    .from('orders')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'draft');
   const productsActiveQuery =
     scopeStoreId !== null
       ? supabase
@@ -149,17 +153,19 @@ export default async function HomePage() {
 
   if (scopeStoreId) {
     todayOrdersQuery.eq('store_id', scopeStoreId);
-    mtdOrdersQuery.eq('store_id', scopeStoreId);
+    todayRevenueQuery.eq('store_id', scopeStoreId);
+    draftCountQuery.eq('store_id', scopeStoreId);
     transfersOpenQuery.or(
       `from_store_id.eq.${scopeStoreId},to_store_id.eq.${scopeStoreId}`,
     );
     recentOrdersQuery.eq('store_id', scopeStoreId);
   }
 
-  const [todayOrdersRes, mtdOrdersRes, productsActiveRes, tiresActiveRes, transfersOpenRes, recentOrdersRes] =
+  const [todayOrdersRes, todayRevenueRes, draftCountRes, productsActiveRes, tiresActiveRes, transfersOpenRes, recentOrdersRes] =
     await Promise.all([
       todayOrdersQuery,
-      mtdOrdersQuery,
+      todayRevenueQuery,
+      draftCountQuery,
       productsActiveQuery,
       tiresActiveQuery,
       transfersOpenQuery,
@@ -167,12 +173,12 @@ export default async function HomePage() {
     ]);
 
   const ordersToday = todayOrdersRes.count ?? 0;
-  const mtdTotal = (mtdOrdersRes.data ?? []).reduce(
+  const revenueToday = (todayRevenueRes.data ?? []).reduce(
     (sum, o) => sum + Number(o.total ?? 0),
     0,
   );
+  const draftCount = draftCountRes.count ?? 0;
   const productsActive = productsActiveRes.count ?? 0;
-  const tiresActive = tiresActiveRes.count ?? 0;
   const openTransfers = transfersOpenRes.data ?? [];
   const recentOrders = recentOrdersRes.data ?? [];
 
@@ -200,7 +206,6 @@ export default async function HomePage() {
   } | null;
 
   const totalUnits = Number(stockResult?.total_units ?? 0);
-  const totalTireUnits = Number(stockResult?.tire_total_units ?? 0);
   const lowStockCount = Number(stockResult?.low_stock_count ?? 0);
   const lowStockTop = stockResult?.low_stock_top ?? [];
 
@@ -232,9 +237,20 @@ export default async function HomePage() {
       />
 
       <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div className="grid-kpi-5">
-          <Stat label="Ordini oggi" value={formatInt(ordersToday)} />
-          <Stat label="Fatturato MTD" value={formatCurrency(mtdTotal, 'EUR')} />
+        <div className="grid-kpi-4">
+          <Stat
+            label="Vendite oggi"
+            value={formatCurrency(revenueToday, 'EUR')}
+            hint={`${formatInt(ordersToday)} ordini`}
+            link="/orders"
+          />
+          <Stat
+            label="Ordini bozza"
+            value={formatInt(draftCount)}
+            hint="Prenotano stock"
+            warn={draftCount > 4}
+            link="/orders"
+          />
           <Stat
             label="Stock basso"
             value={formatInt(lowStockCount)}
@@ -246,12 +262,6 @@ export default async function HomePage() {
             value={formatInt(productsActive)}
             hint={`${formatInt(totalUnits)} pezzi totali`}
             link="/products"
-          />
-          <Stat
-            label="Pneumatici attivi"
-            value={formatInt(tiresActive)}
-            hint={`${formatInt(totalTireUnits)} pezzi totali`}
-            link="/tires"
           />
         </div>
 

@@ -128,93 +128,43 @@ export default async function ReportsPage({
     <div>
       <PageHeader
         title="Report"
-        subtitle="Vendite, inventario e movimenti stock. Filtri URL-driven, export CSV/XLSX."
+        subtitle="Esporta per contabilità, decisioni, audit"
         right={
-          <>
+          <form method="get" className="row" style={{ gap: 8, alignItems: 'center' }}>
+            <input type="hidden" name="tab" value={tab} />
+            {storeId && <input type="hidden" name="store" value={String(storeId)} />}
+            {tab !== 'inventory' && (
+              <>
+                <div className="stoku-input" style={{ height: 28, width: 130 }}>
+                  <Icon name="clock" size={11} />
+                  <input type="date" name="from" defaultValue={from ?? ''} />
+                </div>
+                <span className="meta" style={{ fontSize: 12 }}>→</span>
+                <div className="stoku-input" style={{ height: 28, width: 130 }}>
+                  <Icon name="clock" size={11} />
+                  <input type="date" name="to" defaultValue={to ?? ''} />
+                </div>
+              </>
+            )}
+            <button type="submit" className="btn ghost sm">
+              <Icon name="filter" size={12} /> Applica
+            </button>
             <a href={csvHref} className="btn ghost sm" target="_blank" rel="noopener noreferrer">
               <Icon name="download" size={12} /> CSV
             </a>
-            <a href={xlsxHref} className="btn ghost sm" target="_blank" rel="noopener noreferrer">
-              <Icon name="download" size={12} /> XLSX
-            </a>
-          </>
+          </form>
         }
       />
 
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div className="row" style={{ gap: 0, borderBottom: '1px solid var(--stoku-border)' }}>
-          <TabLink current={tab} label="Vendite" target="sales" params={params} />
-          <TabLink current={tab} label="Inventario" target="inventory" params={params} />
-          <TabLink current={tab} label="Movimenti" target="movements" params={params} />
+      <div style={{ padding: '0 24px', borderBottom: '1px solid var(--stoku-border)' }}>
+        <div className="row" style={{ gap: 0 }}>
+          <TabLink current={tab} label="Vendite" target="sales" icon="cart" params={params} />
+          <TabLink current={tab} label="Inventario" target="inventory" icon="box" params={params} />
+          <TabLink current={tab} label="Movimenti" target="movements" icon="history" params={params} />
         </div>
+      </div>
 
-        <Panel padded>
-          <form
-            method="get"
-            className="row"
-            style={{ gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}
-          >
-            <input type="hidden" name="tab" value={tab} />
-            {tab === 'inventory' ? (
-              <span style={{ fontSize: 11, color: 'var(--ink-4)', alignSelf: 'center' }}>
-                Snapshot corrente — nessun filtro data
-              </span>
-            ) : (
-              <>
-                <label className="col" style={{ gap: 4 }}>
-                  <span className="meta" style={{ fontSize: 11 }}>
-                    DA
-                  </span>
-                  <input
-                    type="date"
-                    name="from"
-                    defaultValue={from ?? ''}
-                    className="stoku-input report-date-input"
-                    style={{ height: 32, paddingLeft: 10, paddingRight: 10, width: 150 }}
-                  />
-                </label>
-                <label className="col" style={{ gap: 4 }}>
-                  <span className="meta" style={{ fontSize: 11 }}>
-                    A
-                  </span>
-                  <input
-                    type="date"
-                    name="to"
-                    defaultValue={to ?? ''}
-                    className="stoku-input report-date-input"
-                    style={{ height: 32, paddingLeft: 10, paddingRight: 10, width: 150 }}
-                  />
-                </label>
-              </>
-            )}
-            <label className="col" style={{ gap: 4, width: 200 }}>
-              <span className="meta" style={{ fontSize: 11 }}>
-                STORE
-              </span>
-              <select
-                name="store"
-                defaultValue={storeId ? String(storeId) : ''}
-                className="stoku-input"
-                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
-              >
-                <option value="">Tutti</option>
-                {(stores ?? []).map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.code} · {s.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <button type="submit" className="btn primary sm">
-              <Icon name="filter" size={12} /> Applica
-            </button>
-            {(from || to || storeId) && (
-              <Link href={`/reports?tab=${tab}`} className="btn ghost sm">
-                Reset
-              </Link>
-            )}
-          </form>
-        </Panel>
+      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
 
         {tab === 'sales' && (
           <Panel
@@ -400,11 +350,13 @@ function TabLink({
   current,
   label,
   target,
+  icon,
   params,
 }: {
   current: ReportTab;
   label: string;
   target: ReportTab;
+  icon?: string;
   params: SearchParams;
 }) {
   const active = current === target;
@@ -412,8 +364,10 @@ function TabLink({
   return (
     <Link
       href={href}
+      className="row"
       style={{
-        padding: '8px 14px',
+        gap: 6,
+        padding: '10px 14px',
         fontSize: 13,
         color: active ? 'var(--ink-1)' : 'var(--ink-3)',
         fontWeight: active ? 600 : 400,

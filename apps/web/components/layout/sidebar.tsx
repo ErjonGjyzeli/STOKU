@@ -114,7 +114,8 @@ export function Sidebar({ role, email, fullName, counts }: Props) {
           display: 'flex',
           alignItems: 'center',
           gap: 10,
-          padding: '0 14px',
+          padding: collapsed ? 0 : '0 14px',
+          justifyContent: collapsed ? 'center' : 'flex-start',
           borderBottom: '1px solid var(--sbar-border)',
           flexShrink: 0,
         }}
@@ -139,15 +140,29 @@ export function Sidebar({ role, email, fullName, counts }: Props) {
           S
         </div>
         {!collapsed && (
-          <div style={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.01em', color: '#fff' }}>
-            STOKU
-          </div>
+          <>
+            <div style={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.01em', color: '#fff' }}>
+              Stoku
+            </div>
+            <div style={{ flex: 1 }} />
+            <span
+              className="kbd"
+              style={{
+                background: 'var(--sbar-2)',
+                borderColor: 'var(--sbar-border)',
+                color: 'var(--sbar-ink-dim)',
+                boxShadow: 'none',
+              }}
+            >
+              v0.1
+            </span>
+          </>
         )}
       </div>
 
       <nav
         style={{
-          padding: '10px 8px',
+          padding: collapsed ? '8px 6px' : '10px 12px',
           display: 'flex',
           flexDirection: 'column',
           gap: 2,
@@ -281,7 +296,7 @@ function SidebarLink({
     alignItems: 'center',
     gap: 10,
     width: '100%',
-    height: 32,
+    height: 30,
     padding: collapsed ? '0' : '0 10px',
     justifyContent: collapsed ? 'center' : 'flex-start',
     borderRadius: 'var(--r-sm)',
@@ -300,7 +315,7 @@ function SidebarLink({
           aria-hidden
           style={{
             position: 'absolute',
-            left: -8,
+            left: -12,
             top: 6,
             bottom: 6,
             width: 2,

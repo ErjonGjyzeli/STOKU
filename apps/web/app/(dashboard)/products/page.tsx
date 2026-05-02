@@ -4,7 +4,6 @@ import { Empty } from '@/components/ui/empty';
 import { Icon } from '@/components/ui/icon';
 import { PageHeader } from '@/components/ui/page-header';
 import { Panel } from '@/components/ui/panel';
-import { StokuButton } from '@/components/ui/stoku-button';
 import { requireSession } from '@/lib/auth/session';
 import { formatInt } from '@/lib/format';
 import { createClient } from '@/lib/supabase/server';
@@ -103,12 +102,17 @@ export default async function ProductsPage({
 
   const productIds = products.map((p) => p.id);
   const stockMap = new Map<string, { available: number; total: number }>();
+  const perStoreMap = new Map<string, { storeId: number; storeCode: string; available: number }[]>();
   const imagesMap = new Map<string, { id: string; storage_path: string; is_primary: boolean }[]>();
   if (productIds.length > 0) {
-    const [stockRes, imagesRes] = await Promise.all([
+    const [stockRes, perStoreRes, imagesRes] = await Promise.all([
       supabase
         .from('v_product_stock_total')
         .select('product_id, total_quantity, total_available')
+        .in('product_id', productIds),
+      supabase
+        .from('stock')
+        .select('product_id, store_id, quantity, reserved_quantity, store:stores(code)')
         .in('product_id', productIds),
       supabase
         .from('product_images')
@@ -124,6 +128,17 @@ export default async function ProductsPage({
           total: row.total_quantity ?? 0,
         });
       }
+    }
+    for (const row of perStoreRes.data ?? []) {
+      if (!row.product_id) continue;
+      const store = Array.isArray(row.store) ? row.store[0] : row.store;
+      const list = perStoreMap.get(row.product_id) ?? [];
+      list.push({
+        storeId: row.store_id,
+        storeCode: (store as { code: string } | null)?.code ?? String(row.store_id),
+        available: Math.max(0, (row.quantity ?? 0) - (row.reserved_quantity ?? 0)),
+      });
+      perStoreMap.set(row.product_id, list);
     }
     for (const img of imagesRes.data ?? []) {
       if (!img.product_id) continue;
@@ -151,102 +166,77 @@ export default async function ProductsPage({
         title="Prodotti"
         subtitle={
           total > 0
-            ? `${formatInt(total)} prodotti · ${rangeFrom}–${rangeTo}`
+            ? `${formatInt(total)} prodotti nel catalogo · ${rangeFrom}–${rangeTo} mostrati`
             : 'Nessun prodotto — crea il primo articolo per iniziare'
         }
         right={<ProductsCreateButton categories={categories} />}
       />
 
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <Panel padded>
-          <form
-            method="get"
-            className="row"
-            style={{ gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}
+      {/* Inline filter bar */}
+      <form
+        method="get"
+        style={{
+          padding: '12px 24px',
+          borderBottom: '1px solid var(--stoku-border)',
+          display: 'flex',
+          gap: 8,
+          alignItems: 'center',
+          flexWrap: 'wrap',
+        }}
+      >
+        <div className="stoku-input" style={{ flex: '1 1 280px', maxWidth: 420, height: 28 }}>
+          <Icon name="search" size={13} />
+          <input
+            type="search"
+            name="q"
+            defaultValue={q}
+            placeholder='Cerca SKU, OEM, nome, NR…'
+            autoComplete="off"
+          />
+        </div>
+
+        <div className="stoku-input" style={{ width: 180, height: 28 }}>
+          <Icon name="filter" size={13} />
+          <select name="category" defaultValue={categoryId ? String(categoryId) : ''}>
+            <option value="">Tutte le categorie</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="stoku-input" style={{ width: 150, height: 28 }}>
+          <select name="condition" defaultValue={condition}>
+            <option value="">Condizione</option>
+            {Object.entries(CONDITION_LABEL).map(([k, label]) => (
+              <option key={k} value={k}>{label}</option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ flex: 1 }} />
+
+        {(['active', 'inactive', 'all'] as const).map((v) => (
+          <Link
+            key={v}
+            href={`/products${buildQuery(params, { status: v, page: undefined })}`}
+            className={status === v ? 'btn primary sm' : 'btn ghost sm'}
           >
-            <label className="col" style={{ gap: 4, flex: '1 1 260px' }}>
-              <span className="meta" style={{ fontSize: 11 }}>
-                CERCA
-              </span>
-              <div className="stoku-input" style={{ height: 32 }}>
-                <Icon name="search" size={13} />
-                <input
-                  type="search"
-                  name="q"
-                  defaultValue={q}
-                  placeholder={'Nome, SKU, OEM, #ex-Excel · "frase esatta" · -parola'}
-                  autoComplete="off"
-                />
-              </div>
-            </label>
+            {v === 'active' ? 'Attivi' : v === 'inactive' ? 'Disattivati' : 'Tutti'}
+          </Link>
+        ))}
 
-            <label className="col" style={{ gap: 4, width: 200 }}>
-              <span className="meta" style={{ fontSize: 11 }}>
-                CATEGORIA
-              </span>
-              <select
-                name="category"
-                defaultValue={categoryId ? String(categoryId) : ''}
-                className="stoku-input"
-                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
-              >
-                <option value="">Tutte</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </label>
+        {activeFilters > 0 && (
+          <button type="submit" className="btn ghost sm">
+            <Icon name="search" size={12} /> Cerca
+          </button>
+        )}
+        {(q || categoryId || condition) && (
+          <Link href="/products" className="btn ghost sm">Reset</Link>
+        )}
+      </form>
 
-            <label className="col" style={{ gap: 4, width: 160 }}>
-              <span className="meta" style={{ fontSize: 11 }}>
-                CONDIZIONE
-              </span>
-              <select
-                name="condition"
-                defaultValue={condition}
-                className="stoku-input"
-                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
-              >
-                <option value="">Tutte</option>
-                {Object.entries(CONDITION_LABEL).map(([k, label]) => (
-                  <option key={k} value={k}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="col" style={{ gap: 4, width: 140 }}>
-              <span className="meta" style={{ fontSize: 11 }}>
-                STATO
-              </span>
-              <select
-                name="status"
-                defaultValue={status}
-                className="stoku-input"
-                style={{ height: 32, paddingLeft: 10, paddingRight: 10 }}
-              >
-                <option value="active">Attivi</option>
-                <option value="inactive">Disattivati</option>
-                <option value="all">Tutti</option>
-              </select>
-            </label>
-
-            <div className="row" style={{ gap: 6, marginLeft: 'auto' }}>
-              <StokuButton type="submit" variant="primary" size="sm" icon="search">
-                Filtra
-              </StokuButton>
-              {activeFilters > 0 && (
-                <Link href="/products" className="btn ghost sm">
-                  Reset
-                </Link>
-              )}
-            </div>
-          </form>
-        </Panel>
-
+      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
         <Panel padded={false}>
           {products.length === 0 ? (
             <Empty
@@ -262,14 +252,15 @@ export default async function ProductsPage({
             <table className="tbl">
               <thead>
                 <tr>
-                  <th style={{ width: 130 }}>SKU</th>
-                  <th>Nome</th>
-                  <th style={{ width: 160 }}>Categoria</th>
+                  <th style={{ width: 36 }} />
+                  <th>Prodotto</th>
+                  <th style={{ width: 130 }}>SKU / OEM</th>
+                  <th style={{ width: 160 }}>Veicolo</th>
                   <th style={{ width: 110 }}>Condizione</th>
-                  <th style={{ width: 110, textAlign: 'right' }}>Prezzo</th>
-                  <th style={{ width: 90, textAlign: 'right' }}>Disp.</th>
-                  <th style={{ width: 100 }}>Stato</th>
-                  <th style={{ width: 170 }} />
+                  <th style={{ width: 160 }}>Stock per punto</th>
+                  <th style={{ width: 70, textAlign: 'right' }}>Disp.</th>
+                  <th style={{ width: 100, textAlign: 'right' }}>Prezzo</th>
+                  <th style={{ width: 120 }} />
                 </tr>
               </thead>
               <ProductsRows
@@ -292,6 +283,7 @@ export default async function ProductsPage({
                     is_active: p.is_active,
                     category: p.category ? { id: p.category.id, name: p.category.name } : null,
                     stock: stockMap.get(p.id) ?? null,
+                    perStore: perStoreMap.get(p.id) ?? null,
                     images: imagesMap.get(p.id) ?? [],
                   }),
                 )}

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
@@ -26,6 +27,8 @@ const CONDITION_VARIANT: Record<string, BadgeVariant> = {
   damaged: 'warn',
 };
 
+type PerStore = { storeId: number; storeCode: string; available: number };
+
 export type ProductRow = {
   id: string;
   sku: string;
@@ -44,6 +47,7 @@ export type ProductRow = {
   description: string | null;
   category: { id: number; name: string } | null;
   stock: { available: number; total: number } | null;
+  perStore: PerStore[] | null;
   images: ProductImage[];
 };
 
@@ -71,6 +75,43 @@ function toFormValues(p: ProductRow): ProductFormValues {
     vehicle_year_to: p.vehicle_year_to != null ? String(p.vehicle_year_to) : '',
     oem_code: p.oem_code ?? '',
   };
+}
+
+function StoreDots({ perStore }: { perStore: PerStore[] | null }) {
+  if (!perStore || perStore.length === 0) return <span className="faint">—</span>;
+  return (
+    <div className="row" style={{ gap: 6 }}>
+      {perStore.map((s) => (
+        <div
+          key={s.storeId}
+          className="row"
+          style={{ gap: 4 }}
+          title={`${s.storeCode}: ${s.available} disp.`}
+        >
+          <span
+            style={{
+              width: 7,
+              height: 7,
+              borderRadius: '50%',
+              flexShrink: 0,
+              background:
+                s.available === 0
+                  ? 'var(--ink-4)'
+                  : s.available <= 2
+                    ? 'var(--warn)'
+                    : 'var(--ok)',
+            }}
+          />
+          <span
+            className="mono"
+            style={{ fontSize: 10.5, color: 'var(--ink-3)' }}
+          >
+            {s.storeCode}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export function ProductsRows({
@@ -109,34 +150,97 @@ export function ProductsRows({
       <tbody>
         {products.map((p) => {
           const price = currency(p.price_sell, p.currency);
+          const hasPhoto = p.images.length > 0;
           return (
             <tr key={p.id}>
-              <td className="mono" style={{ fontWeight: 500, fontSize: 11 }}>
-                {p.sku}
+              {/* Thumb */}
+              <td style={{ padding: '0 6px 0 10px' }}>
+                <Link href={`/products/${p.id}`}>
+                  <div
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 'var(--r-sm)',
+                      border: '1px solid var(--border)',
+                      background: hasPhoto ? 'var(--panel-sunken)' : undefined,
+                      backgroundImage: !hasPhoto
+                        ? `repeating-linear-gradient(45deg, oklch(0.88 0.005 80) 0 4px, oklch(0.94 0.004 80) 4px 8px)`
+                        : undefined,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'var(--ink-4)',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {hasPhoto && <Icon name="image" size={12} />}
+                  </div>
+                </Link>
               </td>
-              <td className="truncate-1" style={{ maxWidth: 320 }}>
-                {p.name}
-                {p.legacy_nr && (
-                  <span className="faint mono" style={{ marginLeft: 8, fontSize: 11 }}>
-                    #{p.legacy_nr}
-                  </span>
-                )}
+
+              {/* Prodotto: name + description */}
+              <td style={{ maxWidth: 280 }}>
+                <Link href={`/products/${p.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                  <div className="col" style={{ gap: 1, minWidth: 0 }}>
+                    <span
+                      className="truncate-1"
+                      style={{ fontSize: 13, fontWeight: 500 }}
+                    >
+                      {p.name}
+                    </span>
+                    {p.description && (
+                      <span
+                        className="meta truncate-1"
+                        style={{ fontSize: 11 }}
+                      >
+                        {p.description}
+                      </span>
+                    )}
+                  </div>
+                </Link>
               </td>
+
+              {/* SKU / OEM */}
               <td>
-                {p.category?.name ? (
-                  <StokuBadge>{p.category.name}</StokuBadge>
+                <div className="col" style={{ gap: 0 }}>
+                  <span className="mono" style={{ fontSize: 12 }}>{p.sku}</span>
+                  {p.oem_code && (
+                    <span className="mono meta" style={{ fontSize: 10.5 }}>{p.oem_code}</span>
+                  )}
+                </div>
+              </td>
+
+              {/* Veicolo */}
+              <td>
+                {p.vehicle_make ? (
+                  <div className="col" style={{ gap: 0 }}>
+                    <span style={{ fontSize: 12 }}>
+                      {p.vehicle_make} {p.vehicle_model}
+                    </span>
+                    {(p.vehicle_year_from || p.vehicle_year_to) && (
+                      <span className="meta" style={{ fontSize: 10.5 }}>
+                        {p.vehicle_year_from ?? '?'}–{p.vehicle_year_to ?? '?'}
+                      </span>
+                    )}
+                  </div>
                 ) : (
                   <span className="faint">—</span>
                 )}
               </td>
+
+              {/* Condizione */}
               <td>
                 <StokuBadge variant={CONDITION_VARIANT[p.condition] ?? 'default'}>
                   {CONDITION_LABEL[p.condition] ?? p.condition}
                 </StokuBadge>
               </td>
-              <td className="mono" style={{ textAlign: 'right' }}>
-                {price ?? <span className="faint">—</span>}
+
+              {/* Stock per punto */}
+              <td>
+                <StoreDots perStore={p.perStore} />
               </td>
+
+              {/* Disponibile */}
               <td className="mono" style={{ textAlign: 'right' }}>
                 {p.stock ? (
                   <span style={{ color: p.stock.available > 0 ? undefined : 'var(--ink-3)' }}>
@@ -146,15 +250,13 @@ export function ProductsRows({
                   <span className="faint">0</span>
                 )}
               </td>
-              <td>
-                {p.is_active ? (
-                  <StokuBadge variant="ok" dot>
-                    Attivo
-                  </StokuBadge>
-                ) : (
-                  <StokuBadge variant="draft">Disattivato</StokuBadge>
-                )}
+
+              {/* Prezzo */}
+              <td className="mono" style={{ textAlign: 'right' }}>
+                {price ?? <span className="faint">—</span>}
               </td>
+
+              {/* Azioni */}
               <td>
                 <div className="row" style={{ gap: 4, justifyContent: 'flex-end' }}>
                   <a

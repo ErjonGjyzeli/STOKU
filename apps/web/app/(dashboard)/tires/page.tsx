@@ -86,9 +86,6 @@ export default async function TiresPage({
 
   const supabase = await createClient();
 
-  // Pre-filtro set4: ottiene i product_id con stock totale ≥ 4 prima della
-  // query principale, così il count: 'exact' resta accurato e la
-  // paginazione funziona.
   let set4Ids: string[] | null = null;
   if (set4) {
     const { data } = await supabase
@@ -98,9 +95,20 @@ export default async function TiresPage({
     set4Ids = (data ?? [])
       .map((r) => r.product_id)
       .filter((id): id is string => !!id);
-    // Se nessun prodotto soddisfa, esiste un caso di "no results" coerente.
     if (set4Ids.length === 0) set4Ids = ['00000000-0000-0000-0000-000000000000'];
   }
+
+  // Distinct dimensions for filter dropdowns
+  const dimsRes = await supabase
+    .from('products')
+    .select('tire_width, tire_aspect, tire_diameter, category:product_categories!inner(kind)')
+    .eq('category.kind', 'gomma')
+    .eq('is_active', true)
+    .not('tire_width', 'is', null);
+  const allTires = dimsRes.data ?? [];
+  const availableWidths = [...new Set(allTires.map((r) => r.tire_width).filter(Boolean) as number[])].sort((a, b) => a - b);
+  const availableAspects = [...new Set(allTires.map((r) => r.tire_aspect).filter(Boolean) as number[])].sort((a, b) => a - b);
+  const availableDiameters = [...new Set(allTires.map((r) => r.tire_diameter).filter(Boolean) as number[])].sort((a, b) => a - b);
 
   let query = supabase
     .from('products')
@@ -225,11 +233,23 @@ export default async function TiresPage({
         right={<TiresCreateButton categories={tireCategories} />}
       />
 
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <Panel padded>
-          <TiresFilterBar initial={initialFilters} hasFilters={hasFilters} />
-        </Panel>
+      {/* Inline filter bar */}
+      <div
+        style={{
+          padding: '12px 24px',
+          borderBottom: '1px solid var(--stoku-border)',
+        }}
+      >
+        <TiresFilterBar
+          initial={initialFilters}
+          hasFilters={hasFilters}
+          availableWidths={availableWidths}
+          availableAspects={availableAspects}
+          availableDiameters={availableDiameters}
+        />
+      </div>
 
+      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
         <Panel padded={false}>
           {products.length === 0 ? (
             <Empty
@@ -245,15 +265,16 @@ export default async function TiresPage({
             <table className="tbl">
               <thead>
                 <tr>
-                  <th style={{ width: 56 }} />
-                  <th style={{ width: 130 }}>SKU</th>
-                  <th style={{ width: 140 }}>Misura</th>
-                  <th>Marca / Modello</th>
-                  <th style={{ width: 90 }}>DOT</th>
-                  <th style={{ width: 90, textAlign: 'right' }}>Battistr.</th>
-                  <th style={{ width: 110, textAlign: 'right' }}>Prezzo</th>
-                  <th style={{ width: 90, textAlign: 'right' }}>Disp.</th>
                   <th style={{ width: 36 }} />
+                  <th style={{ width: 110 }}>SKU</th>
+                  <th>Misura · Indici</th>
+                  <th>Marca / Modello</th>
+                  <th style={{ width: 60, textAlign: 'center' }}>Stagione</th>
+                  <th style={{ width: 80 }}>DOT</th>
+                  <th style={{ width: 100 }}>Battistrada</th>
+                  <th style={{ width: 60 }}>Tag</th>
+                  <th style={{ width: 100, textAlign: 'right' }}>Prezzo</th>
+                  <th style={{ width: 80, textAlign: 'right' }}>Disp.</th>
                 </tr>
               </thead>
               <tbody>
@@ -266,6 +287,13 @@ export default async function TiresPage({
                   const price = formatPrice(p.price_sell, p.currency);
                   const stock = stockMap.get(p.id);
                   const thumb = imagesMap.get(p.id);
+                  const categoryObj = Array.isArray(p.category) ? p.category[0] : p.category;
+                  const slug = categoryObj?.slug ?? '';
+                  const seasonKey =
+                    slug === 'tires-summer' ? 'summer' :
+                    slug === 'tires-winter' ? 'winter' :
+                    slug === 'tires-allseason' ? 'allseason' : null;
+                  const treadMm = p.tire_tread_mm != null ? Number(p.tire_tread_mm) : null;
                   return (
                     <tr key={p.id}>
                       <td>
@@ -274,13 +302,13 @@ export default async function TiresPage({
                           <img
                             src={publicUrl(thumb)}
                             alt=""
-                            width={36}
-                            height={36}
+                            width={28}
+                            height={28}
                             style={{
-                              width: 36,
-                              height: 36,
+                              width: 28,
+                              height: 28,
                               objectFit: 'cover',
-                              borderRadius: 'var(--r-sm)',
+                              borderRadius: '50%',
                               border: '1px solid var(--stoku-border)',
                               background: 'var(--panel-2)',
                             }}
@@ -288,9 +316,9 @@ export default async function TiresPage({
                         ) : (
                           <div
                             style={{
-                              width: 36,
-                              height: 36,
-                              borderRadius: 'var(--r-sm)',
+                              width: 28,
+                              height: 28,
+                              borderRadius: '50%',
                               border: '1px solid var(--stoku-border)',
                               background: 'var(--panel-2)',
                               display: 'flex',
@@ -299,74 +327,99 @@ export default async function TiresPage({
                               color: 'var(--ink-4)',
                             }}
                           >
-                            <Icon name="disc" size={16} />
+                            <Icon name="disc" size={13} />
                           </div>
                         )}
                       </td>
                       <td className="mono" style={{ fontWeight: 500, fontSize: 11 }}>
                         {p.sku}
                       </td>
-                      <td className="mono" style={{ fontSize: 12 }}>
-                        {size ?? <span className="faint">—</span>}
-                        {sizeIndex && (
-                          <span className="faint" style={{ marginLeft: 6 }}>
-                            {sizeIndex}
+                      <td>
+                        <div className="col" style={{ gap: 0 }}>
+                          <span className="mono" style={{ fontWeight: 600, fontSize: 13 }}>
+                            {size ?? <span className="faint">—</span>}
                           </span>
-                        )}
-                        {(p.tire_runflat || p.tire_reinforced) && (
-                          <div className="row" style={{ gap: 4, marginTop: 2 }}>
-                            {p.tire_runflat && (
-                              <StokuBadge variant="info">RFT</StokuBadge>
-                            )}
-                            {p.tire_reinforced && (
-                              <StokuBadge variant="info">XL</StokuBadge>
-                            )}
-                          </div>
-                        )}
+                          {sizeIndex && (
+                            <span className="mono meta" style={{ fontSize: 11 }}>
+                              {sizeIndex}
+                            </span>
+                          )}
+                        </div>
                       </td>
-                      <td className="truncate-1" style={{ maxWidth: 280 }}>
-                        {p.vehicle_make ? (
-                          <span style={{ fontWeight: 500 }}>{p.vehicle_make}</span>
-                        ) : (
-                          <span className="faint">—</span>
-                        )}
-                        <span className="faint" style={{ marginLeft: 6 }}>
-                          {p.name}
-                        </span>
+                      <td>
+                        <div className="col" style={{ gap: 0 }}>
+                          <span style={{ fontWeight: 500 }}>
+                            {p.vehicle_make ?? <span className="faint">—</span>}
+                          </span>
+                          <span className="meta" style={{ fontSize: 11 }}>{p.name}</span>
+                        </div>
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
+                        <SeasonIcon season={seasonKey} />
                       </td>
                       <td className="mono" style={{ fontSize: 11 }}>
                         {p.tire_dot ?? <span className="faint">—</span>}
                       </td>
-                      <td className="mono" style={{ textAlign: 'right' }}>
-                        {p.tire_tread_mm != null ? (
-                          `${Number(p.tire_tread_mm).toFixed(1)} mm`
+                      <td>
+                        {treadMm != null ? (
+                          <div className="row" style={{ gap: 4, alignItems: 'center' }}>
+                            <span className="mono" style={{ fontSize: 12, fontWeight: 500 }}>
+                              {treadMm.toFixed(1)}
+                            </span>
+                            <span className="meta" style={{ fontSize: 10 }}>mm</span>
+                            <span
+                              style={{
+                                width: 40,
+                                height: 5,
+                                background: 'var(--panel-2)',
+                                borderRadius: 2,
+                                flexShrink: 0,
+                              }}
+                            >
+                              <span
+                                style={{
+                                  display: 'block',
+                                  width: `${Math.min(100, (treadMm / 8) * 100)}%`,
+                                  height: '100%',
+                                  background: treadMm < 4 ? 'var(--warn)' : 'var(--ok)',
+                                  borderRadius: 2,
+                                }}
+                              />
+                            </span>
+                          </div>
                         ) : (
                           <span className="faint">—</span>
                         )}
+                      </td>
+                      <td>
+                        <div className="row" style={{ gap: 3 }}>
+                          {p.tire_runflat && (
+                            <StokuBadge variant="info">RFT</StokuBadge>
+                          )}
+                          {p.tire_reinforced && (
+                            <StokuBadge variant="accent">XL</StokuBadge>
+                          )}
+                        </div>
                       </td>
                       <td className="mono" style={{ textAlign: 'right' }}>
                         {price ?? <span className="faint">—</span>}
                       </td>
                       <td className="mono" style={{ textAlign: 'right' }}>
                         {stock ? (
-                          <StokuBadge variant={stock.available >= 4 ? 'ok' : stock.available > 0 ? 'default' : 'draft'}>
+                          <StokuBadge
+                            variant={
+                              stock.available >= 4
+                                ? 'ok'
+                                : stock.available > 0
+                                  ? 'default'
+                                  : 'draft'
+                            }
+                          >
                             {stock.available}
                           </StokuBadge>
                         ) : (
                           <span className="faint">0</span>
                         )}
-                      </td>
-                      <td>
-                        <a
-                          href={`/tires/${p.id}/label`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="btn ghost"
-                          style={{ padding: 4, width: 28, height: 28 }}
-                          title="Stampa etichetta"
-                        >
-                          <Icon name="tag" size={13} />
-                        </a>
                       </td>
                     </tr>
                   );
@@ -415,4 +468,68 @@ export default async function TiresPage({
       </div>
     </div>
   );
+}
+
+function SeasonIcon({ season }: { season: 'summer' | 'winter' | 'allseason' | null }) {
+  if (season === 'summer') {
+    return (
+      <span
+        title="Estive"
+        style={{
+          width: 18,
+          height: 18,
+          borderRadius: '50%',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'oklch(0.92 0.05 80)',
+          color: 'oklch(0.55 0.18 60)',
+          fontSize: 11,
+        }}
+      >
+        ☀
+      </span>
+    );
+  }
+  if (season === 'winter') {
+    return (
+      <span
+        title="Invernali"
+        style={{
+          width: 18,
+          height: 18,
+          borderRadius: '50%',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'oklch(0.93 0.04 230)',
+          color: 'oklch(0.5 0.15 230)',
+          fontSize: 11,
+        }}
+      >
+        ❄
+      </span>
+    );
+  }
+  if (season === 'allseason') {
+    return (
+      <span
+        title="4 Stagioni"
+        style={{
+          width: 18,
+          height: 18,
+          borderRadius: '50%',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'oklch(0.93 0.05 150)',
+          color: 'oklch(0.5 0.13 150)',
+          fontSize: 11,
+        }}
+      >
+        ◐
+      </span>
+    );
+  }
+  return <span className="faint">—</span>;
 }

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { Icon } from './icon';
 
@@ -30,7 +31,13 @@ export function PageHeader({ title, subtitle, right, breadcrumb }: Props) {
             {breadcrumb.map((b, i) => (
               <span key={`${b.label}-${i}`} className="row" style={{ gap: 4 }}>
                 {i > 0 && <Icon name="chevronRight" size={11} />}
-                <span>{b.label}</span>
+                {b.href ? (
+                  <Link href={b.href} style={{ color: 'inherit', textDecoration: 'none' }}>
+                    {b.label}
+                  </Link>
+                ) : (
+                  <span>{b.label}</span>
+                )}
               </span>
             ))}
           </div>
